@@ -61,18 +61,32 @@
 
 	% ここから 文章 Start!
 	\section{今週やったこと}
+	% \begin{itemize}{
+	% 	\item{DCGANのモデル製作}
+	% }\end{itemize}
+	\subsection{DCGANのモデル製作}
+	DCGAN\cite{radford2015unsupervised}の論文から,	先週作ったCNNを参考に, Pytorchでモデルの実装を行った.
+
+	\subsubsection{結果}
+	実行できるモデルが作成できた.
+	以前に利用したDCGANの実装サンプルと比較すると, 対応する画像がモノクロからカラーに改善できた.
+	学習結果は図\ref{fig:result}に示した. GPU環境がないので 学習は 1 epochとした. 学習前後を見ると, ランダムな状態から大雑把ながら特徴を学習していると思われる.
+
+	\subsubsection{感想}
+	実装途中に作成した, 入力したデータがモデルの内部を通過する過程を表示する関数(図\ref{fig:helper})によってデバッグが効率的に行えた.
+
+	\section{来週やりたいこと}
 	\begin{itemize}{
-		\item{DCGANのモデル製作}
+		\item{VGG16などのモデルをGANに転移学習させる}
 	}\end{itemize}
-	\subsection{あああ}
-	先週作ったCNNを参考に, Pytorchで論文の情報からDCGANモデルの実装を行った. 1から実装したことで, 以前の実装サンプルはモノクロだったのに対し, カラーイメージに対応することができた. GPU環境がないので 1 epochだけ学習した結果を図\ref{fig:result}に示した. 実装途中に作成した, 入力したデータがモデルの内部を通過する過程を表示する関数(図\ref{fig:helper})によってデバッグが効率的に行えた.
 
 	\begin{figure}[htbp]
-  	\begin{center}
-	    \includegraphics[clip,width=7.0cm]{../../test/images/3100.png}
-	    \caption{1epoch 32x32の結果９枚}
-	    \label{fig:result}
-	  \end{center}
+		\begin{center}
+			\includegraphics[clip,width=7.0cm]{../../test/images/0.png}
+		    \includegraphics[clip,width=7.0cm]{../../test/images/3100.png}
+			\caption{学習結果 左:0 epoch, 右:1 epoch (32x32)}
+			\label{fig:result}
+		\end{center}
 	\end{figure}
 
 	\begin{figure}[htbp]
@@ -83,7 +97,7 @@
 	  \end{center}
 	\end{figure}
 
-	% % 参考文献リスト
-	% \bibliographystyle{unsrt}
-	% \bibliography{2020_04_17}
+	% 参考文献リスト
+	\bibliographystyle{unsrt}
+	\bibliography{ref}
 \end{document}
