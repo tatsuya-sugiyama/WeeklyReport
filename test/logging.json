@@ -1,0 +1,51 @@
+{
+    "version": 1,
+    "formatters": {
+        "simple": {
+            "format": "%(message)s"
+        },
+        "full": {
+            "format": "%(asctime)s %(name)s %(levelname)s # %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "ERROR",
+            "formatter": "simple",
+            "stream": "ext://sys.stderr"
+        },
+        "info": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "stream": "ext://sys.stderr"
+        },
+        "env_file": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "full",
+            "filename": "log.txt"
+        },
+        "env_file_short": {
+            "class": "logging.FileHandler",
+            "level": "INFO",
+            "formatter": "full",
+            "filename": "log_short.txt"
+        }
+    },
+    "loggers": {
+        "env": {
+            "level": "DEBUG",
+            "handlers": [
+                "env_file",
+                "env_file_short"
+            ]
+        }
+    },
+    "root": {
+        "handlers": [
+            "info"
+        ]
+    }
+}

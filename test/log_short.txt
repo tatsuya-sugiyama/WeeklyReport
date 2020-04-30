@@ -1,0 +1,40 @@
+2020-04-29 21:23:28,981 env INFO # [system] start
+2020-04-29 21:23:28,983 env INFO # [argparse] batch_size=16
+2020-04-29 21:23:28,984 env INFO # [argparse] epochs=1
+2020-04-29 21:23:28,985 env INFO # [argparse] save_model=False
+2020-04-29 21:23:28,987 env INFO # [device] cpu
+2020-04-29 21:23:30,030 env INFO # [system] epoch 0
+2020-04-29 21:23:30,032 env INFO # [system] train_a -> test_b
+2020-04-29 21:24:06,634 env INFO # [system] train_b -> test_a
+2020-04-29 21:24:42,466 env INFO # [system] train end
+2020-04-29 21:24:42,466 env INFO # [statics] elapsed time : 73.4838752746582
+2020-04-29 21:24:42,466 env INFO # [system] finish
+2020-04-29 21:36:12,091 env INFO # [system] start
+2020-04-29 21:36:12,092 env INFO # [argparse] batch_size=16
+2020-04-29 21:36:12,094 env INFO # [argparse] epochs=1
+2020-04-29 21:36:12,095 env INFO # [argparse] save_model=False
+2020-04-29 21:36:12,096 env INFO # [device] cpu
+2020-04-29 21:36:13,131 env INFO # [system] epoch 0
+2020-04-29 21:36:13,133 env INFO # [system] train_a -> test_b
+2020-04-29 21:36:49,088 env INFO # [system] train_b -> test_a
+2020-04-29 21:37:25,141 env INFO # [system] train end
+2020-04-29 21:37:25,144 env INFO # [system] finish
+2020-04-29 21:42:30,034 env INFO # [system] start
+2020-04-29 21:42:30,036 env INFO # [argparse] batch_size=16
+2020-04-29 21:42:30,037 env INFO # [argparse] epochs=1
+2020-04-29 21:42:30,038 env INFO # [argparse] save_model=False
+2020-04-29 21:42:30,040 env INFO # [device] cpu
+2020-04-29 21:42:31,096 env INFO # [system] epoch 0
+2020-04-29 21:42:31,096 env INFO # [system] train_a -> test_b
+2020-04-29 21:43:08,003 env INFO # [system] train_b -> test_a
+2020-04-29 21:43:44,454 env INFO # [system] train end
+2020-04-29 21:43:44,454 env INFO # [system] finish
+2020-04-29 21:53:14,854 env INFO # [system] start
+2020-04-29 21:53:14,856 env INFO # [argparse] batch_size=16
+2020-04-29 21:53:14,857 env INFO # [argparse] epochs=1
+2020-04-29 21:53:14,859 env INFO # [argparse] save_model=False
+2020-04-29 21:53:14,860 env INFO # [device] cpu
+2020-04-29 21:53:15,971 env INFO # [system] epoch 0
+2020-04-29 21:53:15,971 env INFO # [system] train_a -> test_b
+2020-04-29 21:53:53,134 env INFO # [system] train_b -> test_a
+2020-04-29 21:54:30,465 env INFO # [system] finish
