@@ -38,3 +38,54 @@
 2020-04-29 21:53:15,971 env INFO # [system] train_a -> test_b
 2020-04-29 21:53:53,134 env INFO # [system] train_b -> test_a
 2020-04-29 21:54:30,465 env INFO # [system] finish
+2020-04-30 16:28:11,527 env INFO # [system] start
+2020-04-30 16:28:11,578 env INFO # [meta] データを分割して交換するアルゴリズム
+2020-04-30 16:28:11,621 env INFO # [argparse] batch_size=16
+2020-04-30 16:28:11,622 env INFO # [argparse] epochs=1
+2020-04-30 16:28:11,623 env INFO # [argparse] lr=0.001
+2020-04-30 16:28:11,624 env INFO # [argparse] momentum=0.9
+2020-04-30 16:28:11,625 env INFO # [argparse] dataset=cifar10
+2020-04-30 16:28:11,627 env INFO # [argparse] model=cnn
+2020-04-30 16:28:11,628 env INFO # [argparse] optimizer=sgd
+2020-04-30 16:28:11,629 env INFO # [argparse] criterion=cross_entropy_loss
+2020-04-30 16:28:11,630 env INFO # [argparse] save_model=False
+2020-04-30 16:28:11,635 env INFO # [device] cpu
+2020-04-30 16:30:43,024 env INFO # [system] start
+2020-04-30 16:30:43,025 env INFO # [meta] データを分割して交換するアルゴリズム
+2020-04-30 16:30:43,028 env INFO # [param] batch_size=16
+2020-04-30 16:30:43,030 env INFO # [param] epochs=1
+2020-04-30 16:30:43,031 env INFO # [param] lr=0.001
+2020-04-30 16:30:43,033 env INFO # [param] momentum=0.9
+2020-04-30 16:30:43,034 env INFO # [param] dataset=cifar10
+2020-04-30 16:30:43,036 env INFO # [param] model=cnn
+2020-04-30 16:30:43,038 env INFO # [param] optimizer=sgd
+2020-04-30 16:30:43,039 env INFO # [param] criterion=cross_entropy_loss
+2020-04-30 16:30:43,041 env INFO # [param] save_model=False
+2020-04-30 16:30:43,042 env INFO # [device] cpu
+2020-04-30 16:30:44,088 env INFO # [system] epoch 0
+2020-04-30 16:30:44,090 env INFO # [system] train_a -> test_b
+2020-04-30 16:31:17,724 env INFO # [system] train_b -> test_a
+2020-04-30 16:31:51,559 env INFO # [system] finish
+2020-04-30 16:34:36,804 env INFO # [system] start
+2020-04-30 16:34:36,806 env INFO # [meta] データを分割して交換するアルゴリズム
+2020-04-30 16:34:36,808 env INFO # [param] batch_size=16
+2020-04-30 16:34:36,810 env INFO # [param] epochs=1
+2020-04-30 16:34:36,811 env INFO # [param] lr=0.001
+2020-04-30 16:34:36,813 env INFO # [param] momentum=0.9
+2020-04-30 16:34:36,814 env INFO # [param] dataset=cifar10
+2020-04-30 16:34:36,815 env INFO # [param] model=cnn
+2020-04-30 16:34:36,817 env INFO # [param] optimizer=sgd
+2020-04-30 16:34:36,818 env INFO # [param] criterion=cross_entropy_loss
+2020-04-30 16:34:36,820 env INFO # [param] save_model=False
+2020-04-30 16:34:36,821 env INFO # [device] cpu
+2020-04-30 16:34:37,864 env INFO # [system] epoch 0
+2020-04-30 16:34:37,866 env INFO # [system] train_a -> test_b
+2020-04-30 16:35:12,395 env INFO # [system] train_b -> test_a
+2020-04-30 16:35:46,163 env INFO # [stat] X train loss : [1.7897357940673828]
+2020-04-30 16:35:46,165 env INFO # [stat] X test loss : [2.0386693585170663]
+2020-04-30 16:35:46,167 env INFO # [stat] Y train loss : [2.214972972869873]
+2020-04-30 16:35:46,168 env INFO # [stat] Y test loss : [2.2158003693883876]
+2020-04-30 16:35:46,169 env INFO # [stat] X accuracy : [26.544]
+2020-04-30 16:35:46,171 env INFO # [stat] Y accuracy : [20.844]
+2020-04-30 16:35:46,172 env INFO # [stat] elapsed time : 69.36411929130554[s]
+2020-04-30 16:35:46,173 env INFO # [system] finish
