@@ -1,0 +1,47 @@
+2020-05-06 11:06:51,731 env INFO # [system] start
+2020-05-06 11:06:51,733 env INFO # [meta] データを分割して交換しないアルゴリズム / ベースライン / deep cnn
+2020-05-06 11:06:51,736 env INFO # [param] batch_size=32
+2020-05-06 11:06:51,738 env INFO # [param] epochs=2
+2020-05-06 11:06:51,739 env INFO # [param] lr=0.001
+2020-05-06 11:06:51,741 env INFO # [param] b1=0.9
+2020-05-06 11:06:51,743 env INFO # [param] b2=0.999
+2020-05-06 11:06:51,745 env INFO # [param] momentum=0.9
+2020-05-06 11:06:51,747 env INFO # [param] dataset=cifar10
+2020-05-06 11:06:51,748 env INFO # [param] model=cnn
+2020-05-06 11:06:51,750 env INFO # [param] optimizer=sdg
+2020-05-06 11:06:51,751 env INFO # [param] criterion=cross_entropy_loss
+2020-05-06 11:06:51,753 env INFO # [param] save_model=False
+2020-05-06 11:06:51,754 env INFO # [device] cuda
+2020-05-06 11:06:52,824 env DEBUG # --------------------
+2020-05-06 11:06:52,825 env INFO # [system] epoch 0
+2020-05-06 11:06:52,826 env INFO # [system] train_a -> test_b
+2020-05-06 11:06:52,914 env DEBUG # [train] batch : 0/25000 (0%),	loss : 2.302823
+2020-05-06 11:06:58,501 env DEBUG # [train] batch : 3200/25000 (13%),	loss : 2.302834
+2020-05-06 11:07:03,998 env DEBUG # [train] batch : 6400/25000 (26%),	loss : 2.301637
+2020-05-06 11:07:09,486 env DEBUG # [train] batch : 9600/25000 (38%),	loss : 2.302919
+2020-05-06 11:07:14,977 env DEBUG # [train] batch : 12800/25000 (51%),	loss : 2.302065
+2020-05-06 11:07:20,466 env DEBUG # [train] batch : 16000/25000 (64%),	loss : 2.300868
+2020-05-06 11:07:25,969 env DEBUG # [train] batch : 19200/25000 (77%),	loss : 2.303195
+2020-05-06 11:07:31,489 env DEBUG # [train] batch : 22400/25000 (90%),	loss : 2.302359
+2020-05-06 11:07:54,938 env DEBUG # [test] ave loss : 2.3022,	accu : 2482/25000(10%)
+2020-05-06 11:07:55,376 env DEBUG # [dump] X loss : 2.3032100200653076 / 2.3022202049070004,	acc : 9.928
+2020-05-06 11:07:55,377 env DEBUG # --------------------
+2020-05-06 11:07:55,377 env INFO # [system] epoch 1
+2020-05-06 11:07:55,378 env INFO # [system] train_a -> test_b
+2020-05-06 11:07:55,448 env DEBUG # [train] batch : 0/25000 (0%),	loss : 2.302623
+2020-05-06 11:08:00,969 env DEBUG # [train] batch : 3200/25000 (13%),	loss : 2.302829
+2020-05-06 11:08:06,472 env DEBUG # [train] batch : 6400/25000 (26%),	loss : 2.297479
+2020-05-06 11:08:11,982 env DEBUG # [train] batch : 9600/25000 (38%),	loss : 2.301347
+2020-05-06 11:08:17,495 env DEBUG # [train] batch : 12800/25000 (51%),	loss : 2.297401
+2020-05-06 11:08:23,000 env DEBUG # [train] batch : 16000/25000 (64%),	loss : 2.294176
+2020-05-06 11:08:28,530 env DEBUG # [train] batch : 19200/25000 (77%),	loss : 2.296111
+2020-05-06 11:08:34,057 env DEBUG # [train] batch : 22400/25000 (90%),	loss : 2.277584
+2020-05-06 11:08:57,921 env DEBUG # [test] ave loss : 2.2753,	accu : 3863/25000(15%)
+2020-05-06 11:08:58,332 env DEBUG # [dump] X loss : 2.2293643951416016 / 2.2753313667024186,	acc : 15.452
+2020-05-06 11:08:58,333 env DEBUG # ---------- statistics ----------
+2020-05-06 11:08:58,333 env INFO # [stat] X train loss : [2.3032100200653076, 2.2293643951416016]
+2020-05-06 11:08:58,334 env INFO # [stat] X test loss : [2.3022202049070004, 2.2753313667024186]
+2020-05-06 11:08:58,335 env INFO # [stat] X accuracy : [9.928, 15.452]
+2020-05-06 11:08:58,336 env INFO # [stat] elapsed time : 126.6012556552887[s]
+2020-05-06 11:08:58,338 env INFO # [system] finish
+2020-05-06 11:10:50,104 env DEBUG # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

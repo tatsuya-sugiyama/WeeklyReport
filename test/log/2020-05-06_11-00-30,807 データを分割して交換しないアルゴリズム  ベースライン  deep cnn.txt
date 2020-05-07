@@ -1,0 +1,33 @@
+2020-05-06 11:00:30,807 env INFO # [system] start
+2020-05-06 11:00:30,808 env INFO # [meta] データを分割して交換しないアルゴリズム / ベースライン / deep cnn
+2020-05-06 11:00:30,812 env INFO # [param] batch_size=32
+2020-05-06 11:00:30,815 env INFO # [param] epochs=1
+2020-05-06 11:00:30,816 env INFO # [param] lr=0.001
+2020-05-06 11:00:30,819 env INFO # [param] b1=0.9
+2020-05-06 11:00:30,824 env INFO # [param] b2=0.999
+2020-05-06 11:00:30,827 env INFO # [param] dataset=cifar10
+2020-05-06 11:00:30,828 env INFO # [param] model=cnn
+2020-05-06 11:00:30,831 env INFO # [param] optimizer=adam
+2020-05-06 11:00:30,832 env INFO # [param] criterion=cross_entropy_loss
+2020-05-06 11:00:30,833 env INFO # [param] save_model=False
+2020-05-06 11:00:30,835 env INFO # [device] cuda
+2020-05-06 11:00:31,897 env DEBUG # --------------------
+2020-05-06 11:00:31,898 env INFO # [system] epoch 0
+2020-05-06 11:00:31,899 env INFO # [system] train_a -> test_b
+2020-05-06 11:00:31,993 env DEBUG # [train] batch : 0/25000 (0%),	loss : 2.302802
+2020-05-06 11:00:37,841 env DEBUG # [train] batch : 3200/25000 (13%),	loss : 2.144235
+2020-05-06 11:00:43,606 env DEBUG # [train] batch : 6400/25000 (26%),	loss : 2.367401
+2020-05-06 11:00:49,361 env DEBUG # [train] batch : 9600/25000 (38%),	loss : 2.367401
+2020-05-06 11:00:55,108 env DEBUG # [train] batch : 12800/25000 (51%),	loss : 2.367401
+2020-05-06 11:01:00,852 env DEBUG # [train] batch : 16000/25000 (64%),	loss : 2.273651
+2020-05-06 11:01:06,630 env DEBUG # [train] batch : 19200/25000 (77%),	loss : 2.398650
+2020-05-06 11:01:12,429 env DEBUG # [train] batch : 22400/25000 (90%),	loss : 2.367401
+2020-05-06 11:01:36,106 env DEBUG # [test] ave loss : 2.3616,	accu : 2482/25000(10%)
+2020-05-06 11:01:36,533 env DEBUG # [dump] X loss : 2.3361501693725586 / 2.3616050347647706,	acc : 9.928
+2020-05-06 11:01:36,533 env DEBUG # ---------- statistics ----------
+2020-05-06 11:01:36,533 env INFO # [stat] X train loss : [2.3361501693725586]
+2020-05-06 11:01:36,534 env INFO # [stat] X test loss : [2.3616050347647706]
+2020-05-06 11:01:36,535 env INFO # [stat] X accuracy : [9.928]
+2020-05-06 11:01:36,536 env INFO # [stat] elapsed time : 65.72589612007141[s]
+2020-05-06 11:01:36,540 env INFO # [system] finish
+2020-05-06 11:06:51,731 env DEBUG # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
