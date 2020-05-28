@@ -1,0 +1,320 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 5 月 29 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+	% ここから 文章 Start!
+\section{今週やったこと}
+\begin{itemize}
+	\item {論文読んでまとめた}
+\end{itemize}
+
+
+
+\section{A Survey of Automatic Parameter Tuning Methods for Metaheuristics}
+% \subsection{概要}
+%
+% \begin{enumerate}
+%   \item 単純な生成評価法
+%   \item 反復的な生成評価法
+%   \item 高レベルな生成評価法
+% \end{enumerate}
+
+\subsection{導入}
+
+最適化アプローチ
+\begin{enumerate}
+  \item 厳密法 \\
+  長所：最適性保証\\
+  短所：ＮＰ困難では膨大な計算コスト
+
+  \item ヒューリスティック法 \\
+  戦略やルールで問題に特化したアルゴリズム\\
+  長所：ＮＰ困難な問題で顕著な成功\\
+  短所：問題依存性（適用の制限）・局所最適解
+
+  \item メタヒューリスティック法 \\
+  高レベルの方法論・一般的なアルゴリズムのテンプレート・自然から着想を得た\\
+  長所：幅広い問題を解決
+\end{enumerate}
+
+\subsubsection{最適化のノー・フリー・ランチ（NFL）定理}
+全ての最適化問題に対応する万能アルゴリズムはない
+
+\subsubsection{パラメータ設定問題}
+問題ごとにパラメータを適切に設定する必要がある
+
+\begin{enumerate}
+  \item パラメータチューニング（オフラインチューニング） \\
+  事前にチューニングで得たパラメータを利用・実行中は変更されない\\
+  利点：汎用性\\
+  欠点：多くの設定ごとに実行するので時間がかかる
+
+  \item パラメータ制御（オンラインチューニング） \\
+  戦略に従い実行中に変更\\
+  利点：ーー\\
+  欠点：非普遍性・変更するパラメータの適切な理解が必要
+\end{enumerate}
+
+
+\subsection{自動パラメータ調整}
+
+開発動機
+\begin{itemize}
+  \item 時間コストの削減・性能の向上
+  \item アルゴリズムの評価、比較のためパラメータの最適性の影響を緩和
+  \item パラメータが与える影響の知識の必要性を排除
+\end{itemize}
+
+\subsubsection{分類}
+
+\begin{enumerate}
+  \item パラメータの種類 \\
+  １）数値パラメータ：実数や整数\\
+  ２）カテゴリパラメータ：メカニズムや演算子
+
+  \item  \\
+  １）ゼネラリスト：広い範囲の問題に対してよいパフォーマンスのパラメータ設定\\
+  ２）スペシャリスト：１つの問題に対してのみ優れた性能のパラメータ設定
+
+\end{enumerate}
+
+\subsubsection{チューニング方法の分類}
+
+主要カテゴリ
+\begin{enumerate}
+  \item 単純な生成・評価法 \\
+  生成段階で候補となる設定を生成、評価段階で評価して最適な設定を見つける
+
+  \item 反復的生成・評価法 \\
+  少数の設定を生成して、最も優れたものをみつけ、反復的に生成する新しい設定の指針とする。
+
+  \item 高レベルの生成・評価方法 \\
+  高レベル生成機構では既存のチューナーや探索手法から少数精鋭の設定を生成。
+  評価段階では慎重に評価する
+\end{enumerate}
+
+サブカテゴリ
+\begin{enumerate}
+  \item 評価の繰り返し \\
+  確率的目的関数最適化問題では複数回評価した平均値が最も分かりやすい方法
+
+  \item F-Racing \\
+  評価した統計的に劣る設定を段階的に排除し、有望な候補に計算を集中。繰り返し評価より効率的
+
+  \item インテンシフィケーション（強化） \\
+  評価途中で候補が暫定設定より劣るなら排除し、そうでなければ次の問題で評価する。全ての問題で評価されると新しい暫定設定となる
+
+  \item シャープニング \\
+  少ないテスト数で評価が始まり、将来性のあるパラメータはテスト数が２倍になる。素早く探索できる
+
+  \item アダプティブキャッピング  \\
+  有望でない設定の実行を中断して計算量を削減
+\end{enumerate}
+
+\subsection{単純生成評価法}
+\subsubsection{ブルートフォースアプローチ}
+FFDや他のDOE技術を用いてパラメータ設定を生成し、学習インスタンスに対して同じ回数の実行を行うことで、各設定候補の性能を推定\\
+欠点：各設定に計算資源を均等に割り当てるので非効率的・実行回数を決める基準がない
+
+\subsubsection{Fレース}
+構成候補のうち少なくとも1つが他の構成候補とパフォーマンス指標の点で有意に異なるかを調べる。ノンパラメトリックFriedman検定で、違いがないという帰無仮説が棄却された場合、最高ランクの構成と各構成との１対比較が実行され、劣った性能の候補が排除される。残った２つの候補のうち良いほうを結果とする
+
+\begin{enumerate}
+  \item FFD/F-Race \\
+  FDDによって候補を生成\\
+  欠点：パラメータ基準が必要、候補数がパラメータ数に指数関数的
+
+  \item RSD/F-Race \\
+  RSDはパラメータ空間に定義された確率モデル（一様分布）に従ってサンプリングされる\\
+  利点：数値パラメータ水準を定義する必要がない、任意の数の候補を生成
+\end{enumerate}
+
+\subsection{反復的生成評価法}
+
+\subsubsection{実験設計に基づくチューニング}
+DOE：統計的手法で分析できるように実験を計画する方法\\
+できること：構成候補の生成、探索空間の有望な領域を特定、パラメータ値が変化した場合の影響を分析、パラメータの重要度をスクリーニング、ランク付け
+
+\begin{enumerate}
+  \item CALIBRA \\
+  DOEと局所探索を組み合わせた反復調整アルゴリズム。
+  実験解析を用いて探索空間を狭くし、次の実験を開始。
+  各反復について，狭くなった範囲の境界と中点を用いて，田口の分数実験計画を行い局所最適基準を満たすまで繰り返す。\\
+  欠点：田口の分数実験計画の制約でパラメータは５つまで、パラメータ間の相互作用効果を考慮できない
+
+\end{enumerate}
+
+\subsubsection{数値最適化に基づくチューニング}
+アルゴリズムのパラメータがすべて数値的なら、数値最適化手法と評価手法で解ける
+
+\begin{enumerate}
+  \item 二次近似による境界最適化（BOBYQA）と繰り返し評価の組み合わせ
+  \item メッシュ適応的直接探索（MADS）と繰り返し評価とFレースの組み合わせ
+\end{enumerate}
+
+欠点：カテゴリカルパラメータを扱うことができない
+
+\subsubsection{ヒューリスティック検索に基づく方法}
+
+\begin{enumerate}
+  \item 反復F-Race \\
+  確率モデルに基づいて設定候補のセットを生成。
+  標準的なF-Raceを実行。
+  生き残った候補で次の反復の確率モデルを更新\\
+  利点：候補の数を増やすことなく効率的に探索\\
+  欠点：計算時間を短縮できない、チューニング予算が少なすぎると解が貧弱になる
+
+  \item メタEA \\
+  個体はパラメータ設定。
+  各設定の評価方法による性能尺度が、（メタ）フィットネスに対応。\\
+  利点：パラメータ空間内で大域的な最適値に到達する可能性がある。任意の時点で停止し、最良の設定を解として返すことができる\\
+  欠点：パラメータ空間が大きい場合には現実的ではない。カテゴリカルなパラメータを扱うことができない
+
+  \item ParamILS \\
+  まずデフォルト構成とランダム生成された設定に対して、一度に 1 つのパラメータ値のみが変更（一交換近傍探索）して、最適なパラメータ設定を探索\\
+  1）パラメータ値をランダムに変更する摂動ステップ\\
+  2）反復改善プロセスの実行\\
+  3）どの設定から探索を継続するか決定する受容基準\\
+  利点：探索プロセスのほぼ全ての時点で停止できる\\
+  欠点：パラメータごとに離散化して候補の近傍を定義する必要がある
+
+  \item HORA \\
+  任意のn個の問題を選択し、問題ごとに応答曲面法（RSM）で最適なパラメータ設定を特定\\
+  1) 最も好ましい設定の近傍に新しい候補を動的に生成\\
+  2) 設定候補をレース法で評価し、統計的証拠に基づいて悪い設定を破棄\\
+  利点：GAとSAより計算コストがはるかに低い\\
+  欠点：アルゴリズム性能が複雑な場合やマルチモーダルの場合は、単純なRSMは誤った領域を探索する
+\end{enumerate}
+
+\subsubsection{モデルベースの最適化アプローチ}
+アルゴリズム性能のパラメータ設定への依存性を応答曲面でモデル化し、良いパラメータ設定を探索。
+探索と搾取の間のトレードオフに対処できる。
+
+\begin{enumerate}
+  \item SPO \\
+  LHDで初期設定を生成し、最適な設定が初期の暫定候補として選択。
+  パラメータと対応する性能測定値に基づいて、Krigingモデルと呼ばれる応答曲面モデルを構築。
+  新しい設計が生成され、構築されたモデルを使用してテスト。
+  最も高いEIを持つ設定を現在の現職と比較。
+  新たに評価された点で、モデルを更新。\\
+  欠点：カテゴリカルなパラメータを扱うことができない。単一の問題でのみアルゴリズムの性能を最適化
+
+  \item SMAC \\
+  Krigingの代わりに、ランダムフォレストを用いる。
+  単純なマルチスタート局所探索を行い、EIが最大となる設定を見つけ、得られた設定を次の反復の有望な候補に反映。\\
+  利点：カテゴリカルな入力データに対して優れた性能を発揮。予測の不確実性を定量化できる。一連の問題対してアルゴリズムの性能を最適化できる\\
+  SMAC, TB-SPO, GGA, ParamILSに対して有意に改善\\
+\end{enumerate}
+
+\subsection{高レベル生成評価法}
+\subsubsection{ポストセレクションの仕組み}
+エリート認定フェーズ：高品質な構成、あるいは精鋭化候補の構成をいくつか特定\\
+エリート選択フェーズ：エリート構成を徹底的に評価し、最適なものを慎重に選択\\
+既存のチューナーをジェネレーターとして使用し、エリート候補の構成を作成・特定し、その中から慎重に評価した上で最適なものを選択することで、良いパラメータ設定を見つけるという新しいアイデア\\
+利点：多数のエリート構成を容易に提供することができる\\
+欠点：エリート認定の段階でエリート候補の多様性を維持できない
+
+\subsection{今後の研究展望}
+\subsubsection{パラメータチューニング問題の解決効率を向上させる}
+1)テストする候補構成の総数を減らす：先進的なサンプリング戦略
+2)構成の評価にかかる平均コストを削減する：効率的にテストするための評価方法
+
+\subsubsection{ベンチマークテスト一式と使いやすいアルゴリズムチューニングツールボックスの確立}
+標準化されたチューニング問題のベンチマークセット
+新しいチューニング手法の簡単な利用と統合を可能にするオープンなアルゴリズムパラメータチューニングツールボックス
+目的：チューニングアルゴリズムの実証研究を容易にする
+
+\subsubsection{多目的チューニングアプローチの研究}
+複数の性能指標を同時に最適化する
+
+
+\section{考察}
+% 精度が出ない，とかだけではなく自分なりの考察を示す
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+\begin{itemize}
+	\item {精度を高めるためのモデルの調整}
+\end{itemize}
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
