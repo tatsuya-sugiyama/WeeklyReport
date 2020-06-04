@@ -1,0 +1,246 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 5 月 29 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+	% ここから 文章 Start!
+\section{今週やったこと}
+\begin{itemize}
+	\item {論文読んでまとめた}
+\end{itemize}
+
+
+
+\section{CMA-ES に基づく適応度景観推定型進化型
+計算の提案}
+% \subsection{概要}
+%
+% \begin{enumerate}
+%   \item 単純な生成評価法
+%   \item 反復的な生成評価法
+%   \item 高レベルな生成評価法
+% \end{enumerate}
+
+\subsection{導入}
+進化型計算　Evolutionary Computation:EC
+利点：汎用性高い
+欠点：適応度評価に時間がかかる
+→目的：評価回数の削減
+
+\subsection{遺伝的アルゴリズム}
+解を個体で表現
+
+個体表現
+\begin{itemize}
+  \item 遺伝子の記号列
+  \item 位置：遺伝子座
+  \item 候補：対立遺伝子
+  \item 長さ：遺伝子長
+\end{itemize}
+
+選択
+・優れた解近傍の探索の重点化
+・適応度で次世代の個体を決定
+探索と多様性（初期収束問題）のトレードオフ
+ルーレット戦略
+適応度に比例して選択
+トーナメント戦略
+トーナメントサイズ分ランダム抽出し、最良個体を選択
+エリート保存戦略
+最も適応度の高い個体を変更せずに残す
+
+交叉
+親の染色体から子を生成
+一点交叉
+多点交叉
+一様交叉
+
+突然変異
+ランダムな遺伝子座を対立遺伝子に置換
+多様性、解の破壊
+
+単純遺伝的アルゴリズムＳＧＡ
+1.
+2.ランダム生成
+3.エリート選択
+4.選択（ルーレット戦略）、交叉（２つの親から２つの子）、突然変異、エリートと入れ替え
+5.終了条件
+
+\subsection{進化戦略}
+個体が実数ベクトル
+交叉ではなく、正規分布による摂動
+利点：遺伝子型から表現型への変換が不要
+
+μ：親
+λ：子
+
+(μ, λ)-ES
+次世代は子個体群からμ個選択
+世代交代する多点探索
+
+(μ+λ)-ES
+次世代は親＋子からμ個選択
+エリート保存する多点探索
+(1+1)-ES
+山登り法
+(1+λ)-ES
+１点のみ保持、周辺探索
+(μ+1)-ES
+新しい解は１つだけ、連続世代
+
+
+CMA-ES
+多変量正規分布の母数（平均ベクトル・共分散行列）を効果的に更新
+利点：変数の相互作用に強い
+
+更新
+平均ベクトル：Recombination
+突然変異（分散？）の大きさ：Step Size  Adaptation:SSA
+共分散行列：Cocariance Matrixx Adaptation:CMA
+
+初期化
+サンプリング
+子個体生成
+Ｎ（ｍ, σ^2C）
+平均ベクトルを加重平均に更新
+進化パスで大域ステップサイズを更新
+分散の大きさは適応的に変化、共分散と分離
+進化パスで共分散行列を更新（進化パス：平均の移動量、共分散行列：上位μ個体を利用）
+終了条件
+
+\subsection{適応度景観推定型進化型計算(Fitness Landscape Learning Evolutionary Computation:FLLEC)}
+
+個体の適応度計算(Fitness function)は時間がかかる
+適応度を推定するサロゲート（代理）モデルで短縮
+
+Rank Space Estimationモデル:RSE
+比較指標となる適用度ではなく、１対比較を予測するモデル。学習が容易。
+ここではＳＶＭを使用
+
+実装の考慮点
+・選択アルゴリズム
+トーナメント：ＯＫ
+適応度上位を選択：難しい
+・モデルの利用法
+世代基準適用法
+一定世代経過で、全ての個体の適応度を評価し、モデルを更新
+個体基準適用法
+常に一部を選んで適応度を評価し、一定世代ごとにモデルを更新
+・モデル再学習の頻度
+
+
+Air GA
+ＲＳＥを利用。連続値への拡張
+1.初期化
+2.初期ランダム個体生成　適応度計算
+3.交叉、突然変異
+4.適応度評価して保存、エリート保存
+5.保存した遺伝子・適応度で、一定世代ごとにＳＶＭを再学習
+6.エリート個体＋ＳＶＭでトーナメント選択した個体
+7.終了条件
+
+
+FLLECの連続値拡張の考慮点
+・アルゴリズム（ＲＳＥモデル）
+・解収束時のＳＶＭ識別率低下
+
+\subsection{提案手法}
+ＣＭＡ－ＥＳ＋ＲＳＥモデル
+改善：分布中心の更新時の評価回数をＲＳＥで削減・（ＳＶＭで判定＝＞誤識別、ＳＶＭで大まかに判定＝＞全体の評価数削減）
+
+データのスケーリング
+分布の偏りを一様分布に変換して効率的に探索
+・シグモイド関数
+・共分散行列Ｃの利用（逆行列）
+
+
+\section{考察}
+% 精度が出ない，とかだけではなく自分なりの考察を示す
+
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+\begin{itemize}
+	\item {}
+\end{itemize}
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
