@@ -143,8 +143,28 @@ cifar10に含まれる10クラスを5クラスずつに分割した。今回は�
 \section{今後の予定}
 % なんとなくなんかの勉強をするとかではなく具体的に
 \begin{itemize}
-	\item {モデルの完成と実験}
+	\item {モデルの改良}
 \end{itemize}
+
+
+\section{ソースコード}
+% 埋め込みでもGitでもいいので参照できるように
+
+結合モデルのPytorchでの実装をコード\ref{model_cnn}に示す.
+
+\begin{lstlisting}[caption=cnn,label=model_cnn]
+class catCNN(nn.Module):
+  def __init__(self, x, y):
+    super(catCNN, self).__init__()
+    self.model = [x, y]
+
+  def forward(self, i):
+    x = self.model[0](i)
+    y = self.model[1](i)
+
+    return torch.cat((x, y), 1)
+\end{lstlisting}
+
 
 % 参考文献リスト
 \bibliographystyle{unsrt}
