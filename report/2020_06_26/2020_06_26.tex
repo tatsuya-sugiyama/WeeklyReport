@@ -1,0 +1,302 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 6 月 26 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+	% ここから 文章 Start!
+\section{今週やったこと}
+\begin{itemize}
+	\item {論文読んだ}
+	\item {CNNの縮小}
+\end{itemize}
+
+\section{論文}
+NEURAL ARCHITECTURE SEARCH WITH REINFORCEMENT LEARNING
+\subsection{導入}
+アーキテクチャの設計には、専門知識と十分な時間が必要
+
+\paragraph{ニューラルアーキテクチャ探索}
+文字列をネットワークの構造に変換
+\begin{enumerate}
+  \item コントローラ（RNN）で文字列を生成
+  \item ネットワーク生成
+  \item 訓練して検証データの精度を得る
+  \item 精度の勾配からコントローラを更新
+\end{enumerate}
+% テストエラー3.65\%達成
+
+% \subsection{関連論文}
+% ハイパーパラメータ最適化
+% 固定長の空間での探索
+%
+% 検索ベース手法
+% ヒューリスティックが必要
+% ・ベイズ最適化
+% ・ニューラル進化アルゴリズム
+%
+% ニューラルアーキテクチャ探索
+% プログラム合成・帰納的プログラミング
+% コントローラ：自動回帰型（以前の予測を条件にハイパーパラメタを1つずつ予測する？）
+% learning to learn、meta-learningに関連
+
+\subsection{手法}
+\subsubsection{コントローラリカレントニューラルネットワークを用いたモデル記述の生成}
+コントローラからニューラルネットワークのハイパーパラメータを生成\\
+
+\paragraph{例）Conv層のみのネットワーク\\}
+RNNでフィルタの高さ、幅、ストライドの高さ、幅、フィルタ数をレイヤーごとに予測\\
+% スケジューラ：学習が進むにつれレイヤーの数を増やす\\
+
+\subsubsection{REINFORCEによる学習}
+% 強化学習
+% ・価値ベース
+% 　Ｑ学習
+% 　ＳＡＲＳＡ
+% ・方策ベース
+% 　方策勾配法系
+% 　　Vanilla
+% 　　REINFORCE
+% 　Actor-Critic系
+% 　　A3C
+% 　　DDPG
+% 　　TRPO
+コントローラ自体の学習は, 方策勾配法系のREINFORCEで$\theta$を更新
+% 1 m Xm k=1 X T t=1 5θc log P(at|a(t−1):1; θc)(Rk − b)
+
+\paragraph{並列性と非同期更新で訓練を加速}
+子ネットワークの訓練には何時間もかかる.
+分散訓練と非同期パラメータ更新を使用.
+\begin{itemize}
+  \item パラメータサーバ　$s$個：パラメータを保存
+  \item コントローラ（レプリカ）　$k$個：　$\theta$の勾配を計算
+  \item 子ネットワーク　$m$個：勾配のために増やす？、並列実行
+\end{itemize}
+
+\subsubsection{スキップ接続や他のレイヤを用いたアーキテクチャの複雑性の向上}
+% スキップ接続や分岐層の提案
+% set-selection type attention
+\begin{itemize}
+  \item N - 1のコンテンツベースのシグモイドを持つアンカーポイントを追加\\
+        接続する必要がある前のレイヤーを示す
+  \item 学習率、畳み込み層以外の層（層のタイプとそのハイパーパラメータ）の追加
+\end{itemize}
+
+\paragraph{コンパイルの失敗}
+レイヤの互換性がない, レイヤが入力・出力を持たないなどの理由\\
+回避策は
+\begin{enumerate}
+  \item 入力がないとき、画像を入力レイヤとして使用する
+  \item 接続されていないすべてのレイヤ出力を連結した最終レイヤは隠れていた状態を分類器に送る
+  \item 連結する入力レイヤのサイズが異なる場合、小さいほうを０で埋める
+\end{enumerate}
+
+\subsubsection{リカレントセル・アーキテクチャの生成}
+(リカレントネットワークを生成する場合)
+\begin{description}
+  \item[リカレントセル] 入力$(x_t, h_{t-1}, c_{t-1})$ → 出力$(h_t, c_t)$
+  \item[ノード] 組み合わせ方法（加算、アダマール積）＋活性化関数（tanh, sigmoid）
+  \item[基底数] ノードの数。実験では基底数８
+\end{description}
+
+コントローラで
+\begin{itemize}
+  \item ノードの設定 x 基底数
+  \item セルへ挿入するノード設定
+  \item 状態ノード($c_{t-1}, c_t$)の接続位置
+\end{itemize}
+を生成し、計算グラフ（リカレントセル）を組み立てる
+
+
+\subsection{実験と結果}
+\subsubsection{Cifar-10の畳み込みアーキテクチャの学習}
+\paragraph{データセット}
+オーギュメント手順は、アップサンプル＝＞ランダムクロップ＝＞ランダム水平反転
+
+\paragraph{探索空間}
+ReLU, Batch Norm, スキップ接続を持つ畳み込みアーキテクチャ。畳み込み層はカーネルサイズ縦横[1, 3, 5, 7], チャンネル数[24, 36, 48, 64]から選択、ストライドは1固定と[1, 2, 3]から選択する実験に分ける
+
+\paragraph{トレーニング詳細}
+コントローラＲＮＮ：２層LSTM(各層の隠れユニット35個), 初期重みは-0.08 ~ 0.08、オプティマイザはAdam(lr=0.0006)、スケジューラーは子モデルの層数を増やす(6layer + 2layer / 1600 sample)\\
+分散学習：パラメータサーバ数S=20, コントローラレプリカ数K=100, 子レプリカ数m=8　(800のネットワーク同時学習)\\
+50 epoch訓練\\
+報酬：最後の5 epochの検証精度の最大値の3乗\\
+検証セット/ 訓練セット：5000 / 45000\\
+子モデルの訓練：Momentum Optimizer(lr=0.1, weight decay=1e-4, momentum=0.9)
+
+\paragraph{結果}
+\begin{enumerate}
+  \item 12800のアーキテクチャを訓練
+  \item 最高精度のアーキテクチャを見つける
+  \item グリッド探索：学習率、重みの減衰、Batch Normの$\epsilon$、学習率の減衰
+  \item 検証精度を計算
+\end{enumerate}
+
+ｖ１：プレーン
+Error rate 5.50%, 15 layers
+% ネットワークが浅くてコスパがいい
+
+ｖ２：ストライドを予測
+Error rate 6.01%, 20 layers
+
+ｖ３：プーリング層
+% 13と24層目にプーリング層を選べる
+% 探索空間を制限
+% １．チャンネル数：[24, 36, 48, 64] から [6, 12, 24, 36]に変更
+% ２．3層の全結合ブロックを予測（3x13 = 39 layers）
+Error rate 4.47%, 39 layers
+% フィルター数+40：error rate 3.65%
+
+\subsubsection{Penn Treebankのリカレントセルの学習}
+\paragraph{データセット}
+Penn Treebank
+正則化手法（過学習を抑制）：embedding dropout, recurrent dropout, 入力と出力embeddingの共有
+
+\paragraph{探索空間}
+コントローラ：組み合わせ法(add, elem mult)＋活性化関数(identity, tanh, sigmoid, relu)
+基数8、6x10^16
+
+\paragraph{訓練の詳細}
+Cifar-10ほぼ同様
+% コントローラlr=0.0005\\
+% 分散訓練s=20, k=400, m=1, (400のネットワーク同時学習)\\
+% 35 epoch学習,
+% 2層\\
+% 報酬：c / (validation perplexity)^2, (c=80)
+
+最低のvalidation perplexityとなるRNNセルを選択
+グリッド探索：学習率、重みの初期値、ドロップアウト率、減衰epoch
+% (3つの設定とサイズで実行して容量を増加させる)
+
+\paragraph{結果}
+3.6 perplexityの改善, 2倍の高速化\\
+
+% 対照実験１：
+% 組み合わせ関数にmax, 活性化関数にsinを追加\\
+% 探索空間は広がるが、性能は同程度
+%
+% 対照実験２：
+% ランダム探索ｖｓ方策勾配\\
+% 優れている
+
+\section{考察}
+% 精度が出ない，とかだけではなく自分なりの考察を示す
+基本的な考え方は, コントローラにアーキテクチャのパラメータを生成させること。
+RNNだと長さを自由に変えられるので適している。
+ほかの強化学習手法を使うこともあるらしい。
+\begin{enumerate}
+  \item ネットワークアーキテクチャの探索
+  \item ハイパーパラメータ調整
+  \item ネットワークの重み学習
+\end{enumerate}
+普通は2. 3.だけ行うが, NASでは全て学習する.
+
+学習には膨大な時間がかかるのを、分散訓練で対処しているが, NASではGPU 800台で28日かかっている.
+NASを参考にしたENASでは, 重みを転移学習することで, GPU 1台で半日程度で訓練できるらしい.
+
+\paragraph{分からなかったこと}
+\begin{itemize}
+  \item RNNの仕組みと内部の計算グラフ（使ったことがないので試してみる）
+  \item コントローラによるネットワークの組み立て（githubにコードがある？）
+  \item GPUの分散学習の具体的な手順
+\end{itemize}
+
+\section{CNNの縮小}
+前回のCNNは学習に1時間近くを必要とするためより高速なネットワークを探した.
+単純にレイヤーを16層から9層に削減することで, 時間と精度がどう変化するかを実験した.
+5分で精度が7割, 30分で9割近くのCNNに改善できた.
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+\begin{itemize}
+	\item {RNNでネットワークを作るシステムの調査と構築}
+\end{itemize}
+
+
+\section{ソースコード}
+% 埋め込みでもGitでもいいので参照できるように
+載せていなかった, 前回のソースコードです\\
+\url{https://github.com/tatsuya-sugiyama/WeeklyReport/blob/2020_0626/report/2020_06_26/5%20to%2010.ipynb}
+% \begin{lstlisting}[caption=concat,label=model_cnn]
+% \end{lstlisting}
+
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
