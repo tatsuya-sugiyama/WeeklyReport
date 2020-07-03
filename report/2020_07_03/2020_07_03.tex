@@ -1,0 +1,258 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 7 月 3 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+	% ここから 文章 Start!
+\section{今週やったこと}
+\begin{itemize}
+	\item {論文読んだ}
+	\item {CNNの縮小}
+\end{itemize}
+
+\section{論文}
+貢献度分配を導入した方策勾配によるNeural Architecture Searchの高速化\cite{ANAS}
+
+\subsection{はじめに}
+アーキテクチャ最適化は, 学習に時間がかかる
+\paragraph{One-shotアーキテクチャ}
+アーキテクチャとパラメータを同時学習.
+アーキテクチャを連続的に表現して、微分可能にする.
+
+\subsection{Neural Architecture Search}
+\subsubsection{有効非巡回グラフとしてのDNN}
+\begin{description}
+  \item[ノード] 特徴$x$
+  \item[エッジ] オペレーション$Ｏ$
+  \item[$a_i$] エッジ$i$のアーキテクチャ. $|a_i|=1$のときone-hotベクトル.
+\end{description}
+
+\subsubsection{One-shot Architecture Search}
+\begin{description}
+  \item[$R(a; w_a)$] 評価関数. ここでは負の交差エントロピー誤差.
+  \item[$w_a$] パラメータ. $\hat{w}$に保存した学習済みパラメータから取得することで学習コストを削減.
+\end{description}
+
+\subsection{関連研究}
+\subsubsection{ENAS}
+REINFORCE
+\begin{description}
+  \item[目的関数] $E_{a	\sim p_\theta{(a)}} [R(a)]$%, $argmax \theta$
+  \item[アーキテクチャ] $a$
+\end{description}
+
+\subsubsection{DARTS}
+連続値アーキテクチャ
+\begin{description}
+  \item[評価関数] $E[R(\mu(\theta))]$
+  \item[アーキテクチャ] $\theta \in [0, 1]^{|I||J|}$
+\end{description}
+学習後確率分布$\theta$からone-hot化する\\
+\[a_{ij} = \lim_{\lambda \rightarrow 0} [\mu_{ij} (\theta / \lambda)]\]
+\[j = {\arg\max}_j \mu_{ij}(\theta)\]
+
+\subsubsection{SNAS}
+連続値アーキテクチャ
+\begin{description}
+  \item[評価関数] $E_G [R(m(\mu_{ij}(\theta), G))]$
+  \item[アーキテクチャ] DARTS同様
+  \item[$G$] 標準Gumbel乱数
+  \item[$m_{ij}(\theta, G)$] $\mu_{ij}(\theta)$に乱数$G$と温度パラメータ$\lambda$を導入
+\end{description}
+
+\subsubsection{ProxylessNAS}
+\begin{description}
+  \item[評価関数] $E_N [R(z(\mu(\theta), N))]$
+  \item[アーキテクチャ] DARTS同様
+  \item[$z_i(\mu(\theta), N)$] 乱数$N$からtwo-hotベクトルを生成
+\end{description}
+
+% \subsubsection{計算コストの比較}
+
+
+\subsection{提案手法}
+\begin{itemize}
+  \item DARTS, SNAS\\オペレーション候補ごとに計算. $O(|J|)$.
+  \item 提案手法\\貢献度分配で効率化.$|J|$に依存しない
+\end{itemize}
+
+\subsubsection{貢献度}
+各エッジごとに, 全体に与える評価$R(a)$の善し悪しがある.\\
+各演算子を一度に更新できる\\
+貢献度$A$：全体評価$R(a)$に与える影響. 各エッジの評価
+\[A(a_i, S_i) = R(a_i, S_i) - R(\vec{0}, S_i)\]
+% \[S_i = {a_g|g \in I, g \neq i}\]
+$S_i$：$a$から要素$a_i$を除いた集合
+
+\subsubsection{効率的な貢献度の計算}
+貢献度$A$を近似して$R$の評価回数を減らす
+(13)
+(14)
+
+\subsection{実験}
+% \subsubsection{Toy Problem}
+% \begin{description}
+%   \item[手法] REINFORCE, DARTS, SNAS, ProxylessNAS, 提案手法
+%   \item[教師モデル] 2層全結合ネット（input 500, hidden 500, output 2）、活性化関数はランダムに決定
+%   \item[生徒モデル 教師モデルと同じ重み, 活性化関数を探索
+%   \item[活性化関数] x, x^2, x^3, ReLU(x), sigmoid(x)
+%   \item[損失関数] 教師モデルと生徒モデルの出力の交差エントロピー誤差
+% \end{description}
+%
+% 5.1.1. 結果
+
+\subsubsection{アーキテクチャ探索}
+\begin{itemize}
+  \item セル\\
+        (エッジ14, ノード7)$\times 8$個
+  \item ノード\\
+        c-1, c-2番目のセルからの入力, c番目のセルの出力, 中間ノード$\times 4$
+  \item エッジ候補\\
+        3x3 / 5x5 sep conv, 3x3 / 5x5 dilated sep conv, 3x3 max pooling, 3x3 average pooling, 恒等写像, 零写像の8つ%（チャンネル数 16）
+  \item 学習\\
+        $\sim$ 50 epoch(重み学習), 50 epoch $\sim$ 150 epoch($\theta$も更新)
+\end{itemize}
+
+\paragraph{結果}
+得られた$\theta$をone-hot化し、重みを再学習
+\begin{itemize}
+  \item DARTS, SNASに迫る精度
+  \item DARTS, SNASの3割程度の学習時間
+\end{itemize}
+
+\section{考察}
+% 精度が出ない，とかだけではなく自分なりの考察を示す
+
+\begin{itemize}
+  \item アーキテクチャをカテゴリカルから連続的な確率分布に
+  \item ネットワークの重みを再利用して学習を削減
+  \item 見つけたアーキテクチャの重みを再学習する(acc 6割 $\rightarrow$ 9割)
+\end{itemize}
+
+\paragraph{重みの再利用}
+\begin{enumerate}
+  \item 冗長にネットワーク構造を決めておく. (あるノードはそれ以前のノード全てに接続可能とする)
+  \item 重みを学習して、各エッジ、各演算子ごとに重みを保存
+  \item アーキテクチャ（接続するか？＋演算子）を探索
+\end{enumerate}
+
+得られたセルでは,
+直前のセルからの入力を恒等写像でそのまま出力していた.
+
+畳み込み層は全てseparable convolutionを利用している. パラメータ数を減らしたかった？
+
+\paragraph{アーキテクチャの表現法}
+\begin{itemize}
+  \item RNNでパラメータを生成(カテゴリカル)
+  \item GAで個体表現(カテゴリカル)
+  \item 演算子の確率分布集合として表現
+\end{itemize}
+
+\section{RNNの動作実験}
+目的：RNNでパラメータを生成
+
+\subsection{}
+input:系列データ[1, 0, 1, 0]\\
+output:系列データ[1, 1, 0, 0]\\
+lossはほぼ0になり学習できた
+
+\subsection{}
+直前の出力を入力することで再帰的にパラメータを出力\\
+input:初期乱数z\\
+output:系列データ[1, 1, 0, 0]\\
+出力が常に0となり, 学習できなかった.
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+\begin{itemize}
+	\item {RNNの再帰的な入力の学習実験}
+\end{itemize}
+
+
+\section{ソースコード}
+% 埋め込みでもGitでもいいので参照できるように
+\url{https://github.com/tatsuya-sugiyama/WeeklyReport/blob/2020_0703/report/2020_07_03/RNN_test.ipynb}
+% % \begin{lstlisting}[caption=concat,label=model_cnn]
+% % \end{lstlisting}
+
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
