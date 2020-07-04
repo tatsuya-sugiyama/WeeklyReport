@@ -99,10 +99,59 @@
 
 \section{はじめに（研究背景）}
 % ちょっと
+人工知能の成功が目覚ましい
+人の手が必要
+専門知識が必要
+困難である
+深層学習の広範囲な（メタな）技術のサーベイ
+
 
 \section{要素技術}
 \subsection{AutoML}
+サーベイ\cite{SurveyAutoML}
+\subsubsection{パラメータ設定問題}
+問題ごとにパラメータを適切に設定する必要がある
+\subsection{自動パラメータ調整}
+
+開発動機
+\begin{itemize}
+  \item 時間コストの削減・性能の向上
+  \item アルゴリズムの評価, 比較のためパラメータの最適性の影響を緩和
+  \item パラメータが与える影響の知識の必要性を排除
+\end{itemize}
+主要カテゴリ
+\begin{enumerate}
+  \item 単純な生成・評価法 \\
+  生成段階で候補となる設定を生成, 評価段階で評価して最適な設定を見つける
+
+  \item 反復的生成・評価法 \\
+  少数の設定を生成して, 最も優れたものをみつけ, 反復的に生成する新しい設定の指針とする.
+
+  \item 高レベルの生成・評価方法 \\
+  高レベル生成機構では既存のチューナーや探索手法から少数精鋭の設定を生成.
+  評価段階では慎重に評価する
+\end{enumerate}
+
+サブカテゴリ
+\begin{enumerate}
+  \item 評価の繰り返し \\
+  確率的目的関数最適化問題では複数回評価した平均値が最も分かりやすい方法
+
+  \item F-Racing \\
+  評価した統計的に劣る設定を段階的に排除し, 有望な候補に計算を集中. 繰り返し評価より効率的
+
+  \item インテンシフィケーション（強化） \\
+  評価途中で候補が暫定設定より劣るなら排除し, そうでなければ次の問題で評価する. 全ての問題で評価されると新しい暫定設定となる
+
+  \item シャープニング \\
+  少ないテスト数で評価が始まり, 将来性のあるパラメータはテスト数が２倍になる. 素早く探索できる
+
+  \item アダプティブキャッピング  \\
+  有望でない設定の実行を中断して計算量を削減
+\end{enumerate}
+
 \subsection{NAS}
+AutoMLの一種
 従来の機械学習では手作業によって設計されたモデルをデータセットで学習して重みの最適化を行うが, アーキテクチャの設計には, 高度な専門知識と手作業による構築が必要である.
 Neural Architecture Search(NAS)\cite{DBLP:journals/corr/ZophL16}は, ニューラルネットワークのアーキテクチャ自体を最適化する.
 
@@ -111,18 +160,140 @@ NASでは, まずコントローラと呼ばれるRecurrent Neural Network(RNN)�
 
 スキップ接続や他のレイヤを用いたアーキテクチャの複雑性の向上
 
-\subsection{DataAugment}
 
+\begin{itemize}
+  \item アーキテクチャをカテゴリカルから連続的な確率分布に
+  \item ネットワークの重みを再利用して学習を削減
+  \item 見つけたアーキテクチャの重みを再学習する(acc 6割 $\rightarrow$ 9割)
+\end{itemize}
+
+\paragraph{重みの再利用}
+\begin{enumerate}
+  \item 冗長にネットワーク構造を決めておく. (あるノードはそれ以前のノード全てに接続可能とする)
+  \item 重みを学習して、各エッジ、各演算子ごとに重みを保存
+  \item アーキテクチャ（接続するか？＋演算子）を探索
+\end{enumerate}
+
+得られたセルでは,
+直前のセルからの入力を恒等写像でそのまま出力していた.
+
+畳み込み層は全てseparable convolutionを利用している. パラメータ数を減らしたかった？
+
+\paragraph{アーキテクチャの表現法}
+\begin{itemize}
+  \item RNNでパラメータを生成(カテゴリカル)
+  \item GAで個体表現(カテゴリカル)
+  \item 演算子の確率分布集合として表現
+\end{itemize}
+
+\subsection{AutoAugment}
+\cite{DBLP:journals/corr/abs-1805-09501}
+AutoMLの一種？
+(編集しよう！)
+画像認識の分野では、画像データを少し回転させたり左右反転させたりなどの操作をすることで画像データ数を増やすData Augmentation(以下、DA)が広く使われています。ただ、どの操作を行うのかというのは試行錯誤で見つけるしかなく時間がかかります。そこで強化学習を使うことで自動的にDAを選択してくれるというAutoAugmentが提案されました。
 
 \section{実験}
 % ＋結果
 % 本実験ではｘ 本研究ではo
 % １ｐ
+～に関する実験の前段階として, 以下の予備実験を練習的に行った.
+アンサンブル学習に関連？
+
+\subsection{モデルの構築}
+前回, 5クラス識別器を2つ利用したモデルの構築をしたが, 10クラスの識別が50\%であったため, より適したパラメータを探索し, 再び実験して精度の向上を目指した.
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験の設定}
+    \begin{tabular}{|c|c|} \hline
+      dataset & cifar10 \\
+      n data & 16,000 / model \\ \hline
+      task & 5, 7, 10クラス識別 \\
+      input & image(3x32x32) \\
+      output & class(5, 7, 10) \\ \hline
+      model & CNN(16層) \\
+      optim & SDG (lr=0.001, moment=0.9) \\
+      loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\
+      epoch & 100 \\ \hline
+    \end{tabular}
+    \label{tab:setting}
+  \end{center}
+\end{table}
+
+\begin{figure*}[t]
+	\begin{center}
+		\includegraphics[clip,width=16cm]{model_figure.png}
+		\caption{モデルの簡略図　()内はデータの次元数}
+		\label{fig:model}
+	\end{center}
+\end{figure*}
+
+\subsubsection{5クラスx2}
+
+cifar10に含まれる10クラスを5クラスずつに分割した。インデックスの前半(airplane, mobile, bird, cat, deer)と後半(dog, frog, horse, ship, truck)で分けることにした。生成した部分データセットを、それぞれモデルA, Bで学習した。5クラス分類ができるモデルA, Bを持つ結合モデルA + Bを作成し、10クラス分類の精度を計測した。このモデルの学習と相互関係を図\ref{fig:model}に示した。
+
+結合モデルA + Bは10クラスのデータセットをA, Bに入力し、得られた出力をクラスインデックス順に結合して、出力とする。結合では特別な処理を行わず、そのままのデータを連結した.
+
+\subsubsection{7クラスx3}
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{モデルごとの7クラスの振り分け}
+    \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|} \hline
+      model & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\ \hline\hline
+      A     & o & o & o & o & o & o & o & _ & _ & _ \\ \hline
+      B     & o & o & o & o & _ & _ & _ & o & o & o \\ \hline
+      C     & o & _ & _ & _ & o & o & o & o & o & o \\ \hline
+    \end{tabular}
+    \label{tab:class7}
+  \end{center}
+\end{table}
+
+さらに今回は, 細川君に指摘してもらったアイデアでも実験を行った. 7クラス分類器を3つ組み合わせて,10クラスの分類を行った. 表\ref{tab:class7}のように, 2つ以上の分類器で各クラスを推定するように, クラスを振り分けた.
+
+\subsection{結果}
+
+\begin{figure}[tb]
+	\begin{center}
+		\includegraphics[clip,width=8.5cm]{accuracy5.png}
+		\caption{5クラス分類の正答率}
+		\label{fig:accuracy5}
+	\end{center}
+\end{figure}
+
+\begin{figure}[tb]
+	\begin{center}
+		\includegraphics[clip,width=8.5cm]{accuracy7.png}
+		\caption{7クラス分類の正答率}
+		\label{fig:accuracy7}
+	\end{center}
+\end{figure}
+
+5クラス分類の精度を図\ref{fig:accuracy5}に, 7クラス分類の精度を図\ref{fig:accuracy7}に示した.
+
+5クラス分類の場合, 80\% ～ 90\%の正答率で前回よりも10\%程向上した. 前回のデータ数2000よりもデータ数を増やしたことで精度がよくなった. 結合した結果も, 70\%(前回+20\%)となった.
+
+7クラス分類では, 正答率が平均80\%程度で, 結合した結果10クラス分類では86.7\%となった.
+
+\subsection{考察}
+% 精度が出ない，とかだけではなく自分なりの考察を示す
+データ数とバッチサイズを増やして, 精度の向上と学習の安定化ができた. 特に5クラス分類ではあるが, 正答率 9割を超えることができた. データオーギュメントはしていないので, さらに精度を上げることはできると思われる.
+
+図\ref{fig:accuracy5}, \ref{fig:accuracy7}ともにインデックスが前半のクラスを持つモデルでは, 正答率が低い傾向が見られた. 誤差の影響ではなく, 困難なクラスの分類によって精度が下がっていると考えられる. これはクラスを単純に分割したことによる偏りに原因がある.
+
+分割する組み合わせを自由に替える実装ができたので, 様々な組み合わせパターンで実験して, その差異を見たい.
+特にモデル間の正答率の差が目立ったため, これを埋めるような組み合わせを探したい.
+
 
 \section{考察}
 
 \section{まとめと今後の課題}
+論文の調査をした
+AutoMLとその関連技術についてまとめた
 
+NASについて確率的なアーキテクチャ表現したシステムを構築し
+簡単な問題を解く小さなネットワークを探索する実験をしたい
 
 % 参考文献リスト
 \bibliographystyle{unsrt}
