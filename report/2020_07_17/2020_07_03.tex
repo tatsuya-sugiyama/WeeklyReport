@@ -1,0 +1,157 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 7 月 17 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+	% ここから 文章 Start!
+\section{今週やったこと}
+\begin{itemize}
+	\item {NASの実装}
+\end{itemize}
+
+\section{NAS}
+DARTS系のNASの実験をする.
+ネットワークにはまずエッジとセルが必要となる.
+コード1, 2にPytorchで実装したクラスを示した.
+ネットワークの構造上逆伝播が可能が心配だったが,
+逆伝播ができることも確認した.
+ただし期待通りの挙動かは分からないため,
+実験をしながらテストしたい.
+
+エッジに渡す演算子の多くは既に用意されているが, 存在しない零写像の仕様は逆伝播するときのボトルネックにならないようにテストする.
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+実装したクラスでネットワークを構築して実験する.
+対象とする問題はCifar-10を考えている.
+
+
+\section{ソースコード}
+% 埋め込みでもGitでもいいので参照できるように
+
+動作することを第一に実装した.
+operatorsで演算子の候補を受け取る.
+セルは3つのノードで1入力1出力と暫定的に定めた.
+
+\url{https://github.com/tatsuya-sugiyama/WeeklyReport/blob/2020_0717/report/2020_07_17/NAS_test.ipynb}
+
+\begin{lstlisting}[caption=Edge,label=Edge]
+class Edge(nn.Module):
+  def __init__(self, operators):
+    super(Edge, self).__init__()
+    self.operators = operators
+
+    rand = torch.randn(len(operators), requires_grad=True)
+    self.theta = rand / torch.sum(rand)
+
+  def forward(self, input: Tensor) -> Tensor:
+    output = torch.zeros(input.shape, requires_grad=True)
+    for (theta_i, operator) in zip(self.theta, self.operators):
+      if operator == None:
+        continue
+      output = output +  theta_i * operator(input)
+
+    return output
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Cell,label=Cell]
+class Cell(nn.Module):
+  def __init__(self, operators):
+    super(Cell, self).__init__()
+
+    self.node_num = 3
+
+    self.ref = [(0, 1), (0, 2), (1, 2)]
+    self.edges = [Edge(operators) for _ in self.ref]
+
+  def forward(self, input) -> Tensor:
+    nodes = [torch.zeros(*list(input.shape), requires_grad=True) for _ in range(self.node_num)]
+    nodes[0] = input
+
+    for idx, (inref, outref) in enumerate(self.ref):
+      nodes[outref] = nodes[outref] + self.edges[idx](nodes[inref])
+
+    return nodes[-1]
+\end{lstlisting}
+
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
