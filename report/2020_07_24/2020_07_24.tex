@@ -96,7 +96,7 @@
 またセルの入力は, チャンネル数の前処理としてReLU-Conv-BNを用いた.
 
 このセルを4つ重ねたものを用いて, Cifar10の10クラス分類器を構築した.
-モデルのOptimizerはSDGで, アーキテクチャを表す\thetaはAdamとした.
+モデルのOptimizerはSGDで, アーキテクチャを表す\thetaはAdamとした.
 
 \subsection{実験}
 実験ではまず\thetaを固定して演算子ごとの重みだけを(a)30 epoch学習し,
@@ -133,7 +133,7 @@
     \begin{tabular}{|c|c|} \hline
       Cell & 4 \\ \hline
       Node & 7(input=1, output=1) \\ \hline
-      Optim(model) & SDG(lr=5e-3, momentum=0.9) \\ \hline
+      Optim(model) & SGD(lr=5e-3, momentum=0.9) \\ \hline
       Optim($\theta$) & Adam(lr=5e-4, $\beta$=(0.5, 0.999)) \\ \hline
       Loss & Cross Entropy Loss \\ \hline
       batch size & 64 \\ \hline
