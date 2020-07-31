@@ -131,7 +131,7 @@
 
 \subsection{変更点}
 今回は各ノードが最大2つの親を持つように設定し, モデルの複雑化をした.
-Reduction Cellを実装し, 画像サイズを半分にするセルを
+Reduction Cellを実装し, 画像サイズを半分にするセルを2番目, 4番目のセルとして追加した.
 
 \subsection{実験}
 実験ではまず\thetaを固定して演算子ごとの重みだけを(a)10 epoch学習し,
@@ -148,10 +148,7 @@ Reduction Cellを実装し, 画像サイズを半分にするセルを
 	\end{center}
 \end{figure}
 
-図\ref{fig:cell}に得られたセルを示した.
-
-
-\section{考察}
+図\ref{fig:cell}, \ref{fig:cell2}に得られたセルを示した.
 
 \begin{figure*}[t]
 	\begin{center}
@@ -169,10 +166,18 @@ Reduction Cellを実装し, 画像サイズを半分にするセルを
 	\end{center}
 \end{figure*}
 
+\section{考察}
+Cellの構造をある程度複雑にできるようになった.
+対して精度は手作業で設計したほうがいい精度である.
+
+暫定的に設定していた表\ref{tab:ops}の演算子には非線形性がないため, どれだけ重ねても精度が上がらないと考えられる.
+活性化関数の扱いを調査して, 新たな演算子の追加をしたい.
+
 \section{今後の予定}
 % なんとなくなんかの勉強をするとかではなく具体的に
 \begin{itemize}
-  \item
+  \item 演算子を増やす
+  \item セルの多入力の対応
 \end{itemize}
 
 \section{ソースコード}
