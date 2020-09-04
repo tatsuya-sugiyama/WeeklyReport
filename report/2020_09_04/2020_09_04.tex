@@ -1,0 +1,185 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 9 月 4 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+	% ここから 文章 Start!
+\section{今週やったこと}
+\begin{itemize}
+	\item {コードの修正}
+\end{itemize}
+
+\section{前回までの問題点}
+パラメータを持たないAverage Poolingが偏って選ばれ, 探索したネットワークの精度が出なかった.
+
+\section{コードの見直し}
+コードを確認して以下の修正を行った.
+
+\begin{itemize}
+  \item データセットがシャッフルされていなかったので, 修正
+  \item レイヤーの重みとネットワークの重みを独立したデータセットでそれぞれ学習
+\end{itemize}
+
+\section{実験}
+訓練データはレイヤーの重みとネットワークの重みそれぞれに対して25000枚とした.
+学習時間は50epochとしたが, 自分で設定していた最大学習時間の3時間に引っかかってしまったので25 epochまでを結果として載せる.
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験の設定}
+    \begin{tabular}{|c|c|} \hline
+      Cell Depth & 5 \\ \hline
+      Node & 7(input=2, output=1) \\ \hline
+      Optim(model) & SGD(lr=2.0e-2, momentum=0.9) \\ \hline
+      Optim($\theta$) & Adam(lr=2e-4, $\beta$=(0.5, 0.999)) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      train data & 25000 \\ \hline
+      epoch & 25 \\ \hline
+    \end{tabular}
+    \label{tab:setting}
+  \end{center}
+\end{table}
+
+\section{結果}
+表\ref{fig:acc}には両学習のテスト精度の結果を, 図\ref{fig:acc}にはモデルの再学習時の精度の経過を示した.
+図\ref{fig:nor}, \ref{fig:red}には探索の結果得られたセルの構造を示した.
+
+セルはConvolutionとPoolingが共存したバランスとなり, 偏りは解消されている.
+それに伴って, 精度も10\%程度向上した. 再学習をもう少し長くすればさらに伸びる可能性がある.
+元論文では24時間学習で精度90\%なので, ある程度近づくことができたといえる.
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{テスト精度の結果}
+    \begin{tabular}{|c|c|c|} \hline
+      _ & epoch & Accuracy(\%) \\ \hline
+      アーキテクチャ探索 & 25 & 83.6 \\ \hline
+      モデル再学習 & 25 & 83.4 \\ \hline
+    \end{tabular}
+    \label{tab:acc}
+  \end{center}
+\end{table}
+
+
+\begin{figure}[tb]
+	\begin{center}
+		\includegraphics[clip,width=7.5cm]{acc.png}
+		\caption{再学習時の精度}
+		\label{fig:acc}
+	\end{center}
+\end{figure}
+
+\begin{figure}[t]
+	\begin{center}
+		\includegraphics[clip,width=7.5cm]{epoch25_normal.png}
+		\caption{学習したセル：normal}
+		\label{fig:nor}
+	\end{center}
+\end{figure}
+\begin{figure}[t]
+	\begin{center}
+		\includegraphics[clip,width=7.5cm]{epoch25_reduce.png}
+		\caption{学習したセル：reduce}
+		\label{fig:red}
+	\end{center}
+\end{figure}
+
+
+\section{考察}
+アーキテクチャの更新にunrolledの評価関数を使用していた. unrolled GANで提案された手法.
+モデルを更新して先読みしたパラメータで評価するらしいが, ランタイムエラーで実行できなかった(メモリ不足？).
+
+またメモリ不足の問題だが, モデル自体は1MB程度思ったより圧迫していないので, 高いbatch sizeで画像データを読み込んでいることが原因だと思われるが, はっきりとした理由や解決法はまだ分かっていない.
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+\begin{itemize}
+  \item 既存の分類モデルの調査とそれを探索空間に含むアーキテクチャサーチの設計
+  \item (unrolled GANの論文を読む？)
+\end{itemize}
+
+\section{ソースコード}
+% 埋め込みでもGitでもいいので参照できるように
+Githubの同階層の\url{NAS_test.ipynb}を参照してください.
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
