@@ -139,6 +139,7 @@ DARTSの追実験が概ね成功したので, 新たにアーキテクチャの�
 テスト精度は最大で85.54\%であった.
 
 表\ref{tab:alpha_max}, \ref{tab:alpha}にはアーキテクチャー探索結果の$\alpha$の重みを示した.
+表\ref{tab:alpha}が生の値で, (\ref{equ:cut})式ではsoftmaxした表\ref{tab:alpha_max}の値を用いている. 表中の0.00となっている場所はショートカットが存在しない.
 
 \begin{figure}[tb]
 	\begin{center}
@@ -194,24 +195,30 @@ DARTSの追実験が概ね成功したので, 新たにアーキテクチャの�
 \section{考察}
 
 VGGに対してショートカットの重みを学習できることを確認した.
-
-DARTSは得られた重みに対して, 適切なアーキテクチャを決定する必要がある.
-決定する方法はいくつか考えられるため, 次回はそれぞれの手法の精度を比較したい.
-図\ref{fig:result}には必ず1つの接続を持つことを仮定した場合のVGGの構造を示した.
-
-\begin{figure}[tb]
-	\begin{center}
-		\includegraphics[clip,width=7.5cm]{result.png}
-		\caption{モデル}
-		\label{fig:result}
-	\end{center}
-\end{figure}
+探索空間を自分で設計してみて分った, DARTSの難しいところ.
+\begin{itemize}
+  \item 微分できるように候補を同時に組み込む必要がある
+  \item $\alpha$からアーキテクチャを決定する必要がある
+\end{itemize}
 
 \section{今後の予定}
 % なんとなくなんかの勉強をするとかではなく具体的に
-\begin{itemize}
-  \item アーキテクチャの性能評価
-\end{itemize}
+
+DARTSは得られた重みに対して, 適切なアーキテクチャを決定する必要がある.
+決定する方法はいくつか考えられるため, 次回はそれぞれの手法の性能を比較したい.
+図\ref{fig:result}には必ず1つの接続を持つことを仮定した場合のVGGの構造を示した.
+
+\begin{figure*}[tb]
+	\begin{center}
+		\includegraphics[clip,width=5.5cm]{result.png}
+		\caption{接続を仮定したモデル}
+		\label{fig:result}
+	\end{center}
+\end{figure*}
+
+% \begin{itemize}
+%   \item アーキテクチャの性能評価
+% \end{itemize}
 
 \section{ソースコード}
 % 埋め込みでもGitでもいいので参照できるように
