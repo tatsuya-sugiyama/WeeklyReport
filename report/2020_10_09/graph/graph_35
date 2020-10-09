@@ -1,0 +1,66 @@
+digraph {
+	node [align=center fontname=times fontsize=20 height=0.5 penwidth=2 shape=rect style=filled width=0.5]
+	edge [fontname=times fontsize=20]
+	node [fillcolor=dodgerblue4 fontcolor=white fontsize=15]
+	0 [label="input
+(3, 32, 32)"]
+	1 [label="1
+(64, 32, 32)"]
+	2 [label="2
+(64, 16, 16)"]
+	3 [label="3
+(128, 16, 16)"]
+	4 [label="4
+(128, 8, 8)"]
+	5 [label="5
+(256, 8, 8)"]
+	6 [label="6
+(256, 8, 8)"]
+	7 [label="7
+(256, 8, 8)"]
+	8 [label="8
+(256, 4, 4)"]
+	9 [label="9
+(512, 4, 4)"]
+	10 [label="10
+(512, 4, 4)"]
+	11 [label="11
+(512, 4, 4)"]
+	12 [label="12
+(512, 2, 2)"]
+	13 [label="13
+(512, 2, 2)"]
+	14 [label="14
+(512, 2, 2)"]
+	15 [label="15
+(512, 2, 2)"]
+	16 [label="16
+(512, 1, 1)"]
+	0 -> 1 [label="" style=bold]
+	1 -> 2 [label="" style=bold]
+	2 -> 3 [label="" style=bold]
+	2 -> 8 [label="" style=dashed]
+	3 -> 4 [label="" style=bold]
+	3 -> 7 [label="" style=dashed]
+	4 -> 5 [label="" style=bold]
+	4 -> 6 [label="" style=dashed]
+	4 -> 9 [label="" style=dashed]
+	4 -> 10 [label="" style=dashed]
+	4 -> 11 [label="" style=dashed]
+	5 -> 6 [label="" style=bold]
+	5 -> 9 [label="" style=dashed]
+	5 -> 11 [label="" style=dashed]
+	5 -> 12 [label="" style=dashed]
+	6 -> 7 [label="" style=bold]
+	6 -> 10 [label="" style=dashed]
+	6 -> 12 [label="" style=dashed]
+	7 -> 8 [label="" style=bold]
+	8 -> 9 [label="" style=bold]
+	9 -> 10 [label="" style=bold]
+	10 -> 11 [label="" style=bold]
+	11 -> 12 [label="" style=bold]
+	12 -> 13 [label="" style=bold]
+	13 -> 14 [label="" style=bold]
+	14 -> 15 [label="" style=bold]
+	15 -> 16 [label="" style=bold]
+}
