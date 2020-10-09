@@ -96,7 +96,7 @@
   \begin{center}
     \caption{実験の設定}
     \begin{tabular}{|c|c|} \hline
-      model & VGG19 \\ \hline
+      base model & VGG19 \\ \hline
       Optim($w$) & SGD(lr=0.01, momentum=0.9) \\ \hline
       Optim($\alpha$) & Adam(lr=0.005, $\beta$=(0.5, 0.999)) \\ \hline
       Loss & Cross Entropy Loss \\ \hline
@@ -109,7 +109,7 @@
 
 表\ref{tab:setting}に探索時の実験設定を示した.
 
-評価段階では, SGDの学習率を, 指数スケジューラ($\gamma = 0.9261 : \gamma^{30} = 0.1$)で減衰させた.
+評価段階では, 表\ref{tab:setting}に加え, SGDの学習率を, 指数スケジューラ($\gamma = 0.9261 : \gamma^{30} = 0.1$)で減衰させた.
 
 \begin{description}
   \item[(a) descending] $\alpha_j$の上位から順に, $\rm{round}(\hat{\beta_j})$本のショートカットを選んだグラフ,
@@ -119,21 +119,6 @@
 の3つで性能を評価した.
 
 \subsection{結果}
-
-\begin{table*}[tb]
-  \begin{center}
-    \caption{各条件の比較}
-    \begin{tabular}{|c||c|c|c|c|c|c|c|} \hline
-       & テスト精度  & 学習時間 & 計算時間 & パラメータ数 & \multicolumn{3}{c|}{データサイズ} \\
-       & (\%)  & (epoch) & (GPU-min) & & train & valid & test \\ \hline \hline
-      探索 & 87.24 & 50 & 120 & 26.30M & 25000 & 25000 & 5000 \\ \hline
-      (a) descending & 92.14 & 100 & 120 & 20.85M & 50000 & 0 & 10000 \\ \hline
-      (b) threshold & 91.83 & 100 & 120 & 20.27M & 50000 & 0 & 10000 \\ \hline
-      (c) baseline & 91.79 & 100 & 120 & 20.04M & 50000 & 0 & 10000 \\ \hline
-    \end{tabular}
-    \label{tab:acc}
-  \end{center}
-\end{table*}
 
 \begin{figure}[tb]
 	\begin{center}
@@ -145,13 +130,28 @@
 
 \begin{figure}[tb]
 	\begin{center}
-		\includegraphics[clip,width=85mm]{alpha_50.png}
+		\includegraphics[clip,width=80mm]{alpha_50.png}
 		\caption{探索後の隣接行列の重み$\hat{\alpha}$}
 		\label{fig:alpha}
 	\end{center}
 \end{figure}
 
 図\ref{fig:acc}にテスト精度を, 表\ref{tab:acc}に結果を示した.
+
+\begin{table*}[tb]
+  \begin{center}
+    \caption{各条件の比較}
+    \begin{tabular}{|c||c|c|c|c|c|c|c|} \hline
+       & テスト精度  & 学習時間 & 計算時間 & パラメータ数 & \multicolumn{3}{c|}{データサイズ} \\
+       & (\%)  & (epoch) & (GPU-min) & & train & valid & test \\ \hline \hline
+      探索 & 87.24 & 50 & 120 & 26.30M & 25000 & 25000 & 5000 \\ \hline
+      (a) descending & 92.14 & 100 & 100 & 20.85M & 50000 & 0 & 10000 \\ \hline
+      (b) threshold & 91.83 & 100 & 100 & 20.27M & 50000 & 0 & 10000 \\ \hline
+      (c) baseline & 91.79 & 100 & 100 & 20.04M & 50000 & 0 & 10000 \\ \hline
+    \end{tabular}
+    \label{tab:acc}
+  \end{center}
+\end{table*}
 
 \begin{figure*}[tb]
   \begin{tabular}{ccc}
@@ -180,19 +180,27 @@
   \end{tabular}
 \end{figure*}
 
-図～　の四角が各ブロックの出力を示し, 太線がVGGのレイヤー, 点線がショートカットを表している.
+図\ref{fig:alpha}は探索した隣接行列の重み$\hat{\alpha}_{ij} = \hat{\beta_j} * \alpha_{ij}$である.
+
+図\ref{fig:max}, \ref{fig:edge}, \ref{fig:base}は, 図\ref{fig:alpha}からグラフ構築手法(a)(b)(c)で得られたグラフである.
+ノードが各ブロックの出力を示し, エッジは太線がVGGのレイヤー, 点線がショートカットを表している.
+
+\section{考察}
+予備実験で, (a)の実験をStepスケジューラ, 300 epochで行ったところ, テスト精度が93.97 \%まで伸びたので,
+時間があればこの設定で学習したい.
 
 \section{今後の予定}
 % なんとなくなんかの勉強をするとかではなく具体的に
-
 \begin{itemize}
-  \item ショートカット関数の改善
-  \item $\beta$周りの改良
+  % \item 重みと編集距離の変化の調査
+  \item 探索10回試行したグラフの比較
+  % \item DARTのunrolling実験
 \end{itemize}
 
 \section{ソースコード}
 % 埋め込みでもGitでもいいので参照できるように
-githubのnotebookリポジトリ参照
+githubのnotebookリポジトリ参照.
+探索中のグラフの変化は, この資料の./graphを参照.
 
 % 参考文献リスト
 \bibliographystyle{unsrt}
