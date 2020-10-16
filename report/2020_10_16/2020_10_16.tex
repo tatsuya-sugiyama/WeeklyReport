@@ -114,19 +114,27 @@
 
 \subsection{結果}
 
-% \begin{figure}[tb]
-% 	\begin{center}
-% 		\includegraphics[clip,width=75mm]{acc.png}
-% 		\caption{学習中のテスト精度}
-% 		\label{fig:acc}
-% 	\end{center}
-% \end{figure}
+性能の結果は来週.
+
+図\ref{fig:mat}に探索後のグラフの編集距離行列を示した.
+0-9が探索後のグラフ, 10-19がランダムなグラフ.
+networkxの関数を使うとvgg19は1時間以上かかるので,
+辺の挿入と削除のコストが1の編集距離を求める関数を実装した.
+
+\begin{figure*}[tb]
+	\begin{center}
+		\includegraphics[clip,width=75mm]{dist_mat.png}
+		\caption{距離行列}
+		\label{fig:mat}
+	\end{center}
+\end{figure*}
 
 
 \section{実験}
 
 schedulerの探索をoptunaでした.
 表\ref{tab:setting2}, \ref{tab:res}にoptunaの実験設定を示した.
+試行回数は100回くらい, 時間は10分/回.
 
 \begin{table}[tb]
   \begin{center}
