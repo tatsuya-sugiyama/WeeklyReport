@@ -1,0 +1,167 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 10 月 23 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+\section{今週やったこと}
+\begin{itemize}
+  \item 評価実験をたくさん
+\end{itemize}
+
+\section{実験}
+
+10回行った探索に対し各々評価を1回, VGG19に対し異なるシード値で10回.
+それぞれ10回ずつ実験した.
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験の設定}
+    \begin{tabular}{|c|c|} \hline
+      base model & VGG19 \\ \hline
+      Optim($w$) & SGD(lr=0.0090131, momentum=0.9) \\ \hline
+      % Optim($\alpha$) & Adam(lr=0.005, $\beta$=(0.5, 0.999)) \\ \hline
+      Scheduler($w$) & Step($\gamma$=0.2344, stepsize=100) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      dataset & cifar10 \\ \hline
+      batch size & 64 \\ \hline
+      epoch & 150 \\ \hline
+    \end{tabular}
+    \label{tab:setting}
+  \end{center}
+\end{table}
+
+表\ref{tab:setting}に評価時の実験設定を示した.
+optunaによって得られた設定を利用した.
+
+\subsection{結果}
+
+評価時のグラフは./graphを参照.
+表\ref{tab:acc}, \ref{tab:accg}にはテスト精度の結果を示した.
+
+\begin{table*}[t]
+  \begin{center}
+    \caption{結果のテスト精度(\%)}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+           & 1     & 2     & 3     & 4     & 5     & 6     & 7     & 8     & 9     & 10    \\ \hline
+    評価     & 93.95 & 94.09 & 93.32 & 93.58 & 93.66 & 93.65 & 93.66 & 93.52 & 93.80 & 93.76 \\ \hline
+    ベースライン & 92.97 & 92.95 & 93.25 & 92.90 & 93.06 & 92.93 & 93.07 & 93.07 & 93.03 & 93.06 \\ \hline
+    \end{tabular}
+    \label{tab:acc}
+  \end{center}
+\end{table*}
+
+\begin{table*}[t]
+  \begin{center}
+    \caption{精度の比較}
+    \begin{tabular}{|c|c|c|}
+    \hline
+           & \begin{tabular}[c]{@{}c@{}}test accracy\\ mean $\pm$ std \end{tabular} & delta    \\ \hline
+    評価     & 93.6990 $\pm$ 0.2173                                                  & + 0.6700 \\ \hline
+    ベースライン & 93.0290 $\pm$ 0.1002                                                  &          \\ \hline
+    \end{tabular}
+    \label{tab:accg}
+  \end{center}
+\end{table*}
+
+\section{考察}
+optunaでlr, $\gamma$, stepsizeを最適化したが, 期待していたlrが0.01, stepsizeが100という値に近いパラメータで$\gamma$が得られた. train sizeを20分の1にしていても割とうまくいくのかもしれない.
+
+google colabだと3時間かかっていたのが, usagiサーバーだと1時間早くなった. GPUの性能かクラウドの同期に時間がかかるのかは不明だが, google colabで開発して, サーバーで実験を回すのが捗るかもしれない.
+
+ベースラインに対して有意な差があることが分かったが, DARTによる探索の効果とショートカットの存在による効果が区別できないので, 何本か適当な位置にショートカット設けたランダムアーキテクチャとの比較も行いたい.
+
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+
+\begin{itemize}
+  % \item 重みと編集距離の変化の調査
+  \item ランダムアーキテクチャとの比較
+  \item DARTのunrolling実験
+\end{itemize}
+
+\section{ソースコード}
+% 埋め込みでもGitでもいいので参照できるように
+githubのnotebookリポジトリ参照.
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
