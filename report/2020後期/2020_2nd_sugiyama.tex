@@ -1,0 +1,255 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		後期研究発表会資料 2020 年 12 月 14 日 (月)
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf DARTSを用いたVGGのショートカット探索とGAによる改良}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+\section{はじめに}
+深層学習にはモデルの改良によって高い精度を得た.
+モデルは手作業でつくる.
+
+NASはモデルを機械学習によって探索する.
+DARTSは小規模な資源で計算できる.
+DARTSには制限が多くある.
+
+演算子の種類ではなくネットワークの構造にのみ着目.
+その初期段階として, VGGのショートカット位置についてDARTSで探索を行う方法を提案する.
+DARTSの構造制限をなくしネットワークの柔軟な探索を目的とする.
+
+\section{要素技術}
+
+\subsection{Neural Architecture Search}
+Neural Architecture Search(NAS)\cite{DBLP:journals/corr/ZophL16}は,
+機械学習の分野で使用されているニューラルネットワークの設計を自動化する手法である.
+ニューラルネットワークの設計は直感的でなく,
+チューニングに人による労力を多く必要とするため,
+ニューラルネットワークの設計は非常に困難である.
+
+NASはニューラルネットワークが構造に関する設定の文字列で表現できることを利用して,
+この文字列を生成する
+Recurrent Neural Network(RNN)を
+強化学習 Reinforcement Learning(RL)によって学習する.
+% RNNによって生成されたアーキテクチャは, 検証データで性能評価され
+
+\subsection{Differentiable Architecture Search}
+Differentiable Architecture Search(DARTS)\cite{DBLP:journals/corr/abs-1806-09055}は,
+離散的なアーキテクチャ探索空間に強化学習を適用したNASとは異なり,
+微分可能な方法で定式化し,
+偏微分による勾配降下法を使用してアーキテクチャを効率的に探索する手法である.
+
+探索空間を連続にするため, カテゴリカルな演算子の選択の代わりに, 候補全ての可能性をもつ混合演算子を
+(\ref{eq:darts/operation}) 式で定義する.
+アーキテクチャを有向非巡回グラフで表したとき, ノードを潜在的な特徴表現$x^{(i)}$,
+エッジを特徴$x^{(i)}$が適用される関数$o(・)$とすると,
+\begin{equation}
+  \label{eq:darts/operation}
+  \bar{o}^{(i, j)}(x) = \sum_{o \in \mathcal{O}} \frac{\exp(\alpha^{(i, j)}_o)}{\sum_{o' \in \mathcal{O}} \exp(\alpha^{(i, j)}_{o'})} o(x)
+\end{equation}
+となる. ここで
+$\mathcal{O}$は探索する演算子の候補集合,
+$\alpha^{(i, j)}$はエッジ$(i, j)$の混合演算子の重みベクトルである.
+DARTSは勾配降下法によって連続変数集合$\alpha$を学習する.
+
+$\alpha$と$w$のバイレベル最適化問題を$w$の近似によって同時に学習し,
+NASの3000 GPU daysに対してDARTSは3.3 GPU daysに高速化した.
+
+DARTSではセルと呼ぶ小さなネットワーク構造を重ねたモデルを利用する.
+セルを構成するノードは2つのノードからの演算子エッジを持ち,
+どのノードからの演算子を選ぶのかをアーキテクチャ$\alpha$によって決定する.
+DARTSの問題点として位置と演算子の種類は探索できるが,
+大局的な構造やノードの持つエッジ数などアーキテクチャが固定されていることが挙げられる.
+
+\subsection{Genetic Algorithm}
+遺伝的アルゴリズムGenetic Algorithm(GA)は生物の進化の仕組みを模倣した最適化手法である.
+問題の解候補を遺伝子の持つ個体として表現し, 適応度によって個体を評価・選択する.
+交叉・突然変異などの操作によって近傍を探索しながら世代を重ねて近似解を求める.
+GAに必要な条件は評価関数の全順序性と探索空間が位相を持つことである.
+
+整数値と実数値
+
+初期収束問題
+
+\section{問題}
+% 問題・探索空間
+DARTSで柔軟なアーキテクチャを探索するため,
+深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を探索する.
+VGG19は16層の畳み込み層と3層の線形結合層を持つ.
+このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
+性能を向上させることを目的とする.
+
+ショートカットに使用する関数の制限によってショートカット位置の候補は61?であるため,
+探索空間は$2^{61}$である.
+
+
+\section{手法と実験1}
+% アルゴリズム
+モデル中の潜在的特徴は高さ・幅・チャンネル数を持つデータであるが,
+特徴の次元は場所によって異なるため, ショートカットは次元を変換する必要がある.
+ショートカット関数は以下のように設定した.
+\begin{enumerate}
+  \item 次元が同じ場合：恒等関数
+  \item フィルタ数が違う場合：Pointwise Convolution
+  \item 高さと幅が半分の場合：Factorized Reduce
+  \item それ以外の場合：ショートカットを定義しない
+\end{enumerate}
+演算子の種類は固定することで, アーキテクチャ$\alpha$は畳み込み部に相当するグラフの重みをもつ隣接行列と定義した.
+
+学習の手順は以下.
+\begin{enumerate}
+  \item 探索：アーキテクチャ$\alpha$の訓練
+  \item 構成：$\alpha$からネットワークを構成
+  \item 評価：得られたネットワークを訓練し, テストデータで性能を検証
+\end{enumerate}
+
+構成手法として
+構成手法1:predecessorsの中で大きい順に採択
+構成手法2:閾値以上のエッジを採択
+で実験した.
+
+\subsection{実験設定}
+表
+10回試行した.
+
+\subsection{結果}
+図 , に精度を示した
+表　にまとめた.
+
+\section{手法と実験2(GA)}
+実験1では$\alpha$の学習度によって重み$w$の学習しやすさに偏りがあったため,
+収束するグラフに分散があった.
+
+個体表現を$\alpha$とした遺伝的アルゴリズムによって,
+アーキテクチャの多様性を維持しつつ, 安定的な学習を図った.
+
+\subsection{実験設定}
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{モデルの設定}
+    \begin{tabular}{|c|c|} \hline
+      Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      dataset & cifar10 \\ \hline
+      pretrain & true \\ \hline
+      batch size & 64 \\ \hline
+      train size & 12500 \\ \hline
+      valid size & 5000 \\ \hline
+    \end{tabular}
+    \label{tab:setting}
+  \end{center}
+\end{table}
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{GAの設定}
+    \begin{tabular}{|c|c|} \hline
+      個体数 & 10 \\ \hline
+      世代数 & 20 \\ \hline \hline
+      選択 & トーナメント \\ \hline
+      サイズ & 2 \\ \hline \hline
+      交叉 & 一様交叉 \\ \hline
+      交叉率 & 0.5 \\ \hline \hline
+      変異 & ガウス分布 \\ \hline
+      変異率 & 0.2 \\
+      (遺伝子座ごと) & 0.1 \\ \hline
+    \end{tabular}
+    \label{tab:setting_ga}
+  \end{center}
+\end{table}
+
+% 表 \ref{tab:setting}, \ref{tab:setting_ga} にモデルとGAの設定を示した.
+% 初期収束を回避するため, トーナメントサイズや交叉アルゴリズムを変更した.
+
+\subsection{結果}
+図
+
+\section{まとめと今後の課題}
+% なんとなくなんかの勉強をするとかではなく具体的に
+DARTSの欠点であるアーキテクチャ構造の制限を緩和するようなネットワーク探索ができた.
+
+ネットワークの構成手法は改善の余地がある.
+選択しないという候補を導入して, 他のショートカットと妥当な比較ができると考えられる.
+
+GAを導入することでショートカットの本数の分析もできた.
+
+データセットを実問題にする.
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
