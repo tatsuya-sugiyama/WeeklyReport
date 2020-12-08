@@ -132,7 +132,7 @@ DARTSは勾配降下法によって連続変数集合$\alpha$を学習する.
 $\alpha$と$w$のバイレベル最適化問題を$w$の近似によって同時に学習し,
 NASの3000 GPU daysに対してDARTSは3.3 GPU daysに高速化した.
 
-DARTSではセルと呼ぶ小さなネットワーク構造を重ねたモデルを利用する.
+DARTSでは次元を統一するためセルと呼ぶ小さなネットワーク構造を重ねたモデルを利用する.
 セルを構成するノードは2つのノードからの演算子エッジを持ち,
 どのノードからの演算子を選ぶのかをアーキテクチャ$\alpha$によって決定する.
 DARTSの問題点として位置と演算子の種類は探索できるが,
@@ -175,11 +175,24 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 \section{手法と実験1}
 % アルゴリズム
 
-ショートカットの本数も探索するため
+ショートカットの本数も探索するため,
+$\alpha$に対する重み補正$\beta$を (\ref{equ:cut}) 式 で定義する.
 \begin{equation}
-  x = x,
+  \label{equ:cut}
+  x_i = f^{\mathrm{c}}_{i-1, i}(x_{i-1}) + \beta_i * \sum_{j \in S_i} \alpha_{ij} * f^{\mathrm{s}}_{j, i} (x_j)
 \end{equation}
-と定義した.
+ここで$f^{\mathrm{c}}(・)$, $f^{\mathrm{s}}(・)$は, VGGの畳み込み関数とショートカット関数,
+$S_i$はノード$i$とショートカットで接続する先行(predecessor)ノードのインデックス集合である.
+
+ただし$\beta=0$で勾配の更新ができなくなるので,
+\begin{equation}
+  \label{equ:beta}
+  \hat{\beta} = \begin{cases}
+    \exp(\beta - 1) & (\beta \leq 1) \\
+    \log(\beta) + 1 & (\mathrm{otherwise})
+  \end{cases}
+\end{equation}
+で0とならないように補正した$\hat{\beta}$を用いた.
 
 学習の手順は以下.
 \begin{enumerate}
@@ -196,13 +209,52 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 で実験した.
 
 \subsection{実験設定}
-表
-10回試行した.
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験1の設定}
+    \begin{tabular}{|c|c|} \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline\hline
+      Step & Architecture Search \\ \hline
+      Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
+      data size & train 25000 : valid 25000 \\ \hline\hline
+      Step & Evaluation \\ \hline
+      Optim($w$) & SGD(lr=0.0090131, momentum=0.9) \\ \hline
+      Scheduler($w$) & Step($\gamma$=0.23440, stepsize=100) \\ \hline
+      data size & train 50000 : valid 0 \\ \hline
+    \end{tabular}
+    \label{tab:setting1}
+  \end{center}
+\end{table}
+
+表 \ref{tab:setting1} に探索段階と評価段階の実験設定を示した.
+探索段階はDARTSを参考に, 評価段階はoptunaで最適化した値を使用した.
+
+データセットは, 訓練画像が32pixel四方で訓練データを50000枚持つcifar10を利用して,
+10クラス分類問題を解いた.
+
+探索時間は, 150 epochとし, 50 epochごとにその時点の$\alpha$の性能を評価した.
+
+構成段階では手法A, Bに加えて比較のため,
+ショートカット数が同じとなる条件でランダムに選択する手法でも実験する.
+各手法において10回試行して統計的な性能を比較した.
 
 \subsection{結果}
-図 , に精度を示した
-表　にまとめた.
+表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示した.
+図 \ref{fig:short}, \ref{fig:param} には 表 \ref{tab:accg} を図示した.
+最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
+100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
+しかし
+ランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
+図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
 
+また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
+問題に対して過度に適合していることが原因であると考えられる.
+
+探索時間は150 epochで 5 gpu hours を要したが, DARTSと比べ演算子の探索を行っていないことや.
+最適な重み$w^*$の近似を1次下げていることで高速になったと思われる.
 
 \begin{table*}[t]
   \begin{center}
@@ -224,16 +276,16 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 \begin{figure*}[tb]
  \begin{minipage}{0.5\hsize}
  	\begin{center}
- 		\includegraphics[clip,width=75mm]{param.png}
- 		\caption{パラメータ数に対する精度}
- 		\label{fig:param}
+ 		\includegraphics[clip,width=75mm]{short.png}
+ 		\caption{ショートカット数に対する精度}
+ 		\label{fig:short}
  	\end{center}
  \end{minipage}
  \begin{minipage}{0.5\hsize}
  	\begin{center}
- 		\includegraphics[clip,width=75mm]{short.png}
- 		\caption{ショートカット数に対する精度}
- 		\label{fig:short}
+    \includegraphics[clip,width=75mm]{param.png}
+    \caption{パラメータ数に対する精度}
+    \label{fig:param}
  	\end{center}
  \end{minipage}
 \end{figure*}
@@ -246,25 +298,39 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 実験1では$\alpha$の学習度によって重み$w$の学習しやすさに偏りがあったため,
 収束するグラフに分散があった.
 
-個体表現を$\alpha$とした遺伝的アルゴリズムによって,
+そこで個体表現を$\alpha$とした遺伝的アルゴリズムによって,
 アーキテクチャの多様性を維持しつつ, 安定的な学習を図った.
+
+GAには評価関数の全順序性が必要となるので,
+各パラメータ集合の学習ステップを分離し個体間で不平等がないように設計した.
+
+\begin{enumerate}
+  \item 一様乱数で初期個体生成
+  \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
+  \item 個体$\alpha$を$\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$で更新
+  \item 適応度$\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{sampled})$で個体$\alpha$を評価・選択
+  \item 交叉・突然変異
+  \item 収束するまで 2. に戻る
+\end{enumerate}
+($P$は個体群, $\alpha^\mathrm{sampled}$は隣接行列にサンプリングした$\alpha$)
 
 \subsection{実験設定}
 
+表 \ref{tab:setting2}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
+
 \begin{table}[tb]
   \begin{center}
-    \caption{モデルの設定}
+    \caption{実験2の設定}
     \begin{tabular}{|c|c|} \hline
       Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
       Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
       Loss & Cross Entropy Loss \\ \hline
-      dataset & cifar10 \\ \hline
       pretrain & true \\ \hline
       batch size & 64 \\ \hline
       train size & 12500 \\ \hline
       valid size & 5000 \\ \hline
     \end{tabular}
-    \label{tab:setting}
+    \label{tab:setting2}
   \end{center}
 \end{table}
 
