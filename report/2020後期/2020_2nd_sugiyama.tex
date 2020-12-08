@@ -79,16 +79,21 @@
 	]
 
 \section{はじめに}
-深層学習にはモデルの改良によって高い精度を得た.
-モデルは手作業でつくる.
+機械学習の分野では, 深層学習モデルの改良によって高い精度を得てきた.
+しかしモデルの設計とその性能の関係はブラックボックスであり
+手作業で行うチューニングには膨大な労力を要する.
 
-NASはモデルを機械学習によって探索する.
-DARTSは小規模な資源で計算できる.
-DARTSには制限が多くある.
+ネットワークの探索を自動化する手法として提案された
+Neural Architecture Search(NAS)はネットワークを機械学習によって探索する.
+しかし何千ものGPUを必要とするため, NASに代わり
+小規模な資源で計算できるDifferentiable Architecture Search(DARTS)
+が大きな注目を集めている.
+DARTSはネットワークの構造と演算子の候補を探索するが,
+一方でDARTSにはネットワーク構造にいくつかの拘束条件がある.
 
-演算子の種類ではなくネットワークの構造にのみ着目.
-その初期段階として, VGGのショートカット位置についてDARTSで探索を行う方法を提案する.
+本研究では演算子の種類ではなくネットワークの構造にのみ着目し,
 DARTSの構造制限をなくしネットワークの柔軟な探索を目的とする.
+その初期段階として, VGGのショートカット位置についてDARTSで探索を行う方法を提案する.
 
 \section{要素技術}
 
@@ -139,9 +144,12 @@ DARTSの問題点として位置と演算子の種類は探索できるが,
 交叉・突然変異などの操作によって近傍を探索しながら世代を重ねて近似解を求める.
 GAに必要な条件は評価関数の全順序性と探索空間が位相を持つことである.
 
-整数値と実数値
+% 整数値と実数値
 
-初期収束問題
+% 初期収束問題
+GAには偶然適応度の高くなった個体だけが選択され続け,
+個体群を同じ個体が占める初期収束問題がある.
+問題によって適切な交叉・突然変異を行う必要がある.
 
 \section{問題}
 % 問題・探索空間
@@ -151,22 +159,27 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
 性能を向上させることを目的とする.
 
-ショートカットに使用する関数の制限によってショートカット位置の候補は61?であるため,
-探索空間は$2^{61}$である.
-
-
-\section{手法と実験1}
-% アルゴリズム
 モデル中の潜在的特徴は高さ・幅・チャンネル数を持つデータであるが,
 特徴の次元は場所によって異なるため, ショートカットは次元を変換する必要がある.
-ショートカット関数は以下のように設定した.
+したがってショートカット関数は以下のように設定した.
 \begin{enumerate}
   \item 次元が同じ場合：恒等関数
   \item フィルタ数が違う場合：Pointwise Convolution
   \item 高さと幅が半分の場合：Factorized Reduce
   \item それ以外の場合：ショートカットを定義しない
 \end{enumerate}
+ショートカットに使用する関数の制限によってショートカット位置の候補は61?であるため,
+探索空間は$2^{61}$である.
 演算子の種類は固定することで, アーキテクチャ$\alpha$は畳み込み部に相当するグラフの重みをもつ隣接行列と定義した.
+
+\section{手法と実験1}
+% アルゴリズム
+
+ショートカットの本数も探索するため
+\begin{equation}
+  x = x,
+\end{equation}
+と定義した.
 
 学習の手順は以下.
 \begin{enumerate}
@@ -175,9 +188,11 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
   \item 評価：得られたネットワークを訓練し, テストデータで性能を検証
 \end{enumerate}
 
-構成手法として
-構成手法1:predecessorsの中で大きい順に採択
-構成手法2:閾値以上のエッジを採択
+構成手法は複数考えられるため,
+\begin{itemize}
+  \item 構成手法A:predecessorsの中で大きい順に採択
+  \item 構成手法B:閾値以上のエッジを採択
+\end{itemize}
 で実験した.
 
 \subsection{実験設定}
@@ -187,6 +202,45 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 \subsection{結果}
 図 , に精度を示した
 表　にまとめた.
+
+
+\begin{table*}[t]
+  \begin{center}
+    \caption{各アーキテクチャの精度}
+    \begin{tabular}{|c|c|c|c|c|c|}\hline
+    \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}number of\\ shortcuts\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}method A\end{tabular}} & 50 epoch & 93.70 $\pm$ 0.22 & 21.06 $\pm$ 0.07 & 12.7 $\pm$ 1.4 & 93.60 $\pm$ 0.15 \\ \cline{2-6}
+     & 100 epoch & 94.02 $\pm$ 0.12 & 21.50 $\pm$ 0.11 & 18.2 $\pm$ 0.9 & 93.67 $\pm$ 0.14 \\ \cline{2-6}
+     & 150 epoch & 93.90 $\pm$ 0.17 & 21.57 $\pm$ 0.25 & 18.9 $\pm$ 0.6 & 93.64 $\pm$ 0.09 \\ \hline
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}method B\end{tabular}} & 50 epoch & 93.57 $\pm$ 0.19 & 20.45 $\pm$ 0.09 & 5.8 $\pm$ 1.2 & 93.36 $\pm$ 0.19 \\ \cline{2-6}
+     & 100 epoch & 93.93 $\pm$ 0.08 & 20.73 $\pm$ 0.10 & 9.8 $\pm$ 1.0 & 93.47 $\pm$ 0.17 \\ \cline{2-6}
+     & 150 epoch & 93.92 $\pm$ 0.12 & 20.76 $\pm$ 0.15 & 10.6 $\pm$ 1.0 & 93.48 $\pm$ 0.15 \\ \hline
+    \multicolumn{2}{|c|}{baseline (VGG19)} & 93.03 $\pm$ 0.10 & 20.04 & 0 & - \\ \hline
+    \end{tabular}
+    \label{tab:accg}
+  \end{center}
+\end{table*}
+
+\begin{figure*}[tb]
+ \begin{minipage}{0.5\hsize}
+ 	\begin{center}
+ 		\includegraphics[clip,width=75mm]{param.png}
+ 		\caption{パラメータ数に対する精度}
+ 		\label{fig:param}
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.5\hsize}
+ 	\begin{center}
+ 		\includegraphics[clip,width=75mm]{short.png}
+ 		\caption{ショートカット数に対する精度}
+ 		\label{fig:short}
+ 	\end{center}
+ \end{minipage}
+\end{figure*}
+
+
+
+
 
 \section{手法と実験2(GA)}
 実験1では$\alpha$の学習度によって重み$w$の学習しやすさに偏りがあったため,
