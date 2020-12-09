@@ -292,7 +292,7 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
 また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
 問題に対して過度に適合していることが原因であると考えられる.
 
-探索時間は150 epochで 5 gpu hours を要したが, DARTSと比べ演算子の探索を行っていないことや.
+探索時間は150 epochでおよそ 5 gpu hours を要したが, DARTSと比べ演算子の探索を行っていないことや.
 最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
 
 
@@ -313,7 +313,7 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
   \item 一様乱数で初期個体生成
   % \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
   \item 重み $w$ を $\displaystyle \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
-  \item 個体 $\alpha$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
+  \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
   \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{sampled})$ で個体 $\alpha$ を評価・選択
   \item 交叉・突然変異
   \item 収束するまで 2. に戻る
@@ -329,8 +329,8 @@ $\alpha^\mathrm{sampled}$ は構成手法Bで隣接行列にサンプリング�
 
 表 \ref{tab:setting2}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
 モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
-初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに操作する一様交叉を使用した.
-突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2?$ となるガウス分布からの摂動を与えた.
+初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.5 の確率で操作する一様交叉を使用した.
+突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
 
 
 \begin{table}[t]
@@ -360,8 +360,7 @@ $\alpha^\mathrm{sampled}$ は構成手法Bで隣接行列にサンプリング�
       交叉 & 一様交叉 \\ \hline
       交叉率 & 0.8 \\ \hline \hline
       変異 & ガウス分布 \\ \hline
-      変異率 & 0.2 \\
-      (遺伝子座ごと) & 0.1 \\ \hline
+      変異率 & 0.2 \\ \hline
     \end{tabular}
     \label{tab:setting_ga}
   \end{center}
@@ -388,7 +387,7 @@ DARTSの欠点であるアーキテクチャ構造の制限を緩和するよう
 
 GAを導入することでショートカットの本数の分析もできた.
 
-データセットを実問題にする.
+他のデータセットや実問題に対して提案手法によるアーキテクチャの汎用性を確認したい.
 
 % 参考文献リスト
 \bibliographystyle{unsrt}
