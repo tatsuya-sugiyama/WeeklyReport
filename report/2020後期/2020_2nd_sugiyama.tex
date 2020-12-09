@@ -245,19 +245,6 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
 各手法において10回試行して統計的な性能を比較した.
 
 \subsection{結果}
-表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
-図 \ref{fig:short}, \ref{fig:param} には
-表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
-最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
-100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
-しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
-図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
-
-また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
-問題に対して過度に適合していることが原因であると考えられる.
-
-探索時間は150 epochで 5 gpu hours を要したが, DARTSと比べ演算子の探索を行っていないことや.
-最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
 
 \begin{table*}[t]
   \begin{center}
@@ -294,34 +281,59 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
 \end{figure*}
 
 
+表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
+図 \ref{fig:short}, \ref{fig:param} には
+表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
+最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
+100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
+しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
+図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
+
+また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
+問題に対して過度に適合していることが原因であると考えられる.
+
+探索時間は150 epochで 5 gpu hours を要したが, DARTSと比べ演算子の探索を行っていないことや.
+最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
+
 
 
 
 \section{手法と実験2(GA)}
 実験1では $\alpha$ の学習度によって重み $w$ の学習しやすさに偏りがあったため,
-収束するグラフに分散があった.
+収束するグラフ構造にばらつきが見られた.
 
 そこで個体表現を $\alpha$ とした遺伝的アルゴリズムによって,
-アーキテクチャの多様性を維持しつつ, 安定的な学習を図った.
+アーキテクチャの多様性を維持しつつ, 安定的な
+ネットワーク構造の学習を図った.
 
 % GAには評価関数の全順序性が必要となるので,（これは間違い）
 各パラメータ集合の学習ステップを分離し個体間で不平等がないように設計した.
 
 \begin{enumerate}
   \item 一様乱数で初期個体生成
-  \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
-  \item 個体$\alpha$を$\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$で更新
-  \item 適応度$\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{sampled})$で個体$\alpha$を評価・選択
+  % \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
+  \item 重み $w$ を $\displaystyle \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
+  \item 個体 $\alpha$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
+  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{sampled})$ で個体 $\alpha$ を評価・選択
   \item 交叉・突然変異
   \item 収束するまで 2. に戻る
 \end{enumerate}
-($P$は個体群, $\alpha^\mathrm{sampled}$は隣接行列にサンプリングした$\alpha$)
+ただし
+% $P$は個体群,
+$\bar{\alpha}$ は各個体の平均,
+$\alpha^\mathrm{sampled}$ は構成手法Bで隣接行列にサンプリングした $\alpha$ .
+
+学習後最終世代の個体の性能を実験1と同じ条件で評価した.
 
 \subsection{実験設定}
 
 表 \ref{tab:setting2}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
+モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
+初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに操作する一様交叉を使用した.
+突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2?$ となるガウス分布からの摂動を与えた.
 
-\begin{table}[tb]
+
+\begin{table}[t]
   \begin{center}
     \caption{実験2の設定}
     \begin{tabular}{|c|c|} \hline
@@ -330,23 +342,23 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
       Loss & Cross Entropy Loss \\ \hline
       pretrain & true \\ \hline
       batch size & 64 \\ \hline
-      train size & 12500 \\ \hline
-      valid size & 5000 \\ \hline
+      train size & 25000 \\ \hline
+      valid size & 10000 \\ \hline
     \end{tabular}
     \label{tab:setting2}
   \end{center}
 \end{table}
 
-\begin{table}[tb]
+\begin{table}[t]
   \begin{center}
     \caption{GAの設定}
     \begin{tabular}{|c|c|} \hline
-      個体数 & 10 \\ \hline
+      個体数 & 15 \\ \hline
       世代数 & 20 \\ \hline \hline
       選択 & トーナメント \\ \hline
       サイズ & 2 \\ \hline \hline
       交叉 & 一様交叉 \\ \hline
-      交叉率 & 0.5 \\ \hline \hline
+      交叉率 & 0.8 \\ \hline \hline
       変異 & ガウス分布 \\ \hline
       変異率 & 0.2 \\
       (遺伝子座ごと) & 0.1 \\ \hline
@@ -359,7 +371,13 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
 % 初期収束を回避するため, トーナメントサイズや交叉アルゴリズムを変更した.
 
 \subsection{結果}
-図
+図 \ref{fig:gene_acc}
+
+\begin{figure}[tb]
+  \includegraphics[clip, width=75mm]{acc.png}
+  \caption{世代ごとの精度}
+  \label{fig:gene_acc}
+\end{figure}
 
 \section{まとめと今後の課題}
 % なんとなくなんかの勉強をするとかではなく具体的に
