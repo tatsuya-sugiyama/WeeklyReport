@@ -325,6 +325,8 @@ $\alpha^\mathrm{smp}$ は実験1で有効だった構成手法Bで隣接行列�
 
 学習後最終世代の個体の性能を実験1と同じ条件で評価した.
 
+% One-Shotで高速化について言及
+
 \subsection{実験設定}
 
 表 \ref{tab:setting2}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
@@ -339,11 +341,9 @@ $\alpha^\mathrm{smp}$ は実験1で有効だった構成手法Bで隣接行列�
     \begin{tabular}{|c|c|} \hline
       Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
       Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
-      Loss & Cross Entropy Loss \\ \hline
-      pretrain & true \\ \hline
-      batch size & 64 \\ \hline
-      train size & 25000 \\ \hline
-      valid size & 10000 \\ \hline
+      % Loss & Cross Entropy Loss \\ \hline
+      % batch size & 64 \\ \hline
+      data size & train : valid = 25000 : 10000 \\ \hline
     \end{tabular}
     \label{tab:setting2}
   \end{center}
@@ -366,16 +366,28 @@ $\alpha^\mathrm{smp}$ は実験1で有効だった構成手法Bで隣接行列�
   \end{center}
 \end{table}
 
-% 表 \ref{tab:setting}, \ref{tab:setting_ga} にモデルとGAの設定を示した.
-% 初期収束を回避するため, トーナメントサイズや交叉アルゴリズムを変更した.
 
 \subsection{結果}
-図 \ref{fig:gene_acc}
+図 \ref{fig:gene_acc} に探索段階の世代ごとの精度を,
+図 \ref{fig:gene_com} に評価段階の最良個体の精度を各指標とともに図示する.
+時間の都合上 5 世代ごとに評価したが, 15 世代目が最も高い性能で,
+93.69 \%, ショートカット数は 12 本であった.
+表 \ref{tab:accg} のランダム手法と比較しても, 少ないショートカット数でより高い精度を獲得できた.
 
-\begin{figure}[tb]
-  \includegraphics[clip, width=75mm]{acc.png}
-  \caption{世代ごとの精度}
+一方で実験1の最良の精度には及ばなかった. 実験1の探索は100 epochで良好な解を得ているため, GAでも100世代まで実験を行いたい.
+
+また 20 世代目は大きく性能が落ちた. 有望な解が保存されにくい一様交叉を使用していることが原因として考えられる. 有望な解に変化を与えないエリート保存戦略と組み合わせたい.
+
+\begin{figure}[t]
+  \includegraphics[clip, width=75mm]{gen_acc.png}
+  \caption{学習時の世代ごとの精度}
   \label{fig:gene_acc}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[clip, width=75mm]{gen_com.png}
+  \caption{評価時の世代ごとの最良個体精度}
+  \label{fig:gene_com}
 \end{figure}
 
 \section{まとめと今後の課題}
@@ -385,9 +397,10 @@ DARTSの欠点であるアーキテクチャ構造の制限を緩和するよう
 しかしながらまだネットワークの構成手法は改善の余地がある.
 選択しないという候補を導入して, 他のショートカットと妥当な比較ができると考えられる.
 
-GAを導入することでショートカットの本数の分析もできた.
+GAを導入することでも, ベースラインを超えることができたが,
+まだ手法が荒削りであるためさらなる改良をする.
 
-他のデータセットや実問題に対して提案手法によるアーキテクチャの汎用性を確認したい.
+今後の課題として, 他のデータセットや実問題に対して提案手法によるアーキテクチャの汎用性を確認したい.
 またパラメータ数が少ないモデルが得られるような適応度の設定についても検討する予定である.
 
 % 参考文献リスト
