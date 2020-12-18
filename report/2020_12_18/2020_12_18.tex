@@ -1,0 +1,134 @@
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2020 年 12 月 18 日
+		ゼミ資料
+		\hfill
+		B4 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+\section{今週やったこと}
+\begin{itemize}
+  \item TDGAの理解
+\end{itemize}
+
+\section{TDGA}
+$F$を最小化する.
+\begin{equation}
+  F = \langle E \rangle - HT
+\end{equation}
+\begin{equation}
+  H = \sum^{M}_{k=1} H_k,
+\end{equation}
+\begin{equation}
+  H_k = - \sum_{j} P^k_j log P^k_j
+\end{equation}
+エントロピー $H$ をグラフ用に改造する必要がある.
+
+単純に考えるなら分散をとる？
+\begin{equation}
+  H = \frac{1}{|\mathcal{E}|} \sum_{i, j} ( \alpha_{ij} - \bar{\alpha}_{ij} )^2
+\end{equation}
+$|\mathcal{E}|$はDARTSの辺の数
+
+\subsection{分からなかった点}
+\begin{equation}
+  \mathcal{P}(t+1, i, h) \Leftarrow \mathcal{P}(t+1) \cup \{h\}
+\end{equation}
+\begin{equation}
+  F_h = \langle E_{\mathcal{P}(t+1, i, h)} \rangle - H_{\mathcal{P}(t+1, i, h)}T
+\end{equation}
+\begin{equation}
+  \label{equ:mi}
+  h_{\min} \Leftarrow \argmin_h F_h
+\end{equation}
+\begin{equation}
+  \mathcal{P}(t+1) \Leftarrow \mathcal{P}(t+1) \cup \{h_{\min}\}
+\end{equation}
+(\ref{equ:mi}) 式は
+どうやって $h$ を選んでいるのか.
+$h$ は重複するのか
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+TDGAを参考にしながら, GA(+DARTS)の実験
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
