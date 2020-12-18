@@ -1,0 +1,185 @@
+% abstract.sty - 修士(卒業)論文概要執筆要項
+%      abstract.sty ver 1.1.0 1997.01.31 (C) L&D SOFT
+%      abstract.sty ver 1.1.1 1997.02.02 (C) L&D SOFT
+%      abstract.sty ver 1.1.2 1997.02.03 (C) L&D SOFT
+% $ID: abstract.sty ver 1.1.3 1997.02.05 (C) L&D SOFT $
+%
+\typeout{論文概要スタイル ver 1.1.3 1997.02.05 (C) L&D SOFT}
+
+\@twosidetrue
+\parindent=1zw
+\textwidth=170mm
+\textheight=257mm
+\topmargin=-10.4mm
+\oddsidemargin=-0.4mm
+\evensidemargin=-10.4mm
+\columnsep=2zw
+\topskip1\baselineskip
+\headheight1\baselineskip
+\headsep1\baselineskip
+%\footheight1\baselineskip
+\footskip1\baselineskip
+\advance\textheight-\headheight
+\advance\textheight-\headsep
+\kanjiskip1pt plus.4pt minus.5pt
+
+% *I* original in jart10.sty
+\leftmargini15pt
+\leftmarginii12pt\leftmarginiii10pt
+\leftmargin\leftmargini
+\labelsep5pt
+\labelwidth\leftmargini\advance\labelwidth-\labelsep
+
+\def\@listI{\leftmargin\leftmargini \parsep0pt plus1pt minus1pt
+  \topsep1pt plus1pt minus1pt\itemsep\parsep}
+\let\@listi\@listI
+\@listi 
+\def\@listii{\leftmargin\leftmarginii
+ \labelwidth\leftmarginii\advance\labelwidth-\labelsep
+ \parsep0pt plus1pt minus1pt\topsep1pt plus1pt minus1pt\itemsep \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+ \labelwidth\leftmarginiii\advance\labelwidth-\labelsep
+ \parsep0pt plus1pt minus1pt\topsep1pt plus1pt minus1pt 
+ \parsep \z@ \partopsep 1pt plus 0pt minus 1pt\itemsep\parsep}
+
+%-----[ フォントの大きさ ]--------------------------------------------
+\def\@normalsize{\@setsize\normalsize{15pt plus2pt minus2pt}\xpt\@xpt
+\abovedisplayskip4pt plus2pt minus2pt\belowdisplayskip\abovedisplayskip
+\abovedisplayshortskip2pt plus1pt minus1pt
+\belowdisplayshortskip\abovedisplayshortskip
+\let\@listi\@listI} 
+\def\small{\@setsize\small{11pt}\ixpt\@ixpt
+  \abovedisplayskip4pt plus2pt minus2pt\belowdisplayskip\abovedisplayskip
+  \abovedisplayshortskip2pt plus1pt\belowdisplayshortskip\abovedisplayshortskip
+  \def\@listi{\leftmargin\leftmargini \topsep 2pt plus 3pt minus 2pt
+    \parsep 2pt plus 1pt minus 1pt\itemsep \parsep}}
+
+% *I* original definition in jart10.TEX
+%\def\section{\@startsection {section}{1}{\z@}{.5ex plus .3ex minus .3ex}
+%  {.3ex plus .2ex minus .2ex}{\bf}}
+\def\section#1{\par\vskip .5ex plus .3ex minus .3ex
+  \refstepcounter{section}\noindent\underline{\bf 
+  \thesection.\hskip1zw\relax#1}\par\penalty\@M
+  \vskip .3ex plus .2ex minus .2ex}
+\def\subsection{\@startsection{subsection}{2}{\z@}{.3ex plus .1ex minus .1ex}
+  {.1ex plus .1ex minus .1ex}{\bf}}
+\def\thebibliography#1{\par\vskip .5ex plus .3ex minus .3ex
+  \noindent\underline{\bf 参考文献}\par\penalty\@M
+  \vskip .3ex plus .2ex minus .2ex
+  \list{[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+    \advance\leftmargin\labelsep
+    \usecounter{enumi}}
+    \def\newblock{\hskip .11em plus .33em minus .07em}
+    \sloppy\clubpenalty4000\widowpenalty4000
+    \sfcode`\.=1000\relax}
+\def\@cite#1#2{${\mbox{[{#1\if@tempswa , #2\fi}]}}$}
+
+\floatsep 3pt plus 2pt minus 0pt \textfloatsep 5pt plus 2pt minus 0pt
+%\intextsep 5pt plus 2pt minus 0pt
+%\@maxsep 5pt 
+\dblfloatsep 3pt plus 2pt minus 0pt
+\dbltextfloatsep 5pt plus 2pt minus 0pt
+%\@dblmaxsep 5pt 
+
+\arraycolsep 2pt \tabcolsep 3pt \arrayrulewidth .4pt \doublerulesep 2pt 
+\tabbingsep \labelsep 
+
+% *I* original definition in LATEX.TEX
+\renewcommand{\@arrayclassz}{\ifcase \@lastchclass \@acolampacol 
+  \or \@ampacol \or \or \or \@addamp \or
+  \@acolampacol \or \@firstampfalse \@acol \fi
+  \edef\@preamble{\@preamble
+  \ifcase \@chnum % *I* array in displaystyle
+     \hfil$\relax\displaystyle\@sharp$\hfil 
+     \or $\relax\displaystyle\@sharp$\hfil 
+     \or \hfil$\relax\displaystyle\@sharp$\fi}}
+
+% *I* narrower spaces in equation array
+\def\eqnarray{\stepcounter{equation}\let\@currentlabel=\theequation
+\global\@eqnswtrue
+\global\@eqcnt\z@\tabskip\@centering\let\\=\@eqncr
+$$\halign to \displaywidth\bgroup\@eqnsel\hskip\@centering
+  $\displaystyle\tabskip\z@{##}$&\global\@eqcnt\@ne 
+  \hskip 1\arraycolsep \hfil${##}$\hfil % original: 2\arraycolsep
+  &\global\@eqcnt\tw@ \hskip 1\arraycolsep % original: 2\arraycolsep
+   $\displaystyle\tabskip\z@{##}$\hfil 
+   \tabskip\@centering&\llap{##}\tabskip\z@\cr}
+
+\newif\if@master\@mastertrue
+\newcount\junban
+\def\ordering{\@ifnextchar[{\@set@course}{\@set@course[1]}}
+\def\@set@course[#1]#2{\def\@course{#1}\junban=#2
+  \@ifnextchar[{\@set@master}{\@set@master[B]}}
+\def\@set@master[#1]{\if#1M\@mastertrue\else\if#1B\@masterfalse\fi\fi
+  \if@master\multiply\junban by2\advance\junban-1\fi\setcounter{page}{\junban}}
+\ordering{1}
+
+% *I* page heading [ヘッディング]
+\newcount\nendo
+\nendo=\year\advance\nendo -1988
+\ifcase\number\month \advance\nendo-1\or\advance\nendo-1\or\advance\nendo-1\fi
+\def\ps@gaiyouheadings{
+  \def\@oddhead{\vbox{
+      \hbox to \textwidth{平~成~\ifnum\nendo=0 元\else\number\nendo\fi~年~度
+        \if@master ~修~士\else ~卒~業\fi ~論~文~概~要
+		\hfil\@course~~--~~\rm\thepage}
+		\hbox to \textwidth{\rule{0pt}{1pt}}
+      \hbox to \textwidth{\rule{\textwidth}{.5pt}}
+      }
+    }
+  \def\@evenhead{\@oddhead}
+  \def\@oddfoot{}%{\vbox{\hbox to\textwidth{\rule[-7mm]{\textwidth}{.2mm}}}}
+  \def\@evenfoot{\@oddfoot}
+  \def\sectionmark##1{}\def\subsectionmark##1{}}
+
+\pagestyle{gaiyouheadings}
+
+% *I* title [タイトル]
+\def\maketitle{\par
+ \begingroup
+ \def\thefootnote{\fnsymbol{footnote}}
+ \def\@makefnmark{\hbox 
+ to 0pt{$^{\@thefnmark}$\hss}} 
+ \if@twocolumn 
+ \twocolumn[\@maketitle] 
+ \else \newpage
+ \global\@topnum\z@ \@maketitle \fi\@thanks
+ \endgroup
+ \setcounter{footnote}{0}
+ \let\maketitle\relax
+ \let\@maketitle\relax
+ \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\thanks\relax}
+\def\@maketitle{
+  {\LARGE\bf\par\vbox to 2.5\baselineskip{\centering\@title\par\vfil}}
+  {\Large\bf\vbox to 1.5\baselineskip{\hfill
+    \ifcase\@course\or 知能情報\or 知能情報\or システム情報\or システム情報\fi
+    講座\hskip1.5zw\relax{\Large\bf\@author}\hskip1zw\mbox{}\par\vfil}}}
+
+\twocolumn\sloppy\flushbottom
+
+\endinput
+%%%%%[ ここからはドキュメントです ]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+最低限必要な設定
+
+  このファイルをカレントディレクトリに置くか，$TEXINPUTSでしていされた
+ディレクトリに置く．
+
+<filename>.texには，つぎのように書いてください．
+\documentclass{jarticle}           % 他に必要なスタイルファイルは各自で
+                                   % 指定してください
+\usepackage{abstract}
+\usepackage[dvipdfm]{graphicx}
+\title{研究テーマ\\論文概要}       % ２行にしたい場合は \\ で区切る
+\author{情報　二郎}                % 著者名
+\ordering{1}[]                     % {}発表順．ページ番号は自動算出．[]卒論はB，修論はM
+\begin{document}
+\maketitle                         % タイトルを表示する．
+     本文
+      ・
+      ・
+      ・
+\end{document}
+
+後はコンパイルして印刷して終りです．
+
+%%%%%[ ファイルの終りです ]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
