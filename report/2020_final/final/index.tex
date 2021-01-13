@@ -1,0 +1,71 @@
+\documentclass[12pt]{jarticle}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{iepaper}
+
+\usepackage{ccaption}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{bm,amsmath}
+\usepackage{arydshln}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{subfigure}
+\usepackage{comment}
+\usepackage{txfonts}
+\usepackage{inputenc}
+
+\title{学位論文本文テンプレート}
+\author{杉山 竜弥}
+\gakuseki{1171201092}[B] %[B]: Bachelor, [M]: Master
+\group{第 1 研究グループ}
+\shidou{もり先生 教授}
+% \syusa{Foo Bar 教授}
+% \hukusa{Hoge Hoge 教授}{Foo Foo 教授}{Bar Bar 准教授}
+
+%図番号を「(section番号).(図番号)」とするため．
+\makeatletter
+\renewcommand{\thefigure}{%
+	\thesection.\arabic{figure}}
+\@addtoreset{figure}{section}
+\makeatother
+\makeatletter
+\renewcommand{\thetable}{%
+	\thesection.\arabic{table}}
+\@addtoreset{table}{section}
+\makeatother
+\makeatletter
+\renewcommand{\theequation}{%
+	\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+\makeatother
+
+%目次・図一覧・表一覧
+\begin{document}
+\maketitle
+\pagenumbering{roman}
+\tableofcontents\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+\pagenumbering{arabic}
+
+
+%文書開始
+\include{./doc/01.introduction} %はじめに
+\clearpage
+\include{./doc/02.tech} %要素技術
+\clearpage
+\include{./doc/03.pred} %提案手法1（人狼予測）
+\clearpage
+\include{./doc/04.exp} %数値実験
+\clearpage
+\include{./doc/05.conclusion} %まとめと今後の課題
+\clearpage
+\include{./doc/06.ack} %謝辞
+
+\bibliographystyle{./jabbrvunsrt}
+\bibliography{index_hoge}
+\end{document}

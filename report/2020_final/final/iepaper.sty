@@ -1,12 +1,12 @@
-% iepaper.sty - 1996�N�x���{����w���H�w�ȏC�m�y�ё��Ƙ_���p�X�^�C
-%               ���t�@�C��
+% iepaper.sty - 1996年度大阪府立大学情報工学科修士及び卒業論文用スタイ
+%               ルファイル
 % $ID: iepaper.sty ver 1.0.4 1997.3.1 (C) L&D SOFT $
 %
-% ���̃t�@�C���̍Ō�Ƀh�L�������g�����Ă��܂��D
+% このファイルの最後にドキュメントがついています．
 %
-% MODIFIED for pLaTeX2e, 2004.3.4 
+% MODIFIED for pLaTeX2e, 2004.3.4
 %
-\typeout{�_���X�^�C�� ver 1.0.4 1997.3.1 (C) L&D SOFT - modified}
+\typeout{論文スタイル ver 1.0.4 1997.3.1 (C) L&D SOFT - modified}
 
 \renewcommand{\baselinestretch}{1.25}
 \oddsidemargin-1in\advance\oddsidemargin30mm
@@ -18,7 +18,7 @@
 %\footskip\footheight
 \topmargin-1in\advance\topmargin31mm%30mm
 \advance\topmargin-\headheight
-\textwidth160mm
+\textwidth158mm
 \textheight239mm%237mm
 \advance\textheight-\headsep\advance\textheight-\footskip
 \parindent1zw
@@ -35,7 +35,7 @@
   \def\@listi{\leftmargin\leftmargini\topsep4pt plus2pt minus2pt\parsep2pt
   plus1pt minus1pt\itemsep \parsep}}
 
-% \@trivlist�̒���
+% \@trivlistの調整
 \def\@trivlist{\@topsepadd\topsep
   \if@noskipsec \leavevmode \fi
   \ifvmode \advance\@topsepadd\partopsep \else \unskip\par\fi
@@ -46,7 +46,7 @@
   \@setpar{\if@newlist\else{\@@par}\fi}%
   \global\@newlisttrue \@outerparskip\parskip}
 
-% �Z�N�V�����R�}���h��
+% セクションコマンド等
 \newdimen\indentlength \indentlength5zw
 \def\changeindent#1{\indentlength#1\relax\@iepstyle}
 \newskip\@Indent
@@ -71,12 +71,12 @@
 {\baselineskip}{-1em}{\normalsize\bf}}
 \def\subparagraph{\@startsection{subparagraph}{4}{\parindent}
 {\baselineskip}{-1em}{\normalsize\bf}}
-% �ӎ�
+% 謝辞
 \def\acknowledgements{\section*{\@acknowledgename}\@mkboth{\@acknowledgename}{\@acknowledgename}
   \addcontentsline{toc}{section}{\@acknowledgename}\mark{}}
 \def\acknowledge{\acknowledgements}
-\def\acknowledgename#1{\def\@acknowledgename{#1}}\acknowledgename{�ӎ�}
-% �t�^
+\def\acknowledgename#1{\def\@acknowledgename{#1}}\acknowledgename{謝辞}
+% 付録
 \newif\if@appendix \@appendixfalse
 \def\appendix{\par
  \setcounter{section}{0}
@@ -84,15 +84,15 @@
  \setcounter{subsubsection}{0}
  \def\thesection{\Alph{section}}
  \def\theequation{\@Alph{\c@section}.\@arabic{\c@equation}}
- \addcontentsline{toc}{section}{�t�^}
+ \addcontentsline{toc}{section}{付録}
  \@appendixtrue
  \def\@sect##1##2##3##4##5##6[##7]##8{\ifnum ##2>\c@secnumdepth
-     \def\@svsec{}\else 
+     \def\@svsec{}\else
      \refstepcounter{##1}\edef\@svsec{\csname the##1\endcsname\hskip 1em }\fi
      \@tempskipa ##5\relax
-      \ifdim \@tempskipa>\z@ 
+      \ifdim \@tempskipa>\z@
         \begingroup ##6\relax
-          \@hangfrom{\hskip ##3\relax\ifnum##2=1 �t�^\fi\@svsec}{\interlinepenalty \@M ##8\par}%
+          \@hangfrom{\hskip ##3\relax\ifnum##2=1 付録\fi\@svsec}{\interlinepenalty \@M ##8\par}%
         \endgroup
        \csname ##1mark\endcsname{##7}\addcontentsline
          {toc}{##1}{\ifnum ##2>\c@secnumdepth \else
@@ -105,10 +105,10 @@
                        ##7}}\fi
      \@xsect{##5}}
 }
-% �Q�l����
+% 参考文献
 \newif\if@squarebracket\@squarebrackettrue
 \def\roundbracket{\@squarebracketfalse}
-\def\refname#1{\def\@refname{#1}}\refname{�Q�l����}
+\def\refname#1{\def\@refname{#1}}\refname{参考文献}
 \def\thebibliography#1{\section*{\@refname}\@mkboth{\@refname}{\@refname}
  \addcontentsline{toc}{section}{\@refname}
   \list{\if@squarebracket[\arabic{enumi}]\else(\arabic{enumi})\fi}%
@@ -145,13 +145,13 @@
      \if@squarebracket\def\@citea{]--[}\else\def\@citea{)--(}\fi\fi
     \advance\@tempcnta\m@ne\the\@tempcnta\@citea\the\@tempcntb}\fi\fi}
 
-% �w�b�f�B���O�X�̐ݒ�
+% ヘッディングスの設定
 \newif\if@master\@mastertrue
 
 \def\sectionmarkfont#1{\def\@sectmarkfont{\noexpand #1}}
 \sectionmarkfont{\normalsize}
 
-\newif\if@head@upper \@head@uppertrue%���̉p���啶����
+\newif\if@head@upper \@head@uppertrue%柱の英語を大文字に
 \def\headnoupper{\@head@upperfalse}
 
 \def\ps@iepheadings{\let\@mkboth\markboth
@@ -161,91 +161,96 @@
     \vskip2pt\hrule width\textwidth height1pt}}%
   \def\@oddfoot{\vbox{\hrule width\textwidth height1pt\vskip1pt%
     \hbox to\textwidth{\hfil\katu%
-      \if@master ���{����w��w�@�H�w�����ȓd�C�E���n��U�m�\���H�w����\else
-      ���{����w�H�w���m�\���H�w��\fi}}}%
+      \if@master 大阪府立大学大学院工学研究科電気・情報系専攻知能情報工学分野\else
+      大阪府立大学工学域電気電子系学類情報工学課程\fi}}}%
   \def\@evenfoot{\vbox{\hrule width\textwidth height1pt\vskip1pt%
     \hbox to\textwidth{\katu%
-      \if@master ���{����w��w�@�H�w�����ȓd�C�E���n��U�m�\���H�w����\else
-      ���{����w�H�w���m�\���H�w��\fi}}}%
+      \if@master 大阪府立大学大学院工学研究科電気・情報系専攻知能情報工学分野\else
+      大阪府立大学工学域電気電子系学類情報工学課程\fi}}}%
   \def\sectionmark##1{\markright{{\@sectmarkfont%
-    \ifnum\c@secnumdepth>\z@\if@appendix �t�^\fi\thesection\hskip1em\relax\fi
+    \ifnum\c@secnumdepth>\z@\if@appendix 付録\fi\thesection\hskip1em\relax\fi
    \if@head@upper\uppercase{##1}\else##1\fi}}}}
 \pagestyle{iepheadings}
 
-% ���\��
-\def\syusa#1{\def\@syusa{#1}}\syusa{}%�卸
-\def\hukusa#1#2{\def\@hukusai{#1}\def\@hukusaii{#2}}\hukusa{}{}%����
+% 中表紙
+\def\syusa#1{\def\@syusa{#1}}\syusa{}%主査
+\def\hukusa#1#2#3{\def\@hukusai{#1}\def\@hukusaii{#2}\def\@hukusaiii{#3}}\hukusa{}{}{}%副査
 
-\def\group#1{\def\@group{#1}}\group{} %�����O���[�v
-\def\shidou#1{\def\@shidou{#1}}\shidou{} %�w������
+\def\group#1{\def\@group{#1}}\group{} %研究グループ
+\def\shidou#1{\def\@shidou{#1}}\shidou{} %指導教官
 
-% �w�Дԍ�
+% 学籍番号
 \def\gakuseki#1{\def\@gakuseki{#1}\@ifnextchar[{\@ismaster}{\@ismaster[M]}}
 \def\@ismaster[#1]{\if#1M\@mastertrue\else\if#1B\@masterfalse\fi\fi}
 
 \newcount\nendoad\nendoad\year
+\advance\nendoad+1
 \ifcase\number\month\or\advance\nendoad-1\or\advance\nendoad-1\or\advance\nendoad-1\fi
-\newcount\nendo\nendo\nendoad\advance\nendo-1988
+\newcount\nendo\nendo\nendoad\advance\nendo-2018
 
 \def\maketitle{\begin{titlepage}
   \if@master \vbox to 210mm{
-  \large\vspace*{20mm}
-  \vbox to9mm{\hskip33mm\hbox to 70mm{\Huge �C�m�w�ʘ_��}}\par
-  \hskip0mm\vbox{\hrule height1pt width139mm}\par
-  \vskip1mm\vbox to 5mm{\hskip54mm\hbox to 30mm{��\hfill ��}}\par\vskip-3mm
+  \large\vspace*{10mm}
+  \vbox to 9mm{\hskip33mm\hbox to 70mm{\Huge 修士学位論文}}\par
+  \vskip-9.5mm\hskip33mm\vbox{\hrule height2pt width70mm}\par
+  \par\vskip5mm\hskip0mm\vbox{\hrule height1pt width139mm}\vskip2mm
+  %\hskip0mm\vbox{\hrule height1pt width139mm}\par
+  \vbox to 8mm{\hskip54mm\hbox to 30mm{題\hfill 目}}\par\vskip0mm
   \hskip0mm\vbox to 24mm{\vfil\hbox to 139mm{
     \parbox{139mm}{\LARGE\centering\baselineskip25pt\@title}}\par\vskip1pt}
-  \par\vskip-5mm\hskip0mm\vbox{\hrule height1pt width139mm}\vskip12mm
-  \hskip22mm\vbox to 5mm{\hbox to 83mm{ ��~��\hfil\@syusa\hfil}%
+  \par\vskip-1mm\hskip0mm\vbox{\hrule height1pt width139mm}\vskip12mm
+  \hskip22mm\vbox to 5mm{\hbox to 83mm{ 主~査\hfil\@syusa\hfil}%
     \hrule height1pt width83mm}\par\vskip6mm
-  \hskip22mm\vbox to 5mm{\hbox to 83mm{ ��~��\hfil\@hukusai\hfil}%
+  \hskip22mm\vbox to 5mm{\hbox to 83mm{ 副~査\hfil\@hukusai\hfil}%
     \hrule height1pt width83mm}\par\vskip6mm
-  \hskip22mm\vbox to 5mm{\hbox to 83mm{ ��~��\hfil\@hukusaii\hfil}%
-    \hrule height1pt width83mm}\par\vskip35mm
+  \hskip22mm\vbox to 5mm{\hbox to 83mm{ 副~査\hfil\@hukusaii\hfil}%
+    \hrule height1pt width83mm}\par\vskip6mm
+  \hskip22mm\vbox to 5mm{\hbox to 83mm{ 副~査\hfil\@hukusaiii\hfil}%
+    \hrule height1pt width83mm}\par\vskip25mm
   \hskip24mm\vbox{\hbox to 83mm{%
-      \mbox{��~��}\ifnum\nendo=0 ��\else\number\nendo\fi �N
-      �i \number\nendoad �N�j\mbox{�x~�C~��}}}\par\vskip10mm
+      \mbox{令~和}\ifnum\nendo=0 元\else\number\nendo\fi 年
+      （ \number\nendoad 年）\mbox{度~修~了}}}\par\vskip10mm
   \hskip5mm\vbox to 5mm{\hbox to132mm{%
-      \hbox to55mm{�iNo. \hfil\@gakuseki\hfil �j}\hfil
+      \hbox to55mm{（No. \hfil\@gakuseki\hfil ）}\hfil
     \@author\hfil}}\par\vskip-5mm
   \hskip4mm\vbox{\hrule height1pt width132mm}
   \vskip19mm
-  \hskip23mm\vbox to12mm{\hbox to 84mm{���{����w��w�@�H�w������}\vskip-2mm
-    \hbox to 84mm{�d�C�E���n��U �m�\���H�w����}}
+  \hskip23mm\vbox to12mm{\hbox to 84mm{大阪府立大学大学院工学研究科}\vskip-2mm
+    \hbox to 84mm{電気・情報系専攻 知能情報工学分野}}
 }
-\else %B4�p Masaki Onishi
+\else %B4用 Masaki Onishi
 \vbox to 210mm{
   \large\vspace*{15mm}
-  \vbox to9mm{\hskip27mm\hbox to 82mm{\Huge ���ƌ����񍐏�}}\par
+  \vbox to9mm{\hskip27mm\hbox to 82mm{\Huge 卒業研究報告書}}\par
   \hskip0mm\vbox{\hrule height1pt width139mm}\par
-  \vskip1mm\vbox to 5mm{\hskip54mm\hbox to 30mm{��\hfill ��}}\par\vskip-3mm
+  \vskip1mm\vbox to 5mm{\hskip54mm\hbox to 30mm{題\hfill 目}}\par\vskip-3mm
   \hskip0mm\vbox to 24mm{\vfil\hbox to 139mm{
     \parbox{139mm}{\Large\centering\baselineskip25pt\@title}}\par\vskip1pt}
   \par\vskip-5mm\hskip0mm\vbox{\hrule height1pt width139mm}\vskip42mm
-  \hskip22mm\vbox to 5mm{\hbox to 97mm{ ��~��~�O~��~�[~�v\hfil\@group}%
+  \hskip22mm\vbox to 5mm{\hbox to 97mm{ 研~究~グ~ル~ー~プ\hfil\@group}%
     \hrule height1pt width97mm}\par\vskip6mm
-  \hskip22mm\vbox to 5mm{\hbox to 97mm{ �w~��~��~��\hfil\@shidou}%
+  \hskip22mm\vbox to 5mm{\hbox to 97mm{ 指~導~教~員\hfil\@shidou}%
     \hrule height1pt width97mm}\par\vskip24mm
   \hskip21mm\vbox{\hbox to 89mm{%
-      \mbox{��~��}\ifnum\nendo=0 ��\else\number\nendo\fi �N
-      �i \number\nendoad �N�j\mbox{�x~��~��~}}}\par\vskip10mm
+      \mbox{令~和}\ifnum\nendo=0 元\else\number\nendo\fi 年
+      （ \number\nendoad 年）\mbox{度~卒~業~}}}\par\vskip10mm
   \hskip5mm\vbox to 5mm{\hbox to132mm{%
-      \hbox to60mm{�iNo. \hfil\@gakuseki\hfil �j}\hfil
+      \hbox to60mm{（No. \hfil\@gakuseki\hfil ）}\hfil
     \@author\hfil}}\par\vskip-5mm
   \hskip4mm\vbox{\hrule height1pt width132mm}
   \vskip24mm
-  \hskip22mm\vbox to12mm{\hbox to 97mm{���{����w�H�w���m�\���H�w��}}
+  \hskip22mm\vbox to12mm{\hbox to 97mm{大阪府立大学工学域電気電子系学類情報工学課程}}
 }\fi
 \end{titlepage}
 \setcounter{footnote}{0}       % Footnotes start at zero again.
 \let\thanks\relax
 \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\maketitle\relax}
 
-% �}�\�̐ݒ�
+% 図表の設定
 \def\engfigurename{Fig.}
 \def\engtablename{Table}
-\def\figurename{�}}
-\def\tablename{�\}
+\def\figurename{図}
+\def\tablename{表}
 
 %\def\fnum@figure@e{\engfigurename \thesection .\thefigure\hskip 5pt}
 %\def\fnum@figure@j{\figurename \thesection .\thefigure\hskip 5pt}
@@ -291,13 +296,13 @@
 % \hbox to\hsize{\hfil\box\@tempboxa\hfil}
 % \fi\fi}
 
-% �������̍Ē�`
+% 数式環境の再定義
 \newdimen\mathoffset \mathoffset\indentlength\divide\mathoffset by2
 \def\@offsetmath#1{\@tempdima#1\ifdim\@tempdima>\z@\hskip\@tempdima minus1pt\fi}
 \def\@mathlspace{\@offsetmath\mathoffset}
 \def\@mathrspace{\@offsetmath{-\mathoffset}}
 
-\def\[{\relax\ifmmode\@badmath\else 
+\def\[{\relax\ifmmode\@badmath\else
          \ifvmode \nointerlineskip \makebox[.6\linewidth]\fi$$\openup-1\jot
          \@mathlspace\relax %%$$ BRACE MATCH HACK
          \fi}
@@ -326,7 +331,7 @@ $$\openup-1\jot\halign to \displaywidth\bgroup\@eqnsel\@mathlspace\hskip\@center
 
 \long\def\wholepage#1{\vbox to .9\textheight{\vfill #1\vfill}}
 
-% �������������s��figure, table, center���̐ݒ�
+% 字下げ処理を行うfigure, table, center環境の設定
 \newdimen\@tmpindentlen
 
 \def\ifigure{\@ifnextchar [{\@ifigure}{\@ifig}}
@@ -356,68 +361,68 @@ $$\openup-1\jot\halign to \displaywidth\bgroup\@eqnsel\@mathlspace\hskip\@center
 \def\endicenter{\end{center}\end{minipage}}
 
 \endinput
-%%%%%[ README �K�����ǂ݉����� ]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%[ README 必ずお読み下さい ]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-��  �͂��߂�
-        ����8�N�x���{����w�H�w�����H�w�ȏC�m�y�ё��Ƙ_�������M��
-      �邽�߂̂��̂ł��DASCII��LaTeX(ver 2.09)�p�ł���CNTT��LaTeX�ł�
-      ����̕ۏ؂͂���܂���D
+○  はじめに
+        平成8年度大阪府立大学工学部情報工学科修士及び卒業論文を執筆す
+      るためのものです．ASCII版LaTeX(ver 2.09)用であり，NTT版LaTeXでの
+      動作の保証はありません．
 
-��  �g�p���������ɂ���
-        �ȉ��̎����ɊY������҂������C�{�X�^�C���t�@�C���̎g�p��������
-      �܂��D
-          �E���̕���(README)��ǂ܂Ȃ��ҁD
-          �E���̕��͂̓��e�𗝉��ł��Ȃ��ҁD
-          �E�g�p���������Ȃǂ��̕��͂ɏ�����Ă�������ɍ��ӂł��Ȃ��ҁD
-          �E�g�p���������Ȃǂ��̕��͂ɏ�����Ă�����e�����Ȃ����͎�
-            ��Ȃ��ҁD
-          �E����҂ɖ��f�Ŗ{�X�^�C���t�@�C����p���ċ��K�I���v�𓾂悤
-            �Ƃ���ҁD
-          �E�t���[�E�F�A != PDS�𗝉����Ă��Ȃ��ҁD
-          �E���̃t�@�C���𖳒f�������g�p����ҁD
+○  使用許諾条件について
+        以下の事項に該当する者を除き，本スタイルファイルの使用を許諾し
+      ます．
+          ・この文章(README)を読まない者．
+          ・この文章の内容を理解できない者．
+          ・使用許諾条件などこの文章に書かれている条件に合意できない者．
+          ・使用許諾条件などこの文章に書かれている内容を守れない又は守
+            らない者．
+          ・著作者に無断で本スタイルファイルを用いて金銭的利益を得よう
+            とする者．
+          ・フリーウェア != PDSを理解していない者．
+          ・このファイルを無断複製し使用する者．
 
-��  ���쌠�ɂ���
-      �E�{�X�^�C���t�@�C���́C�t���[�E�F�A�ł���C���쌠��������Ă���
-        �܂���̂ŁC����Ȃ��悤���肢���܂��D
-      �E�{�X�^�C���t�@�C���̒��쌠�͐X ���i���ۗL���܂��D
-      �E�{�X�^�C���t�@�C���̑��_�p���\���̒��쌠�͑吼 ���P���ۗL���܂��D
-      �E�{�X�^�C���t�@�C���y�т��̕��͒��̒��쌠�\���͏����Ȃ��ŉ������D
+○  著作権について
+      ・本スタイルファイルは，フリーウェアであり，著作権を放棄しており
+        ませんので，誤解なきようお願いします．
+      ・本スタイルファイルの著作権は森 隆司が保有します．
+      ・本スタイルファイルの卒論用中表紙の著作権は大西 正輝が保有します．
+      ・本スタイルファイル及びこの文章中の著作権表示は消さないで下さい．
 
-��  �Ĕz�z�ɂ���
-        �{�X�^�C���t�@�C���̍Ĕz�z���s���ꍇ�́C���̎�����K�����悤
-      ��낵�����肢���܂��D
-          �E�{�X�^�C���t�@�C���̔z�z���s���O�ɁC�z�z�҂����쌠�҂ɘA��
-            ���邱�ƁD
-          �E���̕��͂��܂ޑS�Ẵt�@�C���ꎮ�����̂܂ܓ��������`�Ŕz�z
-            ���邱�ƁD
-          �E�{�X�^�C���t�@�C���̉��ς͎��R�ɍs���Ē����č\���܂��񂪁C
-            ���ς����X�^�C���t�@�C����z�z����ꍇ�ɂ́C���ώҁC���Ϗ�
-            ���Ȃǂ����m�ɂ킩��悤�ɂ��ĉ������D�����āC���̕��͂���
-            �ς����ɕK���Y�t���C�z�z���s���O�ɔz�z�҂����쌠�҂ɕK���A
-            �����ĉ������D
+○  再配布について
+        本スタイルファイルの再配布を行う場合は，次の事項を必ず守るよう
+      よろしくお願いします．
+          ・本スタイルファイルの配布を行う前に，配布者が著作権者に連絡
+            すること．
+          ・この文章を含む全てのファイル一式をそのまま同梱した形で配布
+            すること．
+          ・本スタイルファイルの改変は自由に行って頂いて構いませんが，
+            改変したスタイルファイルを配布する場合には，改変者，改変場
+            所などが明確にわかるようにして下さい．そして，この文章を改
+            変せずに必ず添付し，配布を行う前に配布者が著作権者に必ず連
+            絡して下さい．
 
-��  �g�p��̒���
-        �{�X�^�C���t�@�C���͖��ۏ؂ł��D�{�X�^�C���t�@�C���̎g�p�ɂ��
-      �Đ������@���Ȃ�g���u���C���Q�̐ӂ����쌠�҂͕���Ȃ����̂Ƃ���
-      ���D�K�������g�̔��f�C�ӔC�̂��Ƃɂ��g�p�������D
-        �o�O���|�[�g�C���ӌ��C�����z�C�킩��Ȃ����Ƃ�����܂�����C��
-      �҂܂ł��m�点�������D
+○  使用上の注意
+        本スタイルファイルは無保証です．本スタイルファイルの使用によっ
+      て生じた如何なるトラブル，損害の責も著作権者は負わないものとしま
+      す．必ずご自身の判断，責任のもとにご使用下さい．
+        バグレポート，ご意見，ご感想，わからないことがありましたら，作
+      者までお知らせ下さい．
 
-��  �X�^�C���t�@�C���̎g�p�@
-        �܂��C�X�^�C���t�@�C�����p�X�̒ʂ��Ă���f�B���N�g���ɒu���܂��D
-      ���ɁCTeX�t�@�C���̏������̈��������܂��D
+○  スタイルファイルの使用法
+        まず，スタイルファイルをパスの通っているディレクトリに置きます．
+      次に，TeXファイルの書き方の一例を示します．
 
-          %%%%%  �ǂݍ��ރX�^�C���t�@�C�����w�肵�܂��D
-          %%%%%  ���ɕK�v�ȃX�^�C���t�@�C���͊e���Ŏw�肵�Ă��������D
-          %%%%%  �A���Ca4j, twocolumn, twoside���̎w��͂��Ȃ��ŉ������D
+          %%%%%  読み込むスタイルファイルを指定します．
+          %%%%%  他に必要なスタイルファイルは各自で指定してください．
+          %%%%%  但し，a4j, twocolumn, twoside等の指定はしないで下さい．
           \documentstyle[12pt,iepaper]{jarticle}
-          \title{�_�����}
-          \author{����}
-          \gakuseki{�w�Дԍ�}[B]  %\
-          \group{}                %| ���_�̏ꍇ.
+          \title{論文題目}
+          \author{氏名}
+          \gakuseki{学籍番号}[B]  %\
+          \group{}                %| 卒論の場合.
           \shidou{}               %/
-          \gakuseki{�w�Дԍ�}[M]  % \
-          \syusa{}                % | �C�_�̏ꍇ�D
+          \gakuseki{学籍番号}[M]  % \
+          \syusa{}                % | 修論の場合．
           \hukusa{}{}             % /
           \begin{document}
           \maketitle
@@ -427,8 +432,8 @@ $$\openup-1\jot\halign to \displaywidth\bgroup\@eqnsel\@mathlspace\hskip\@center
           \pagenumbering{arabic}
           \section{}
           %%%%%
-          %%%%%  �c�O�Ȃ���C�{���܂Ŏ����쐬�͂ł��܂���D
-          %%%%%  �{���͊e���ł������������D
+          %%%%%  残念ながら，本文まで自動作成はできません．
+          %%%%%  本文は各自でお書き下さい．
           %%%%%
           \acknowledgements
           \begin{thebibliography}
@@ -438,24 +443,24 @@ $$\openup-1\jot\halign to \displaywidth\bgroup\@eqnsel\@mathlspace\hskip\@center
           \section{}
           \end{document}
 
-      ��̓R���p�C�����Ĉ�����ďI��ł��D
+      後はコンパイルして印刷して終りです．
 
-��  �ǉ��y�яC�����ꂽ�R�}���h�y�уp�����[�^�̗��p�@
+○  追加及び修正されたコマンド及びパラメータの利用法
 
-%��  \caption[1st_entry]{japanese_headings}{english_headings}
-%        ���{��Ɖp��̃^�C�g�����w�肷��悤�ɂȂ��Ă��܂��D�ȗ��͂ł�
-%      �܂���D
-%      1st_entry �̓I���W�i���� \caption �Ɠ������̂ł��D
-%      �}��\�̔ԍ��́C(�Z�N�V�����ԍ�).(�}��\�̔ԍ�)�ƂȂ�܂��D
+%◆  \caption[1st_entry]{japanese_headings}{english_headings}
+%        日本語と英語のタイトルを指定するようになっています．省略はでき
+%      ません．
+%      1st_entry はオリジナルの \caption と同じものです．
+%      図や表の番号は，(セクション番号).(図や表の番号)となります．
 
-��  \indentlength
-        \indentlength���������������̈��{���̗̈�ɂ��܂��D�A���C
-      �Z�N�V�������͎��������s���܂���D
-      ���̃p�����[�^�̒l��ύX����Ƃ���\changeindent���g�p���܂��D
-      �p�����[�^�̕ύX�́C\section�R�}���h�̌�ŗL���ł��D
+◆  \indentlength
+        \indentlengthだけ字下げした領域を本文の領域にします．但し，
+      セクション名は字下げを行いません．
+      このパラメータの値を変更するときは\changeindentを使用します．
+      パラメータの変更は，\sectionコマンドの後で有効です．
           \changeindent{2cm}
-      �������[�h ( \[ \] �� \begin{equation}...\end{equation} )�ł�
-      ���������s���܂���D\mathoffset�Œ������s���Ă��܂��D
+      数式モード ( \[ \] や \begin{equation}...\end{equation} )では
+      字下げが行われません．\mathoffsetで調整を行っています．
           |<-------------- \textwidth ----------->|
           |           |                           |
           |1 section  |                           |
@@ -468,9 +473,9 @@ $$\openup-1\jot\halign to \displaywidth\bgroup\@eqnsel\@mathlspace\hskip\@center
           |           |                           |
           |           |                           |
 
-��  \mathoffset
-        �����̃e�L�X�g�̒��S����̃I�t�Z�b�g���w�肵�܂��D�p�����[�^��
-      �ύX��\setlength���g�p���܂��D
+◆  \mathoffset
+        数式のテキストの中心からのオフセットを指定します．パラメータの
+      変更は\setlengthを使用します．
           \setlength{\mathoffset}{\indentlength}
 
           |                     | \mathoffset = 0     |
@@ -481,102 +486,102 @@ $$\openup-1\jot\halign to \displaywidth\bgroup\@eqnsel\@mathlspace\hskip\@center
           |         |           |             |       |
           |       X = a                     X = a     |
 
-��  \sectionmarkfont{fontsize}
-        ���̃Z�N�V�����������ۂɗp����t�H���g�T�C�Y���w�肵�܂��D
+◆  \sectionmarkfont{fontsize}
+        柱のセクションを書く際に用いるフォントサイズを指定します．
           \sectionmarkfont{\normalsize}
 
-��  \wholepage{figure or table}
-        1�̐}��\��1�y�[�W�ɂ����Ƃ��ɁC���������ɃZ���^�����O���s
-      ���܂��D
+◆  \wholepage{figure or table}
+        1つの図や表を1ページにいれるときに，垂直方向にセンタリングを行
+      います．
           \begin{figure}
           \wholepage{epsfile{file=sample.pstex}\caption{foo}{bar}}
           \end{figure}
 
-��  \ifigure, \itable, \icenter
-        ��������\indentlength�X�L�b�v�����ʒu����Z���^�����O���s���D
+◆  \ifigure, \itable, \icenter
+        横方向に\indentlengthスキップした位置からセンタリングを行う．
 
-���������́C�����C�������������̂ł��D
+ここから後は，私が修正を加えたものです．
 
-��  \acknowledgements
-        �ӎ��������Ƃ��Ɏg���܂��D�Z�N�V�����ԍ��Ȃ���`�ӎ�'�ƕ\�����C
-      �ڎ��̕��ɂ����l�ɃZ�N�V�����ԍ��Ȃ���`�ӎ�'�ƕ\�����܂��D
+◆  \acknowledgements
+        謝辞を書くときに使います．セクション番号なしで`謝辞'と表示し，
+      目次の方にも同様にセクション番号なしで`謝辞'と表示します．
 
-��  \acknowledgename{title}
-        �ӎ��Ə������� title �ɒu�������܂��D
+◆  \acknowledgename{title}
+        謝辞と書かずに title に置き換えます．
 
-��  \refname{title}
-        �Q�l�����Ə������� title �ɒu�������܂��D
+◆  \refname{title}
+        参考文献と書かずに title に置き換えます．
 
-��  \roundbracket
-        �Q�l�����̔ԍ���()�Ŋ���D�f�t�H���g��[]�ł��D
+◆  \roundbracket
+        参考文献の番号を()で括る．デフォルトは[]です．
 
-��  \appendix
-        �t�^�������͂��߂�O�Ɏw�肵�܂��D�Z�N�V�����ԍ��͉p�啶����A
-      ����n�܂�܂��D�{���ł͎��̂悤�ɂȂ�܂��D
-          �t�^A �v�Z�̃t�H���[
-                ��(1)��...
+◆  \appendix
+        付録を書きはじめる前に指定します．セクション番号は英大文字でA
+      から始まります．本文では次のようになります．
+          付録A 計算のフォロー
+                式(1)の...
           A.1 ...
-          �t�^B ...
-      �ڎ��́C���̂悤�ɂȂ�܂��D
-          �ڎ�
-          1 �͂��߂�
-          �t�^
-          A �v�Z�̃t�H���[
+          付録B ...
+      目次は，次のようになります．
+          目次
+          1 はじめに
+          付録
+          A 計算のフォロー
              A.1
           B
 
-��  \changecontentsname{name}
-        �ڎ���`name'�ɒu�������܂��D
+◆  \changecontentsname{name}
+        目次を`name'に置き換えます．
 
-��  �Q�l
-        �t�^���������� \appendix�̈ʒu�ɂ��āC���݂킩���Ă��邱�Ƃ�
-      ���ď����Ă����܂�(�v�{���̕񍐂ɂ��)�D
-      \include�R�}���h��p���ĕt�^��ǂݍ��ނƂ��ɗႦ�΁C���̂悤�ɏ�
-      ���Ă��܂��ƁC�ڎ��ŕt�^�Ƃ�����������ԍŌ�ɂ��邱�Ƃ�����悤
-      �ł��D
+○  参考
+        付録を書く時の \appendixの位置について，現在わかっていることに
+      ついて書いておきます(益本氏の報告による)．
+      \includeコマンドを用いて付録を読み込むときに例えば，次のように書
+      いていますと，目次で付録という文字が一番最後にくることがあるよう
+      です．
           \include{end}
           \appendix
           \include{appendix1}
-      \include�̂�����\input��p����ꍇ�ɂ́C���̖��͐����Ȃ��悤
-      �ł��D
-      �Ώ��@�Ƃ��܂��ẮC���ɂ�������̂��l�����܂��D
-          1. \input�R�}���h��p����D
-          2. \appendix�����C���̃t�@�C���ɏ�������\include�œǂݍ���
-             �t�@�C���ɏ����Ă����D
-      �t�^�������Ƃ��̎Q�l�ɂ��ĉ������D
+      \includeのかわりに\inputを用いる場合には，この問題は生じないよう
+      です．
+      対処法としましては，次にあげるものが考えられます．
+          1. \inputコマンドを用いる．
+          2. \appendixをメインのファイルに書かずに\includeで読み込む
+             ファイルに書いておく．
+      付録を書くときの参考にして下さい．
 
-��  �ӎ�
-        �{�X�^�C���t�@�C�����쐬����ɓ�����C�I���W�i�����X�^�C���t�@
-      �C��(A4.tex, eepaper.sty, ultracit.sty)���쐬����܂���tks@leda��
-      �y�ё��ƌv��񍐏��p���\�����쐬���Ă����������吼 ���P���C�o�O��
-      ���𒸂����n�� �_�i���C�M�d�ȏ��𒸂����v�{ ���K���Ɋ��Ӓv���܂��D
+○  謝辞
+        本スタイルファイルを作成するに当たり，オリジナルをスタイルファ
+      イル(A4.tex, eepaper.sty, ultracit.sty)を作成されましたtks@leda氏
+      及び卒業計画報告書用中表紙を作成していただいた大西 正輝氏，バグ報
+      告を頂いた渡辺 浩司氏，貴重な情報を頂いた益本 昌幸氏に感謝致します．
 
-��  ���ϗ���
-        * �͖����J�łł��D
+○  改変履歴
+        * は未公開版です．
 
       version 1.0.0 1997.2.27
-        �Eeepaper2.sty, ultracit.sty, aa4.tex��1�̃t�@�C���ɂ܂Ƃ߂�
-          �p�����[�^�y�уR�}���h�̔������D
+        ・eepaper2.sty, ultracit.sty, aa4.texを1つのファイルにまとめて
+          パラメータ及びコマンドの微調整．
       version 1.0.1 1997.2.27
-        �E�C�m�w�ʘ_���p���\���̍쐬�D
+        ・修士学位論文用中表紙の作成．
       version 1.0.2 1997.2.27  +(Masaki Onishi)
-        �E���ƌ����񍐏����\���̍쐬.
+        ・卒業研究報告書中表紙の作成.
       version 1.0.3 1997.2.28
-        �E\acknowledgements�R�}���h��\acknowledge�ɂȂ��Ă����̂��C��
-          (�n�� �_�i���̃o�O�񍐂ɂ��)�D
-        �E\appendix�R�}���h�̌�C�����ԍ���(1.1)�̂悤�ɂȂ��Ă����̂�
-          (A.1)�ƂȂ�悤�ɏC��(�n�� �_�i���̃o�O�񍐂ɂ��)�D
+        ・\acknowledgementsコマンドが\acknowledgeになっていたのを修正
+          (渡辺 浩司氏のバグ報告による)．
+        ・\appendixコマンドの後，数式番号が(1.1)のようになっていたので
+          (A.1)となるように修正(渡辺 浩司氏のバグ報告による)．
       version 1.0.4 1997.3.1
-        �E���\���ŔN�x�̌v�Z�Ɍ�肪�������̂𒼂����D
+        ・中表紙で年度の計算に誤りがあったのを直した．
 
-��  ��ҁE���쌠�ҘA����
-                       mori@com.cs.osakafu-u.ac.jp (1997�N3���܂ŗL��)
+○  作者・著作権者連絡先
+                       mori@com.cs.osakafu-u.ac.jp (1997年3月まで有効)
                                                               L&D SOFT
                        onishi@com.cs.osakafu-u.ac.jp
                                                          Masaki Onishi
 
-��  ���܂�
-        �ŋ߃y���l�[���̗R����m�肽�����Ă���l�������悤��. . .
-      (�Жڂ��ނ�C�l�w���w��O�ɂ��ĂȂ���)����͔閧�ł��D(by��̏b�_��)
+○  おまけ
+        最近ペンネームの由来を知りたがっている人が多いような. . .
+      (片目をつむり，人指し指を唇にあてながら)それは秘密です．(by謎の獣神官)
 
-%%%%%[ �t�@�C���̏I��ł� ]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%[ ファイルの終りです ]%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

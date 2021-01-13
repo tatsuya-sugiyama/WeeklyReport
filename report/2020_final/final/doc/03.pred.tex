@@ -1,0 +1,65 @@
+\newpage
+\changeindent{0cm}
+\section{人狼予測モデル}
+\label{sec:pred}
+\changeindent{2cm}
+
+
+%4.1 人狼予測モデル
+\changeindent{0cm}
+\subsection{提案手法}
+\label{sec:pred.01}
+\changeindent{2cm}
+
+\changeindent{0cm}
+\subsubsection{ゲームログ}
+\label{sec:pred.01_01}
+\changeindent{2cm}
+
+\begin{figure}[t]
+     \begin{center}
+       \includegraphics[width=13cm,clip]{./fig/03.pred/log.eps}
+      \end{center}
+      \caption{ゲームログ}
+     \label{fig:04_log}
+\end{figure}
+
+
+\changeindent{0cm}
+\subsubsection{実験概要}
+\label{sec:pred.01_03}
+\changeindent{2cm}
+
+
+\begin{table}[t]
+	\caption{実験パラメータ[\%]}
+	\label{tb:04_param1}
+	\vspace{3mm}
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		ID数&112\\
+		\hline
+		入力次元&120\\
+		\hline
+		埋め込み層&15\\
+		\hline
+		中間層&300\\
+		\hline
+		出力次元&5\\
+		\hline
+		epoch&3000\\
+		\hline
+		最適化手法&Adam\\
+		\hline
+		誤差関数&Softmax\_entropy\\
+		\hline
+	\end{tabular} 
+\end{table}
+
+
+
+
+
+
+
