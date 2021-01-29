@@ -1,28 +1,65 @@
 \newpage
 \changeindent{0cm}
-\section{人狼予測モデル}
+\section{ショートカット探索}
 \label{sec:pred}
 \changeindent{2cm}
+DARTSで柔軟なアーキテクチャを探索するため,
+深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を探索する.
+VGG19は16層の畳み込み層と3層の線形結合層を持つ.
+このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
+性能を向上させることを目的とする.
 
+モデル中の潜在的特徴は高さ・幅・チャンネル数を持つデータであるが,
+特徴の次元は場所によって異なるため, ショートカットは次元を変換する必要がある.
+したがってショートカット関数は以下のように設定した.
+\begin{enumerate}
+  \item 次元が同じ場合：恒等関数
+  \item チャンネル数が違う場合：Pointwise Convolution
+  \item 高さと幅が半分の場合：Factorized Reduce
+  \item それ以外の場合：ショートカットを定義しない
+\end{enumerate}
+ショートカットに使用する関数の制限によってショートカット位置の候補は61であるため,
+探索空間は$2^{61}$である.
+演算子の種類は固定することで, アーキテクチャ $\alpha$ は畳み込み部に相当するグラフの重みをもつ隣接行列と定義した.
 
-%4.1 人狼予測モデル
+%4.1
 \changeindent{0cm}
-\subsection{提案手法}
+\subsection{提案手法:DARTS}
 \label{sec:pred.01}
 \changeindent{2cm}
 
-\changeindent{0cm}
-\subsubsection{ゲームログ}
-\label{sec:pred.01_01}
-\changeindent{2cm}
+ショートカットの本数も探索するため,
+$\alpha$ に対する重み補正 $\beta$ を (\ref{equ:cut}) 式 で定義する.
+\begin{equation}
+  \label{equ:cut}
+  x_i = f^{\mathrm{c}}_{i-1, i}(x_{i-1}) + \beta_i \sum_{j \in S_i} \alpha_{ij} f^{\mathrm{s}}_{j, i} (x_j)
+\end{equation}
+ここで $f^{\mathrm{c}}(・)$, $f^{\mathrm{s}}(・)$ は, VGGの畳み込み関数とショートカット関数,
+$S_i$ はノード $i$ とショートカットで接続する先行(predecessor)ノードのインデックス集合である.
 
-\begin{figure}[t]
-     \begin{center}
-       \includegraphics[width=13cm,clip]{./fig/03.pred/log.eps}
-      \end{center}
-      \caption{ゲームログ}
-     \label{fig:04_log}
-\end{figure}
+ただし$\beta=0$で勾配の更新ができなくなるので,
+\begin{equation}
+  \label{equ:beta}
+  \hat{\beta} = \begin{cases}
+    \exp(\beta - 1) & (\beta \leq 1) \\
+    \log(\beta) + 1 & (\mathrm{otherwise})
+  \end{cases}
+\end{equation}
+で0とならないように補正した $\hat{\beta}$ を用いた.
+
+学習の手順を以下に示す.
+\begin{enumerate}
+  \item 探索：アーキテクチャ $\alpha$ の訓練
+  \item 構成：$\alpha$ からネットワークを構成
+  \item 評価：得られたネットワークをバックプロパゲーションにより訓練し, テストデータで性能を評価
+\end{enumerate}
+
+構成手法は複数考えられるため,
+\begin{itemize}
+  \item 構成手法A : predecessorsの中で大きい順に採択
+  \item 構成手法B : 閾値以上のエッジを採択
+\end{itemize}
+で実験した.
 
 
 \changeindent{0cm}
@@ -31,35 +68,114 @@
 \changeindent{2cm}
 
 
-\begin{table}[t]
-	\caption{実験パラメータ[\%]}
-	\label{tb:04_param1}
-	\vspace{3mm}
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline
-		ID数&112\\
-		\hline
-		入力次元&120\\
-		\hline
-		埋め込み層&15\\
-		\hline
-		中間層&300\\
-		\hline
-		出力次元&5\\
-		\hline
-		epoch&3000\\
-		\hline
-		最適化手法&Adam\\
-		\hline
-		誤差関数&Softmax\_entropy\\
-		\hline
-	\end{tabular} 
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験1の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline\hline
+      Step & Architecture Search \\ \hline
+      Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
+      data size & train : valid : test = 25000 : 25000 : 10000\\ \hline\hline
+      Step & Evaluation \\ \hline
+      Optim($w$) & SGD(lr=0.0090131, momentum=0.9) \\ \hline
+      Scheduler($w$) & Step($\gamma$=0.23440, stepsize=100) \\ \hline
+      data size & train : valid : test = 50000 : 0 : 10000\\ \hline
+    \end{tabular}
+    \label{tab:setting1}
+  \end{center}
 \end{table}
 
+表 \ref{tab:setting1} に探索段階と評価段階の実験設定を示す.
+探索段階はDARTSを参考に, 評価段階はoptunaで最適化した値を使用した.
+データセットは, 訓練画像が 32 pixel 四方で訓練データを50000枚持つ CIFAR-10 を利用して,
+10クラス分類問題を解いた.
+
+探索時間は, 150 epochとし, 50 epochごとにその時点の $\alpha$ の性能を評価した.
+構成段階では手法A, Bに加えて比較のため,
+ショートカット数が同じとなる条件でランダムに選択する手法でも実験する.
+各手法において10回試行して統計的な性能を比較した.
 
 
 
+\changeindent{0cm}
+\subsection{提案手法:DARTS+TDGA}
+\label{sec:pred.02}
+\changeindent{2cm}
+
+実験1では $\alpha$ の学習度によって重み $w$ の学習しやすさに偏りがあったため,
+収束するグラフ構造にばらつきが見られた.
+
+そこで個体表現を $\alpha$ とした遺伝的アルゴリズムによって,
+アーキテクチャの多様性を維持しつつ, 安定的な
+ネットワーク構造の学習を図った.
+しかし単純に個体数を増やすと, 計算コストが定数倍されるので,
+重み $w$ は全体で共有する One-Shot モデルを利用することで,
+高速化した.
+
+% GAには評価関数の全順序性が必要となるので,（これは間違い）
+各パラメータ集合の学習ステップを分離し個体間で不平等がないように設計した.
+
+\begin{enumerate}
+  \item 一様乱数で初期個体生成
+  % \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
+  \item 重み $w$ を $\displaystyle \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
+  \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
+  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{smp})$ で個体 $\alpha$ を評価・選択
+  \item 交叉・突然変異
+  \item 収束するまで 2. に戻る
+\end{enumerate}
+ただし
+% $P$は個体群,
+$\bar{\alpha}$ は各個体の平均,
+$\alpha^\mathrm{smp}$ は実験1で有効だった構成手法Bで隣接行列にサンプリングした $\alpha$ である.
+
+学習後最終世代の個体の性能を実験1と同じ条件で評価した.
 
 
+\changeindent{0cm}
+\subsubsection{実験概要}
+\label{sec:pred.02_03}
+\changeindent{2cm}
 
+
+表 \ref{tab:setting2}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
+モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
+初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.5 の確率で操作する一様交叉を使用した.
+突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
+
+
+\begin{table}[t]
+  \begin{center}
+    \caption{実験2の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
+      % Loss & Cross Entropy Loss \\ \hline
+      % batch size & 64 \\ \hline
+      data size & train : valid = 25000 : 10000 \\ \hline
+    \end{tabular}
+    \label{tab:setting2}
+  \end{center}
+\end{table}
+
+\begin{table}[t]
+  \begin{center}
+    \caption{GAの設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      個体数 & 15 \\ \hline
+      世代数 & 20 \\ \hline \hline
+      選択 & トーナメント \\ \hline
+      サイズ & 2 \\ \hline \hline
+      交叉 & 一様交叉 \\ \hline
+      交叉率 & 0.8 \\ \hline \hline
+      変異 & ガウス分布 \\ \hline
+      変異率 & 0.2 \\ \hline
+    \end{tabular}
+    \label{tab:setting_ga}
+  \end{center}
+\end{table}

@@ -4,36 +4,47 @@
 \label{sec:tech}
 \changeindent{2cm}
 
+% TODO
+% - DARTSの説明 論文を見ながらLoss, w* などの補足を増やす
+% - TDGAの説明 自分の言葉に置き換える and 拡張した部分＋エントロピー部分の説明
+
 %9-12
 本章では，本研究の提案手法に用いた技術について説明する．
 
 %LSTM
 \changeindent{0cm}
-\subsection{深層学習}
-\changeindent{2cm}
-\label{sec:02_deep}
-
-
-
-\changeindent{0cm}
 \subsection{Neural Architecture Search}
 \changeindent{2cm}
-\label{sec:02_nas}
-Neural Architecture Search(NAS)\cite{DBLP:journals/corr/ZophL16}は,
-機械学習の分野で使用されているニューラルネットワークの設計を自動化する手法である.
+\label{sec:02_deep}
+本章では本研究で用いたDifferentiable Architecture Search(DARTS)をはじめとした
+Neural Architecture Search(NAS) について説明する.
+
+従来の機械学習では手作業によって設計されたモデルをデータセットで学習し重みを最適化するが,
 ニューラルネットワークの設計は直感的でなく,
 チューニングに人による労力を多く必要とするため,
 ニューラルネットワークの設計は非常に困難である.
-
-NASはニューラルネットワークが構造に関する設定の文字列で表現できることを利用して,
-この文字列を生成する
-Recurrent Neural Network(RNN)を
-強化学習 Reinforcement Learning(RL)によって学習する.
-
+NAS は機械学習の分野で使用されているニューラルネットワークの設計を自動化する手法である.
 
 
 \changeindent{0cm}
-\subsection{Differentiable Architecture Search}
+\subsubsection{Neural Architecture Search with Reinforcement Learning}
+\changeindent{2cm}
+\label{sec:02_nas}
+Neural Architecture Search with Reinforcement Learning(NAS with RL)\cite{DBLP:journals/corr/ZophL16}は,
+ニューラルネットワークが構造に関する設定の文字列で表現できることを利用して,
+この文字列を生成する Recurrent Neural Network(RNN)を
+強化学習 Reinforcement Learning(RL)によって学習する.
+
+RNNはレイヤーごとにフィルタの高さ・幅, ストライドの高さ・幅, フィルタ数を決定し,
+RNNによって生成された構造は, ニューラルネットワークとしてその重みが学習され
+テストの正答率によって性能が評価される.
+その性能から得られた報酬で, 方策勾配法(Policy gradient method)による RNN の更新を行い,
+アーキテクチャが最適化される.
+
+NAS with RL は高い性能を達成した一方で, 計算に数千 GPU 日かかるという問題もある.
+
+\changeindent{0cm}
+\subsubsection{Differentiable Architecture Search}
 \changeindent{2cm}
 \label{sec:02_darts}
 
@@ -55,8 +66,8 @@ $\mathcal{O}$ は探索する演算子の候補集合,
 $\alpha^{(i, j)}$ はエッジ $(i, j)$ の混合演算子の重みベクトルである.
 DARTSは勾配降下法によって連続変数集合$\alpha$を学習する.
 
-$\alpha$ とレイヤーの重み $w$ のBi-Level最適化問題を $w$ の近似によって同時に学習し,
-NASにおいて 3000 GPU days 必要なタスクに対してDARTSは 3.3 GPU days まで高速化した.
+% $\alpha$ とレイヤーの重み $w$ のBi-Level最適化問題を $w$ の近似によって同時に学習し,
+% NASにおいて 3000 GPU days 必要なタスクに対してDARTSは 3.3 GPU days まで高速化した.
 
 DARTSでは次元を統一するためセルと呼ぶ小さなネットワーク構造を重ねたモデルを利用する.
 セルを構成するノードは2つのノードからの演算子エッジを持ち,
@@ -77,29 +88,68 @@ DARTSの問題点として位置と演算子の種類は探索できるが,
 
 % 整数値と実数値
 
-% 初期収束問題
-GAには偶然適応度の高くなった個体だけが選択され続け,
-個体群を同じ個体が占める初期収束問題がある.
-問題によって適切な交叉・突然変異を設定する必要がある.
+選択は現世代から次世代の個体群を選ぶ操作である.
+トーナメント選択
 
+交叉は現世代から子を生成する操作である.
+遺伝子型が整数型, 小数型, 順序型かによってそれぞれ交叉方法が存在する.
+整数型では,
+\begin{itemize}
+  \item 1点交叉 : 染色体中の1箇所でランダムに切断し, 親の遺伝子を交叉する
+  \item 多点交叉 : 染色体中の複数箇所でランダムに切断し, 親の遺伝子を互い違いに交叉する
+  \item 一様交叉 : 遺伝子座ごとの交叉確率によって, 各遺伝子座でランダムに親の遺伝子を交叉する
+\end{itemize}
+などがあり, 少数型では加えて親の遺伝子をランダムにブレンドする平均化交叉もある.
+
+突然変異は個体をランダムに変化させる操作である.
+解が収束した場合, 交叉にはない局所解からの脱出という効果を持つが,
+突然変異率が高すぎるとランダム探索になるため十分に小さな値を用いる.
+変異方法には, 各遺伝子座でランダムに対立遺伝子へ置き換える方法, 少数値に対して摂動を与える方法などがある.
+
+% 初期収束問題
+またGAには初期収束という, 偶然適応度の高くなった個体だけが選択され続け,
+個体群を同じ個体が占める問題がある.
+この多様性が失われた状態になると単純なランダム探索と変わらない効率になるため,
+パラメータ調整などの方法で回避する必要がある.
+
+交叉・突然変異の手法やパラメータは問題によって異なるため, 適切なものを設定するのは自明ではない.
 
 \changeindent{0cm}
-\subsection{Thermo?? Dinamic?? Genetic Algorithm}
+\subsubsection{Thermodynamical Genetic Algorithm}
 \changeindent{2cm}
 \label{sec:02_tdga}
 
+Thermodynamical Genetic Algorithm (TDGA) は熱力学における自由エネルギー最小化をモデルにした,
+GAで個体群の多様性を維持する手法である.
+選択に温度とエントロピーの概念を導入し, 初期収束問題を解決した.
 
-% \begin{eqnarray}
-% s_{t} &=& f（U_{x_{t}}+W_{s_{t-1}}） \nonumber \\
-% y_{t} &=& g（V_{s_{t}}） \nonumber \\[8pt]
-% f（z） &=& \frac{1}{1+\exp(-z)} \nonumber \\[8pt]
-% g（z_{m}） &=& \frac{\exp(z_{m}）}{\sum_{k}\exp(z_{k})} \nonumber
-% \end{eqnarray}
-%
-% \begin{figure}[t]
-%      \begin{center}
-%        \includegraphics[width=12cm,clip]{./fig/02.tech/rnn.eps}
-%       \end{center}
-%       \caption{RNN ネットワーク}
-%      \label{fig:02_net}
-% \end{figure}
+シミュレーテッドアニーリング法 (Simulated Annealing: SA) は
+次のエネルギー関数 (\ref{eq:tdga}) 式を用いて
+最適化問題を解く一般的な最適化手法である．
+
+\begin{equation}
+  \label{eq:tdga}
+  \min_x E(x), \quad
+  x \in \mathcal{F}
+\end{equation}
+
+ここで $\mathcal{F}$ は有限集合であることを仮定する．SA 法
+では系の状態 $x$ に対して摂動を加え, 新しい状態 $x'$を得る．
+そして新しい状態でのエネルギー値 $E(x')$ が
+旧状態のエネルギー値 $E(x)$ より小さければ高い確率で,
+大きければ温度パラメータ $T$ に基づいた低い確率で新状態 $E(x')$ への遷移を行う．
+SA はこのアプローチを使用して最小状態を見つける．
+
+
+$T$ が定数のとき, SA の典型的な遷移規則である
+メトロポリス法の分布はギブス分布となり, そのとき
+(\ref{eq:tdga/free}) 式で定義される自由エネルギー $\mathcal{F}$ を最小化
+することが知られており, これは自由エネルギーの最小化原理と呼ばれている.
+
+\begin{equation}
+  \label{eq:tdga/free}
+  F = \langle E \rangle - HT
+\end{equation}
+
+ここで $\langle E \rangle$ は系の平均エネルギー, $H$ はエントロ
+ピーである．

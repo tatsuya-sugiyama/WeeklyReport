@@ -4,40 +4,66 @@
 \label{sec:exp}
 \changeindent{2cm}
 
-\begin{figure}[t]
-     \begin{center}
-       \includegraphics[width = 10cm,clip]{./fig/04.exp/felicita.eps}
-      \end{center}
-      \caption{エージェント``Felicita'}
-     \label{fig:06_fel}
-\end{figure}
-
-
 \begin{table}[t]
-		\caption{人狼投票率[\%]}
-		\label{tb:06_result1}
+  \begin{center}
+    \caption{各アーキテクチャの精度}
 		\vspace{3mm}
-		\centering
-		\begin{tabular}{|c|c|c|c|c|}
-			\hline
-			\multicolumn{2}{|c|}{}&Felicita&Baseline\_Ave&Baseline\_Best\\
-			\hline
-			村人&1日目&72.3&59.1&77.1\\
-			\cline{2-5}
-			&2日目&75.4&68.2&78.1\\
-			\hline
-			占い師&1日目&75.0&61.1&84.3\\
-			\cline{2-5}
-			&2日目&87.2&93.1&100\\
-			\hline
-			狂人&1日目&2.7&15.7&1.3\\
-			\cline{2-5}
-			&2日目&28.5&30.5&12.8\\
-			\hline
-		\end{tabular} 
+    \begin{tabular}{|c|c|c|c|c|c|}\hline
+    \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}number of\\ shortcuts\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}method A\end{tabular}} & 50 epoch & 93.70 $\pm$ 0.22 & 21.06 $\pm$ 0.07 & 12.7 $\pm$ 1.4 & 93.60 $\pm$ 0.15 \\ \cline{2-6}
+     & 100 epoch & 94.02 $\pm$ 0.12 & 21.50 $\pm$ 0.11 & 18.2 $\pm$ 0.9 & 93.67 $\pm$ 0.14 \\ \cline{2-6}
+     & 150 epoch & 93.90 $\pm$ 0.17 & 21.57 $\pm$ 0.25 & 18.9 $\pm$ 0.6 & 93.64 $\pm$ 0.09 \\ \hline
+    \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}method B\end{tabular}} & 50 epoch & 93.57 $\pm$ 0.19 & 20.45 $\pm$ 0.09 & 5.8 $\pm$ 1.2 & 93.36 $\pm$ 0.19 \\ \cline{2-6}
+     & 100 epoch & 93.93 $\pm$ 0.08 & 20.73 $\pm$ 0.10 & 9.8 $\pm$ 1.0 & 93.47 $\pm$ 0.17 \\ \cline{2-6}
+     & 150 epoch & 93.92 $\pm$ 0.12 & 20.76 $\pm$ 0.15 & 10.6 $\pm$ 1.0 & 93.48 $\pm$ 0.15 \\ \hline
+    \multicolumn{2}{|c|}{baseline (VGG19)} & 93.03 $\pm$ 0.10 & 20.04 & 0 & - \\ \hline
+    \end{tabular}
+    \label{tab:accg}
+  \end{center}
 \end{table}
 
+% \begin{figure*}[tb]
+%  \begin{minipage}{0.5\hsize}
+%  	\begin{center}
+%  		\includegraphics[clip,width=75mm]{./fig/short.png}
+%  		\caption{ショートカット数に対する精度}
+%  		\label{fig:short}
+%  	\end{center}
+%  \end{minipage}
+%  \begin{minipage}{0.5\hsize}
+%  	\begin{center}
+%     \includegraphics[clip,width=75mm]{./fig/param.png}
+%     \caption{パラメータ数に対する精度}
+%     \label{fig:param}
+%  	\end{center}
+%  \end{minipage}
+% \end{figure*}
 
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=10cm]{./fig/short.png}
+  \end{center}
+  \caption{ショートカット数に対する精度}
+  \label{fig:short}
+\end{figure}
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=10cm]{./fig/param.png}
+  \end{center}
+  \caption{パラメータ数に対する精度}
+  \label{fig:param}
+\end{figure}
 
+表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
+図 \ref{fig:short}, \ref{fig:param} には
+表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
+最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
+100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
+しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
+図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
 
+また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
+問題に対して過度に適合していることが原因であると考えられる.
 
+探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
+最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
