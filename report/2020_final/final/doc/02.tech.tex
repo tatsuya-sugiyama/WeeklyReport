@@ -48,8 +48,17 @@ NAS with RL は高い性能を達成した一方で, 計算に数千 GPU 日か�
 \changeindent{2cm}
 \label{sec:02_darts}
 
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=15cm]{./fig/02.tech/darts.png}
+  \end{center}
+  \caption{DARTS の概念図}
+  (a) はじめ辺上の演算子は不明. (b) 各辺の演算子候補の混合で置換することで探索空間を連続性緩和. (c) 混合確率とネットワークの重みを最適化. (d) 学習した混合確率から最終的なアーキテクチャを導出.
+  \label{fig:darts}
+\end{figure}
+
 Differentiable Architecture Search(DARTS)\cite{DBLP:journals/corr/abs-1806-09055}は,
-離散的なアーキテクチャ探索空間に強化学習を適用したNASとは異なり,
+離散的なアーキテクチャ探索空間に強化学習を適用した NAS with RL とは異なり,
 微分可能な方法で定式化し,
 偏微分による勾配降下法を使用してアーキテクチャを効率的に探索する手法である.
 
@@ -133,6 +142,7 @@ GAで個体群の多様性を維持する手法である.
   x \in \mathcal{F}
 \end{equation}
 
+\noindent
 ここで $\mathcal{F}$ は有限集合であることを仮定する．SA 法
 では系の状態 $x$ に対して摂動を加え, 新しい状態 $x'$を得る．
 そして新しい状態でのエネルギー値 $E(x')$ が
@@ -151,5 +161,29 @@ $T$ が定数のとき, SA の典型的な遷移規則である
   F = \langle E \rangle - HT
 \end{equation}
 
+\noindent
 ここで $\langle E \rangle$ は系の平均エネルギー, $H$ はエントロ
 ピーである．
+
+\paragraph{TDGA におけるエントロピーの計算と
+自由エネルギーの最小化}
+
+SA 法において最小化される自由エネルギー (\ref{eq:tdga/free}) 式の右辺第 1 項は, 系がエネルギー最小化という目的を追求する項, 第 2 項は系の状態の多様性を維持する項と解釈でき, これら両者を温度 $T$ をパラメータとして調和させたものと考えられる．そこで TDGA では単純 GA(Simple GA: SGA) で用いられている適応度比例戦略に代えて, 自由エネルギーを最小化するように次世代の個体群を選択することを基本方針とする．
+
+個体群中の個体の種を区別した系の多様性を表すエントロピー $H^{\rm ALL}$ は (\ref{eq:Entropy}) 式で表される．
+
+\begin{equation}
+H^{\rm ALL} = -\sum_i p_i \log p_i \label{eq:Entropy}
+\end{equation}
+
+\noindent
+ここで $p_i$ は種 $i$ の存在確率である．GA では可能な状態 $x \in {\cal F}$ のうち各個体がとり得る値は個体数 $N_{\rm p}$ 程度であり, $|{\cal F}|$ に比べて極めて小さい．よって TDGA は代わりに (\ref{eq:entropy_from_allele}) 式を用いて各対立遺伝子座から個体群のエントロピー $H^1$ を計算する．
+
+\begin{equation}
+H^1 = \sum_{k=1}^M H^1_k \, ,\quad H^1_k = - \sum_{j\in\{ 0,1\}} P_j^k \log P_j^k \label{eq:entropy_from_allele}
+\end{equation}
+
+\noindent
+ここで $H^1_k$ は個体群の遺伝子座 $k$ の遺伝子に関するエントロピーを, $P_j^k$ は遺伝子座 $k$ における対立遺伝子 $j$ の存在確率を表している．TDGA においては $H^1$ は (\ref{eq:tdga/free}) 式の第 2 項の $H$ とみなされる．これにより世代のエントロピーが計算できるが, 自由エネルギーを厳密に最小化する個体群を選ぶことは, それ自体困難な組み合わせ最適化問題であり, 多大な計算量を要する．しかしながら, 自由エネルギーの最小化は, GA における次世代の形成の評価基準にすぎないので, 厳密な最小化は必要ではない．そこで TDGA では近似的な最小化手法として欲張り法を用いる．すなわち, 次世代の個体群を逐次的に形成する際にその時点で自由エネルギーを最小にする個体を現世代の個体群から選び, 次世代の個体群に付加するという方法を用いる．
+
+% Algorithm \ref{alg:tdga} に TDGA のアルゴリズムを示す．

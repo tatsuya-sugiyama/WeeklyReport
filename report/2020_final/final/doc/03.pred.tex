@@ -3,11 +3,45 @@
 \section{ショートカット探索}
 \label{sec:pred}
 \changeindent{2cm}
+
 DARTSで柔軟なアーキテクチャを探索するため,
 深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を探索する.
 VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
 性能を向上させることを目的とする.
+
+\begin{table}[t]
+  \begin{center}
+    \caption{VGG19 の構造}
+		\vspace{-1mm}
+    例として入力する画像を(32, 32, 3)次元としている.
+		\vspace{1mm}
+		\vspace{3mm}
+    \begin{tabular}{|c|c|c|l|}
+    \hline
+    \textbf{index} & \textbf{image size} & \textbf{channels} & \multicolumn{1}{c|}{\textbf{applied function}} \\ \hline
+    input & 32 x 32 & 3   & \multicolumn{1}{c|}{-}         \\ \hline
+    1     & 32 x 32 & 64  & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    2     & 16 x 16 & 64  & 3x3\_Conv2d, BN, ReLU, MaxPool \\ \hline
+    3     & 16 x 16 & 128 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    4     & 8 x 8   & 128 & 3x3\_Conv2d, BN, ReLU, MaxPool \\ \hline
+    5     & 8 x 8   & 256 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    6     & 8 x 8   & 256 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    7     & 8 x 8   & 256 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    8     & 4 x 4   & 256 & 3x3\_Conv2d, BN, ReLU, MaxPool \\ \hline
+    9     & 4 x 4   & 512 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    10    & 4 x 4   & 512 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    11    & 4 x 4   & 512 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    12    & 2 x 2   & 512 & 3x3\_Conv2d, BN, ReLU, MaxPool \\ \hline
+    13    & 2 x 2   & 512 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    14    & 2 x 2   & 512 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    15    & 2 x 2   & 512 & 3x3\_Conv2d, BN, ReLU          \\ \hline
+    16    & 1 x 1   & 512 & 3x3\_Conv2d, BN, ReLU, MaxPool \\ \hline
+    \end{tabular}
+    \label{tab:vgg}
+  \end{center}
+\end{table}
+
 
 モデル中の潜在的特徴は高さ・幅・チャンネル数を持つデータであるが,
 特徴の次元は場所によって異なるため, ショートカットは次元を変換する必要がある.
@@ -21,6 +55,7 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
 ショートカットに使用する関数の制限によってショートカット位置の候補は61であるため,
 探索空間は$2^{61}$である.
 演算子の種類は固定することで, アーキテクチャ $\alpha$ は畳み込み部に相当するグラフの重みをもつ隣接行列と定義した.
+
 
 %4.1
 \changeindent{0cm}
