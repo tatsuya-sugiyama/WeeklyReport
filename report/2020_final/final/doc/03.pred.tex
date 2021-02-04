@@ -6,7 +6,10 @@
 
 DARTSで柔軟なアーキテクチャを探索するため,
 深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を探索する.
+VGG19は分岐がない単純なネットワーク構造であるため, ベースモデルに適しているとして選択した.
+
 VGG19は16層の畳み込み層と3層の線形結合層を持つ.
+表 \ref{tab:vgg} は, VGG19の畳み込みニューラルネットワーク(Convolutional Neural Network: CNN) 部分の構造を示している. 構成する関数は, フィルターサイズが 3 x 3 の畳み込み層(Conv2d), Batch Normalization(BN), 活性化関数(Rectified Linear Unit: ReLU), ストライドが 2 の Max Pooling (MaxPool)である.
 このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
 性能を向上させることを目的とする.
 
@@ -153,13 +156,24 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
 % GAには評価関数の全順序性が必要となるので,（これは間違い）
 各パラメータ集合の学習ステップを分離し個体間で不平等がないように設計した.
 
+% \begin{enumerate}
+%   \item 一様乱数で初期個体生成
+%   % \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
+%   \item 重み $w$ を $\displaystyle \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
+%   \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
+%   \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{smp})$ で個体 $\alpha$ を評価・選択
+%   \item 交叉・突然変異
+%   \item 収束するまで 2. に戻る
+% \end{enumerate}
+
 \begin{enumerate}
-  \item 一様乱数で初期個体生成
-  % \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
-  \item 重み $w$ を $\displaystyle \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
+  \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
+  \item エリート個体選択
   \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
-  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{smp})$ で個体 $\alpha$ を評価・選択
-  \item 交叉・突然変異
+  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{smp})$ で個体 $\alpha$ を評価
+  \item 交叉で子個体群生成
+  \item 親個体群と子個体群の突然変異
+  \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
   \item 収束するまで 2. に戻る
 \end{enumerate}
 ただし
@@ -187,11 +201,11 @@ $\alpha^\mathrm{smp}$ は実験1で有効だった構成手法Bで隣接行列�
     \caption{実験2の設定}
   	\vspace{3mm}
     \begin{tabular}{|c|c|} \hline
-      Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
-      Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
+      % Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optim($\alpha$) & Adam(lr=0.001, $\beta$=(0.5, 0.999)) \\ \hline
       % Loss & Cross Entropy Loss \\ \hline
       % batch size & 64 \\ \hline
-      data size & train : valid = 25000 : 10000 \\ \hline
+      data size & train : valid = 0 : 25000 \\ \hline
     \end{tabular}
     \label{tab:setting2}
   \end{center}
@@ -202,9 +216,9 @@ $\alpha^\mathrm{smp}$ は実験1で有効だった構成手法Bで隣接行列�
     \caption{GAの設定}
   	\vspace{3mm}
     \begin{tabular}{|c|c|} \hline
-      個体数 & 15 \\ \hline
-      世代数 & 20 \\ \hline \hline
-      選択 & トーナメント \\ \hline
+      個体数 & 10 \\ \hline
+      世代数 & 150 \\ \hline \hline
+      選択 & 熱力学的選択 \\ \hline
       サイズ & 2 \\ \hline \hline
       交叉 & 一様交叉 \\ \hline
       交叉率 & 0.8 \\ \hline \hline

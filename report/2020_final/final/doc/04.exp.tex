@@ -4,6 +4,13 @@
 \label{sec:exp}
 \changeindent{2cm}
 
+
+\changeindent{0cm}
+\subsection{提案手法:DARTS}
+\label{sec:exp.01}
+\changeindent{2cm}
+
+
 \begin{table}[t]
   \begin{center}
     \caption{各アーキテクチャの精度}
@@ -51,3 +58,44 @@
 
 探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
 最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
+
+
+
+
+\changeindent{0cm}
+\subsection{提案手法:DARTS+TDGA}
+\label{sec:exp.02}
+\changeindent{2cm}
+
+
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/acc_tdga.png}
+  \end{center}
+  \caption{TDGA精度}
+  \label{fig:acc_tdga}
+\end{figure}
+
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/loss_tdga.png}
+  \end{center}
+  \caption{TDGA loss}
+  \label{fig:loss_tdga}
+\end{figure}
+
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/edge_tdga.png}
+  \end{center}
+  \caption{TDGA edge}
+  \label{fig:edge_tdga}
+\end{figure}
+
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/eval_tdga.png}
+  \end{center}
+  \caption{TDGA eval}
+  \label{fig:eval_tdga}
+\end{figure}

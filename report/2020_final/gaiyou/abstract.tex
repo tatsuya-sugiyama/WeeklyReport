@@ -1,15 +1,192 @@
-\documentclass{jarticle}
-\usepackage{abstract}
-\usepackage[dvipdfm]{graphicx}
-%\usepackage[dviout]{graphicx}
-%\evensidemargin = -1mm
-\title{}
-\author{}
-\ordering{1}[B]  %���_��B�C�C�_��M
+\documentclass[a4paper,twoside,twocolumn,10pt]{article}
+\usepackage{abstract} % Style for abstracts in Dept. CSIS, OPU
+%\usepackage{abstract4past} % Style for abstracts for the past curriculum
+
+%%%%%%%%%% Designate packages you need %%%%%%%%%%
+\usepackage{graphicx} % Enhanced support for graphics
+\usepackage{url} % Verbatim with URL-sensitive line breaks
+
+%%%%%%%%%% Parameters that should be customized %%%%%%%%%%
+% Language (1 = Japanese, 2 = English)
+\setlang{1}
+% Bachelor or Master (1 = Bachelor, 2 = Master)
+\setborm{1}
+% Fiscal year
+\setfy{2018}
+% Group number
+\setgnum{1}
+% Presentation order
+\setorder{4}
+% Increase page number (optional)
+%% \pplus{1}
+
+% Title
+\title{タイトル未定}
+% Author
+\author{青野 義樹}
+%%%%%%%%%% Parameters that should be customized (end) %%%%%%%%%%
+
 \begin{document}
-\maketitle
+\maketitle % Insert title
 \small
-\section{}
 
+\section{はじめに}
+この文書は，大阪府立大学 工学域 情報工学課程(旧カリキュラムである
+工学部 知能情報工学科を含む)の卒業研究論文ならびに
+大学院工学研究科 電気・情報系専攻 知能情報工学分野の修士学位論文の
+概要テンプレートの使い方を説明した文書である．
+この文書自体が概要テンプレートで書かれている．
+
+
+
+\section{作成要領}
+
+\subsection{卒業研究論文}
+\begin{enumerate}
+\item ページ制限，用紙\\
+  卒業論文概要は A4 版 原則 1 ページとし片面を用いる(2人で両面)．
+  特別な場合2ページまで可．
+\item フォーマット\\
+  指定されたLaTeXまたはWordのテンプレートを使用する．
+\item グループ番号とページ番号\\
+  ページの右上に「グループ番号−グループ内通しページ番号」を記入する．
+\end{enumerate}
+
+\subsection{修士学位論文}
+\begin{enumerate}
+\item ページ制限，用紙\\
+  修士学位論文概要は A4 版 2 ページとし両面を用いる．
+\item フォーマット\\
+  指定されたLaTeXまたはWordのテンプレートを使用する．
+\item グループ番号とページ番号\\
+  ページの右上に「グループ番号−グループ内通しページ番号」を記入する．
+\end{enumerate}
+
+\section{LaTeXテンプレート}
+\subsection{ファイル}
+\begin{itemize}
+\item abstract\_ja.pdf\\
+  サンプルPDF(日本語版)
+\item abstract\_ja.tex\\
+  サンプルLaTeXファイル(日本語版)
+\item index\_ja.bib\\
+  サンプルBibTeXファイル(日本語版)
+\item abstract.sty\\
+  概要スタイルファイル
+\item jabbrvunsrt.bst\\
+  BibTeXスタイルファイル(日本語版)
+\item CSIS.eps\\
+  分野のロゴ(図のサンプルとして)
+\item fancyhdr.sty\\
+  ヘッダとフッダを操作するスタイルファイル
+  (\url{https://www.ctan.org/pkg/fancyhdr}よりダウンロード)
+\item titlesec.sty\\
+  セクションタイトルを操作するためのスタイルファイル
+  (\url{https://www.ctan.org/pkg/titlesec}よりダウンロード)
+\end{itemize}
+
+\subsection{設定}
+abstract.texの上部には以下の設定項目があり，各自しかるべき値に変更する．
+%
+\begin{verbatim}
+% Language (1 = Japanese, 2 = English)
+\setlang{1}
+% Bachelor or Master (1 = Bachelor, 2 = Master)
+\setborm{2}
+% Fiscal year
+\setfy{2015}
+% Group number
+\setgnum{3}
+% Presentation order
+\setorder{2}
+% Increase page number (optional)
+%% \pplus{1}
+\end{verbatim}
+%
+Presentation orderは発表順である．
+これが指定されると，卒業研究論文の場合は1人当たり1ページ，
+修士学位論文の場合は1人当たり2ページとしてページ番号が自動的に計算される．
+何らかの事情によりページ番号がずれる場合は，
+$\backslash$pplus\{1\}
+のように指定してページ番号を増加(または減少)させることができる．
+
+\subsection{図表}
+表~\ref{tbl:kuku}は表の例，
+図~\ref{fig:CSIS_logo}は図の例である．
+
+\begin{table}[tb]
+  \caption{表の例：九九}
+  \label{tbl:kuku}
+  \centering
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|} \hline
+    - &  1 &  2 &  3 &  4 &  5 &  6 &  7 &  8 &  9 \\ \hline \hline
+    1 &  1 &  2 &  3 &  4 &  5 &  6 &  7 &  8 &  9 \\ \hline
+    2 &  2 &  4 &  6 &  8 & 10 & 12 & 14 & 16 & 18 \\ \hline
+    3 &  3 &  6 &  9 & 12 & 15 & 18 & 21 & 24 & 27 \\ \hline
+    4 &  4 &  8 & 12 & 16 & 20 & 24 & 28 & 32 & 36 \\ \hline
+    5 &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40 & 45 \\ \hline
+    6 &  6 & 12 & 18 & 24 & 30 & 36 & 42 & 48 & 54 \\ \hline
+    7 &  7 & 14 & 21 & 28 & 35 & 42 & 49 & 56 & 63 \\ \hline
+    8 &  8 & 16 & 24 & 32 & 40 & 48 & 56 & 64 & 72 \\ \hline
+    9 &  9 & 18 & 27 & 36 & 45 & 54 & 63 & 72 & 81 \\ \hline
+  \end{tabular}
+\end{table}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=.3\hsize]{CSIS.eps}
+  \caption{図の例：ロゴ}
+  \label{fig:CSIS_logo}
+\end{figure}
+
+\subsection{参考文献}
+pBibTeXの使用を推奨する．
+その場合，同梱されているjabbrvunsrt.bstを使うこと．
+これは，jabbrv.bstのソート機能をオフにしたものである．
+\cite{SakaiMe, Food, Neko}は使用例である．
+
+\subsection{旧カリキュラムの学生の場合}
+旧カリキュラムである工学部 知能情報工学科に所属する学生は，
+abstract.styの代わりにabstract4past.styを使用する．
+
+\section{MS Wordテンプレート}
+MS Word用のテンプレートも用意している．
+フォーマットはLaTeXテンプレートに準ずることとする．
+以下に設定方法の概要を示す。
+
+\subsection{ファイル}
+\begin{itemize}
+\item abstract\_ja\_word.pdf\\
+  サンプルPDF(日本語版)
+\item abstract\_ja\_word.docx\\
+  サンプルWordファイル(日本語版)
+\end{itemize}
+
+\subsection{ヘッダの設定}
+ヘッダ部分をダブルクリックするとヘッダが編集可能になるので、以下の項目を設定する。
+
+\subsubsection{論文の種類}
+\begin{itemize}
+\item 工学域 情報工学課程の場合\\
+  「情報工学課程卒業研究論文概要」とする。
+\item 大学院工学研究科 知能情報工学分野の場合\\
+  「知能情報工学分野修士学位論文概要」とする。
+\item 旧カリキュラムである工学部 知能情報工学科の場合\\
+  「知能情報工学科卒業研究論文概要」とする。
+\end{itemize}
+\subsubsection{年度およびグループ番号}
+年度およびグループ番号は直接入力する。
+\subsubsection{ページ番号}
+ページ番号は「ページ番号の書式設定」で「開始番号」を変更する。
+
+\subsection{スタイル}
+Normal, Title, Author, Section, SubSection, SubSubSection, References,
+Table, Verbatim, Enumerate, Itemizeのスタイルが定義されているので、
+適宜使用する。
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{jabbrvunsrt}
+\bibliography{index_ja}
 \end{document}
-

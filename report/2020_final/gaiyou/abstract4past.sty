@@ -3,7 +3,7 @@
 % Prepared by Masakazu Iwamura based on abstract.sty for latex2.09
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{abstract}[2015/11/26 v0.1]
+\ProvidesPackage{abstract4past}[2015/11/26 v0.1]
 
 \usepackage{indentfirst} % Indent first paragraphs
 
@@ -12,10 +12,8 @@
             {\titlerule\vspace{.3ex}\normalfont\bfseries}
             {\thesection.}{.5em}{}[\titlerule\vspace{.8ex}]
 \titleformat{\subsection}{\normalfont\bfseries}{\thesubsection.}{.5em}{}
-\titleformat{\subsubsection}{\normalfont\bfseries}{\thesubsubsection.}{.5em}{}
 \titlespacing*{\section} {0pt}{1em plus 1em minus 0em}{0pt}
 \titlespacing*{\subsection} {0pt}{.5em plus 1em minus 0em}{0pt}
-\titlespacing*{\subsubsection} {0pt}{.3em plus .5em minus 0em}{0pt}
 
 \usepackage{fancyhdr} % Headers and footers
 \pagestyle{fancy}
@@ -78,11 +76,11 @@
   %% --- for Bachelor in Japanese
 
   % Header
-  \fancyhead[L]{\the\abst@fy Ç¯ÅÙ ¾ğÊó¹©³Ø²İÄøÂ´¶È¸¦µæÏÀÊ¸³µÍ×
-    \hfill \the\abst@gnum \ -- \ \thepage}
+%%   \fancyhead[L]{\the\abst@fy Ç¯ÅÙ ¾ğÊó¹©³Ø²İÄøÂ´¶È¸¦µæÏÀÊ¸³µÍ×
+%%     \hfill \the\abst@gnum \ -- \ \thepage}
   %%%%%%%%%%%%%%%%%% (for past students)
-  %% \fancyhead[L]{\the\abst@fy Ç¯ÅÙ ÃÎÇ½¾ğÊó¹©³Ø²ÊÂ´¶È¸¦µæÏÀÊ¸³µÍ×
-  %%   \hfill \the\abst@gnum \ -- \ \thepage}
+  \fancyhead[L]{\the\abst@fy Ç¯ÅÙ ÃÎÇ½¾ğÊó¹©³Ø²ÊÂ´¶È¸¦µæÏÀÊ¸³µÍ×
+    \hfill \the\abst@gnum \ -- \ \thepage}
   \else
   %% --- for Master in Japanese
   % Header
@@ -141,7 +139,7 @@
 \textwidth=170mm
 \textheight=262mm
 \topmargin=-10.4mm
-\oddsidemargin=0mm
+\oddsidemargin=-6.4mm
 \evensidemargin=-10.4mm
 \headwidth\textwidth
 \columnsep=1.5em
