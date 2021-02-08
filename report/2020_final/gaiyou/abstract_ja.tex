@@ -62,11 +62,11 @@ Differentiable Architecture Search(DARTS)\cite{DBLP:journals/corr/abs-1806-09055
 \subsection{Thermodynamical Genetic Algorithm}
 Thermodynamical Genetic Algorithm (TDGA) は熱力学における自由エネルギー最小化をモデルにした,
 遺伝的アルゴリズム(Genetic Algorithm: GA) で個体群の多様性を維持する手法である.
-選択に温度とエントロピーの概念を導入し, 初期収束問題を解決した.
+選択に温度とエントロピーの概念を導入し, 初期収束問題を防ぐことができる.
 
 \section{提案手法}
 \subsection{実験1:DARTS}
-予備実験としてDARTSを用いてネットワークを探索する手法について様々なパラメータで実験した.
+DARTS を広範囲の構造探索が可能な実装に拡張し, ネットワークを探索する手法について様々なパラメータで実験した.
 
 \subsection{実験2:DARTS+TDGA}
 
@@ -74,12 +74,12 @@ Thermodynamical Genetic Algorithm (TDGA) は熱力学における自由エネル
 収束するグラフ構造にばらつきが見られた.
 
 そこで実験1から得られた最適設定をもとに,
-個体表現を $\alpha$ とした遺伝的アルゴリズムによって,
+個体表現を $\alpha$ とした GA によって,
 アーキテクチャの多様性を維持しつつ, 安定的なネットワーク構造の学習を図った.
-単純に個体数を増やすと計算コストが定数倍されるため,
+単純に個体数を増やす場合, 計算コストが定数倍されるため,
 重み $w$ は全体で共有する One-Shot モデルを利用することで高速化した.
 
-以下に TDGA をベースとして, DARTSの学習ステップの追加と多様性項の実数値拡張をした提案手法のアルゴリズムを示す.
+以下に TDGA をベースとして, DARTSの学習ステップ(3. と 4.)の追加の検討 と TDGA の多様性項を実数値拡張した提案手法のアルゴリズムを示す.
 
 \begin{figure}[t]
   % \begin{center}
@@ -87,7 +87,7 @@ Thermodynamical Genetic Algorithm (TDGA) は熱力学における自由エネル
   %   \includegraphics[clip, width=70mm]{ROC_gather.eps}
   % \end{center}
   \centering
-  \includegraphics[width=80mm]{eval_tdga.png}
+  \includegraphics[width=80mm]{eval.png}
   \caption{DARTS+TDGA のアーキテクチャ性能}
   \label{fig:eval_tdga}
 \end{figure}
@@ -95,6 +95,7 @@ Thermodynamical Genetic Algorithm (TDGA) は熱力学における自由エネル
 \begin{enumerate}
   \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
   \item エリート個体選択
+  \item 重み $w$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{train}}(w, \bar{\alpha})$ で更新
   \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w, \alpha_i)$ で更新
   \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
   \item 交叉で子個体群生成
@@ -103,6 +104,8 @@ Thermodynamical Genetic Algorithm (TDGA) は熱力学における自由エネル
   \item 収束するまで 2. に戻る
 \end{enumerate}
 
+DARTSの学習ステップが, GAの探索に与える影響を調べるため,
+3. 4.のステップを行わない条件も比較する.
 
 
 \section{数値実験}
@@ -116,44 +119,27 @@ DARTSを用いたアーキテクチャ全体の探索ができ,
 % 探索中は重みを固定することでTDGAが機能し, ベースラインを超えるアーキテクチャが探索できることがわかった.
 % 図 \ref{fig:eval_tdga} では, 50 世代から 150 世代までのアーキテクチャの評価結果を示しており,
 % TDGAと組み合わせたDARTSが有効に機能している.
-実験1から引き継いだモデルの重みを初期値としてTDGAを行った.
+% 実験1から引き継いだモデルの重みを初期値としてTDGAを行った.
 図 \ref{fig:eval_tdga} では, 50 世代から 150 世代までのアーキテクチャの評価結果を示しており,
-探索中は重み $w$ を固定することでTDGAが機能し,
-DARTSのみの性能を超えるアーキテクチャが探索できることがわかった.
+% 探索中は重み $w$ を固定することでTDGAが機能し,
+いずれもDARTSのみの性能を超えるアーキテクチャが探索できることがわかった.
+毎世代 DARTS で w, $\alpha$ を更新すると, 適応度の出力が不安定になり効果的に GA が動作しないため,
+更新はTDGAのみで行う手法が最も高い性能を達成したと考えられる.
 
-
-
-% \begin{figure}[tb]
-%   \centering
-%   \includegraphics[clip, width=7cm]{eval_tdga.png}
-%   \caption{TDGA eval}
-%   \label{fig:eval_tdga}
-% \end{figure}
-%
-% \begin{table}[tb]
-%   \caption{ROC 曲線の曲線下面積}
-%   \label{auc_tenpai}
-%   \centering
-%   \begin{tabular}{|c||c|} \hline
-%   モデル & 曲線下面積 \\ \hline \hline
-%   model & 0.8761\\ \hline
-%   previous\_study & 0.8430\\ \hline
-%   random & 0.5000\\ \hline
-%   \end{tabular}
-% \end{table}
 
 \section{まとめと今後の課題}
 本研究では，
 まずDARTSの欠点であるアーキテクチャ構造の制限を緩和するようなネットワーク探索ができた.
 
-% しかしながらまだネットワークの構成手法は改善の余地がある.
-% 選択しないという候補を導入して, 他のショートカットと妥当な比較ができると考えられる.
+また
+% TDGAを DARTS の扱う問題に拡張したことで,
+DARTS に TDGAを組み合わせる提案手法によって,
+DARTSのみの結果を超えることができ提案手法の有効性が確認できた.
 
-さらにTDGAを導入することで, DARTSの学習を安定させ, ベースラインを超えることができた.
 
 今後の課題として,
-本研究で用いた VGG の他のネットワークに対してもこの提案手法を適用することで汎用性を確認したい.
-また他のデータセットや実問題では, 最適なアーキテクチャがどのように変化するか検討する予定である.
+本研究で用いた VGG 以外のネットワークに対してもこの提案手法を適用することで汎用性を確認し,
+また他のデータセットや実問題では, 最適なアーキテクチャがどのように変化するか検討することが挙げられる.
 % またパラメータ数が少ないモデルが得られるような適応度の設定についても検討する予定である.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
