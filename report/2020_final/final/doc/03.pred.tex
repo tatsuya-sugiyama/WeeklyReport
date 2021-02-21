@@ -13,12 +13,19 @@
 \end{figure}
 
 DARTSで柔軟なアーキテクチャを探索することを実験の目的とし, 構造探索タスクとして
-深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を考える.
-図 \ref{fig:image} のように, ショートカット接続は, 畳み込み部において 1つ以上特徴を飛ばした接続とする.
+深層畳み込みネットワークのVGG19\cite{Simonyan15}の
+ショートカット接続\cite{mao2016image}を考える.
+図 \ref{fig:image} のように, ショートカット接続は,
+畳み込み部において 1つ以上特徴を飛ばした接続とする.
 VGG19は分岐がない単純なネットワーク構造であるため, ベースモデルに適しているとして選択した.
 
 VGG19は16層の畳み込み層と3層の線形結合層を持つ.
-表 \ref{tab:vgg} は, VGG19の畳み込みニューラルネットワーク(Convolutional Neural Network: CNN) 部分の構造を示している. 構成する関数は, フィルターサイズが 3 x 3 の畳み込み層(Conv2d), Batch Normalization(BN), 活性化関数(Rectified Linear Unit: ReLU), ストライドが 2 の Max Pooling (MaxPool)である.
+表 \ref{tab:vgg} は, VGG19の畳み込みニューラルネットワーク
+(Convolutional Neural Network: CNN) 部分の構造を示している.
+構成する関数は, フィルターサイズが 3 x 3 の畳み込み層(Conv2d),
+Batch Normalization(BN)\cite{Ioffe2015BatchNA},
+活性化関数(Rectified Linear Unit: ReLU),
+ストライドが 2 の Max Pooling (MaxPool)である.
 このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
 性能を向上させることを目的とする.
 
@@ -122,7 +129,8 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 \subsubsection{評価}
 評価段階では, 構成段階で得られたネットワークを学習し,
 最大の正答率をネットワークの性能とする.
-このときのパラメータは, グリッドサーチによる最適化API の optuna で事前学習した結果から設定する.
+このときのパラメータは, グリッドサーチによる最適化API の optuna \cite{akiba2019optuna}
+で事前学習した結果から設定する.
 
 
 \changeindent{0cm}
@@ -232,55 +240,75 @@ softmaxからsigmoidへ.
 
 \subsubsection{アーキテクチャ再探索}
 
-以下に TDGA をベースとして, DARTSの学習ステップの追加と多様性項の実数値拡張をした提案手法のアルゴリズムを示す.
-
-\begin{enumerate}
-  \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
-  \item エリート個体選択
-  \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
-  \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
-  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w^*, \alpha_i)$ で個体 $\alpha_i$ を評価
-  \item 交叉で子個体群生成
-  \item 親個体群と子個体群の突然変異
-  \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
-  \item 収束するまで 2. に戻る
-\end{enumerate}
-
-
-\begin{enumerate}
-  \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
-  \item エリート個体選択
-  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w^*, \alpha_i)$ で個体 $\alpha_i$ を評価
-  \item 交叉で子個体群生成
-  \item 親個体群と子個体群の突然変異
-  \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
-  \item 収束するまで 2. に戻る
-\end{enumerate}
-
-
-\begin{enumerate}
-  \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
-  \item エリート個体選択
-  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w^*, \alpha_i)$ で個体 $\alpha_i$ を評価
-  \item 交叉で子個体群生成
-  \item 親個体群と子個体群の突然変異
-  \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
-  \item 収束するまで 2. に戻る
-\end{enumerate}
+以下に TDGA をベースとして, DARTSの学習ステップの追加と多様性項の実数値拡張をした提案手法のアルゴリズム
 
 \begin{itemize}
-  \item 提案手法1. DAARTS + TDGA($w$, $\alpha$)
-  \item 提案手法2. DAARTS + TDGA($\alpha$)
-  \item 提案手法3. DAARTS + TDGA
+  \item 提案手法1. DARTS + TDGA($w$, $\alpha$)
+  \item 提案手法2. DARTS + TDGA($\alpha$)
+  \item 提案手法3. DARTS + TDGA
 \end{itemize}
+
+\noindent
+を アルゴリズム \ref{alg1}, \ref{alg2}, \ref{alg3} に示す.
+アルゴリズム \ref{alg1} をベースとして, DARTSによる勾配更新のステップを無効にすることで,
+DARTSがTDGAの学習に与える影響をみる.
+
+\begin{algorithm}
+  \caption{提案手法1. DARTS + TDGA($w$, $\alpha$)}
+  \label{alg1}
+  \begin{enumerate}
+    \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
+    \item エリート個体選択
+    \item 重み $w$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{train}}(w, \bar{\alpha})$ で更新
+    \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w, \alpha_i)$ で更新
+    \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
+    \item 交叉で子個体群生成
+    \item 親個体群と子個体群の突然変異
+    \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+    \item 収束するまで 2. に戻る
+  \end{enumerate}
+\end{algorithm}
+
+
+\begin{algorithm}
+  \caption{提案手法2. DARTS + TDGA($\alpha$)}
+  \label{alg2}
+  \begin{enumerate}
+    \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
+    \item エリート個体選択
+    \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w, \alpha_i)$ で更新
+    \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
+    \item 交叉で子個体群生成
+    \item 親個体群と子個体群の突然変異
+    \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+    \item 収束するまで 2. に戻る
+  \end{enumerate}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{提案手法3. DARTS + TDGA}
+  \label{alg3}
+  \begin{enumerate}
+    \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
+    \item エリート個体選択
+    \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
+    \item 交叉で子個体群生成
+    \item 親個体群と子個体群の突然変異
+    \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+    \item 収束するまで 2. に戻る
+  \end{enumerate}
+\end{algorithm}
+
 
 % $P$は個体群,
 % $\bar{\alpha}$ は各個体の平均,
 % $\alpha_$ は実験1で有効だった構成手法Bで隣接行列にサンプリングした $\alpha$ である.
 
+
 \subsubsection{性能評価}
 
-学習後最終世代の個体の性能を実験1と同じ条件で評価した.
+性能評価の段階では, 提案手法による探索結果をもとに,
+学習後最終世代の個体の性能を実験1と同じ条件で学習し評価した.
 
 
 \changeindent{0cm}
@@ -294,6 +322,9 @@ softmaxからsigmoidへ.
 初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.5 の確率で操作する一様交叉を使用した.
 突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
 
+Adam\cite{Kingma2015AdamAM}. Scheduler\cite{Loshchilov2017SGDRSG}.
+
+% ここで 0.5 Page
 
 \begin{table}[tb]
   \begin{center}
@@ -338,6 +369,8 @@ softmaxからsigmoidへ.
       Population & 10 \\ \hline
       Generation & 150 \\ \hline \hline
       % Selection & 熱力学的選択 \\ \hline
+      Selection & Elite \\ \hline
+      Elite # & 1 \\ \hline
       Selection & TD Select \\ \hline
       Temperature & 1 $\rightarrow$ 0.001 \\ \hline \hline
       % Crossover & 一様交叉 \\ \hline

@@ -10,13 +10,12 @@
 \label{sec:exp.01}
 \changeindent{2cm}
 
-
-\begin{table}[t]
+\begin{table}[b]
   \begin{center}
     \caption{実験1 : 各アーキテクチャの精度}
 		\vspace{3mm}
     \begin{tabular}{|c|c|c|c|c|c|}\hline
-    \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}number of\\ shortcuts\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
+    \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}shortcut # \end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
     \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}method A\end{tabular}} & 50 epoch & 93.70 $\pm$ 0.22 & 21.06 $\pm$ 0.07 & 12.7 $\pm$ 1.4 & 93.60 $\pm$ 0.15 \\ \cline{2-6}
      & 100 epoch & 94.02 $\pm$ 0.12 & 21.50 $\pm$ 0.11 & 18.2 $\pm$ 0.9 & 93.67 $\pm$ 0.14 \\ \cline{2-6}
      & 150 epoch & 93.90 $\pm$ 0.17 & 21.57 $\pm$ 0.25 & 18.9 $\pm$ 0.6 & 93.64 $\pm$ 0.09 \\ \hline
@@ -28,6 +27,31 @@
     \label{tab:accg}
   \end{center}
 \end{table}
+
+表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
+図 \ref{fig:short}, \ref{fig:param} には
+表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
+最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
+100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
+しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
+図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
+
+また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
+問題に対して過度に適合していることが原因であると考えられる.
+
+探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
+最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
+
+図 \ref{fig:exp1_a}, \ref{fig:exp1_b} には, 手法A, Bのアーキテクチャの 50 epoch ごとの
+結果として, 10回試行のうちの1つを示した.
+ランダム探索では見られなかったような, 比較的離れた位置からの接続が多いという特徴があった.
+さらに, 学習を経るごとに離れていくため, 接続の距離がネットワークの性能に関係していると考えられる.
+これは離れた位置からの接続が, あまり変換されていない特徴の情報を引き継げることが,
+性能向上の要因と解釈できる.
+
+
+% ここで 0.5 Page
+
 
 
 \begin{figure}[t]
@@ -93,23 +117,6 @@
  \label{fig:exp1_b}
 \end{figure}
 
-表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
-図 \ref{fig:short}, \ref{fig:param} には
-表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
-最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
-100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
-しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
-図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
-
-また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
-問題に対して過度に適合していることが原因であると考えられる.
-
-探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
-最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
-
-
-
-
 
 
 
@@ -127,6 +134,15 @@
 この結果からDARTSによる頻繁な更新がTDGAの正確な適応度計算を妨害していることが原因として考えられます
 .
 
+表 \ref{tab:acc_ga}.
+図 \ref{fig:exp2/eval},
+図 \ref{fig:exp2/acc},
+図 \ref{fig:exp2/loss},
+図 \ref{fig:exp2/edge},
+
+図 \ref{fig:exp2/archi}, \ref{fig:exp2/archi2}.
+
+% ここで 1 Page
 
 
 \begin{table}[t]
@@ -151,28 +167,28 @@
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/04.exp/eval.png}
   \end{center}
-  \caption{eval}
+  \caption{実験2 : 各提案手法のアーキテクチャ性能}
   \label{fig:exp2/eval}
 \end{figure}
 \begin{figure}[t]
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/04.exp/acc.png}
   \end{center}
-  \caption{acc}
+  \caption{実験2 : 各提案手法の探索時の正解率}
   \label{fig:exp2/acc}
 \end{figure}
 \begin{figure}[t]
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/04.exp/loss.png}
   \end{center}
-  \caption{loss}
+  \caption{実験2 : 各提案手法の探索時の損失}
   \label{fig:exp2/loss}
 \end{figure}
 \begin{figure}[t]
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/04.exp/edge.png}
   \end{center}
-  \caption{edge}
+  \caption{実験2 : 各提案手法の探索過程のショートカット数}
   \label{fig:exp2/edge}
 \end{figure}
 

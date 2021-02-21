@@ -32,13 +32,13 @@ NAS は機械学習の分野で使用されているニューラルネットワ�
 \label{sec:02_nas}
 Neural Architecture Search with Reinforcement Learning(NAS with RL)\cite{DBLP:journals/corr/ZophL16}は,
 ニューラルネットワークが構造に関する設定の文字列で表現できることを利用して,
-この文字列を生成する Recurrent Neural Network(RNN)を
-強化学習 Reinforcement Learning(RL)によって学習する.
+この文字列を生成する Recurrent Neural Network(RNN)\cite{mikolov2010recurrent}を
+強化学習 Reinforcement Learning(RL)\cite{sutton2018reinforcement}によって学習する.
 
 RNNはレイヤーごとにフィルタの高さ・幅, ストライドの高さ・幅, フィルタ数を決定し,
 RNNによって生成された構造は, ニューラルネットワークとしてその重みが学習され
 テストの正答率によって性能が評価される.
-その性能から得られた報酬で, 方策勾配法(Policy gradient method)による RNN の更新を行い,
+その性能から得られた報酬で, 方策勾配法(Policy gradient method)\cite{sutton1999policy}による RNN の更新を行い,
 アーキテクチャが最適化される.
 
 NAS with RL は高い性能を達成した一方で, 計算に数千 GPU 日かかるという問題もある.
@@ -59,7 +59,7 @@ NAS with RL は高い性能を達成した一方で, 計算に数千 GPU 日か�
 
 Differentiable Architecture Search(DARTS)\cite{DBLP:journals/corr/abs-1806-09055}は,
 離散的なアーキテクチャ探索空間に強化学習を適用した NAS with RL とは異なり,
-微分可能な方法で定式化し,
+微分可能な方法で定式化し\cite{Paszke2017AutomaticDI},
 偏微分による勾配降下法を使用してアーキテクチャを効率的に探索する手法である.
 
 探索空間を連続にするため, カテゴリカルな演算子の選択の代わりに, 候補全ての可能性をもつ混合演算子を
@@ -75,8 +75,9 @@ $\mathcal{O}$ は探索する演算子の候補集合,
 $\alpha^{(i, j)}$ はエッジ $(i, j)$ の混合演算子の重みベクトルである.
 DARTSは勾配降下法によって連続変数集合$\alpha$を学習する.
 
-% $\alpha$ とレイヤーの重み $w$ のBi-Level最適化問題を $w$ の近似によって同時に学習し,
-% NASにおいて 3000 GPU days 必要なタスクに対してDARTSは 3.3 GPU days まで高速化した.
+$\alpha$ とレイヤーの重み $w$ のBi-Level最適化問題\cite{Colson2007AnOO}を
+$w$ の近似によって同時に学習し,
+NASにおいて 3000 GPU days 必要なタスクに対してDARTSは 3.3 GPU days まで高速化した.
 
 DARTSでは次元を統一するためセルと呼ぶ小さなネットワーク構造を重ねたモデルを利用する.
 セルを構成するノードは2つのノードからの演算子エッジを持ち,
