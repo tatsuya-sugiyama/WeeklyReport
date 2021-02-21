@@ -4,8 +4,17 @@
 \label{sec:pred}
 \changeindent{2cm}
 
-DARTSで柔軟なアーキテクチャを探索するため,
-深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を探索する.
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=6cm]{./fig/03.pred/image.png}
+  \end{center}
+  \caption{ショートカット概念図}
+  \label{fig:image}
+\end{figure}
+
+DARTSで柔軟なアーキテクチャを探索することを実験の目的とし, 構造探索タスクとして
+深層畳み込みネットワークのVGG19\cite{Simonyan15}のショートカット接続を考える.
+図 \ref{fig:image} のように, ショートカット接続は, 畳み込み部において 1つ以上特徴を飛ばした接続とする.
 VGG19は分岐がない単純なネットワーク構造であるため, ベースモデルに適しているとして選択した.
 
 VGG19は16層の畳み込み層と3層の線形結合層を持つ.
@@ -55,6 +64,9 @@ VGG19は16層の畳み込み層と3層の線形結合層を持つ.
   \item 高さと幅が半分の場合：Factorized Reduce
   \item それ以外の場合：ショートカットを定義しない
 \end{enumerate}
+Pointwise Convolutionは, 要素ごとの畳み込みでチャンネル数を調整する.
+Factorized Reduceは, 畳み込み層を偶数列と奇数列の 2枚 用いることで, 情報の損失を防ぎつつ特徴次元を半分にすることができる.
+
 ショートカットに使用する関数の制限によってショートカット位置の候補は61であるため,
 探索空間は$2^{61}$である.
 演算子の種類は固定することで, アーキテクチャ $\alpha$ は畳み込み部に相当するグラフの重みをもつ隣接行列と定義した.
@@ -105,6 +117,7 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
   \item 構成手法B : 閾値以上のエッジを採択
 \end{itemize}
 の 2通りの手法を設定した.
+% (predecessorsはあるノードに接続している前のノードの集合)
 
 \subsubsection{評価}
 評価段階では, 構成段階で得られたネットワークを学習し,
@@ -117,26 +130,16 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 \label{sec:pred.01_03}
 \changeindent{2cm}
 
+提案手法:DARTSの実験を 実験1 とする.
+表 \ref{tab:setting_exp}, \ref{tab:setting_eval} に実験1の探索段階と評価段階の実験設定を示す.
+探索段階はDARTSを参考に, 評価段階はoptunaで最適化した値を使用した.
+データセットは, 訓練画像が 32 pixel 四方で訓練データを50000枚持つ CIFAR-10\cite{cifar10} を利用して,
+10クラス分類問題を解いた.
 
-% \begin{table}[tb]
-%   \begin{center}
-%     \caption{実験1の設定}
-%   	\vspace{3mm}
-%     \begin{tabular}{|c|c|} \hline
-%       Loss & Cross Entropy Loss \\ \hline
-%       batch size & 64 \\ \hline\hline
-%       Step & Architecture Search \\ \hline
-%       Optim($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
-%       Optim($\alpha$) & Adam(lr=0.003, $\beta$=(0.5, 0.999)) \\ \hline
-%       data size & train : valid : test = 25000 : 25000 : 10000\\ \hline\hline
-%       Step & Evaluation \\ \hline
-%       Optim($w$) & SGD(lr=0.0090131, momentum=0.9) \\ \hline
-%       Scheduler($w$) & Step($\gamma$=0.23440, stepsize=100) \\ \hline
-%       data size & train : valid : test = 50000 : 0 : 10000\\ \hline
-%     \end{tabular}
-%     \label{tab:setting1}
-%   \end{center}
-% \end{table}
+探索時間は, 150 epochとし, 50 epochごとにその時点の $\alpha$ の性能を評価した.
+構成段階では手法A, Bに加えて比較のため,
+ショートカット数が同じとなる条件でランダムに選択する手法でも実験する.
+各手法において10回試行して統計的な性能を比較した.
 
 \begin{table}[tb]
   \begin{center}
@@ -169,22 +172,11 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
       Scheduler($w$) & Step($\gamma$=0.23440, stepsize=100) \\ \hline
       epoch & 150\\ \hline
       train data & 50000\\ \hline
-      valid data & 0\\ \hline
       test data &  10000\\ \hline
     \end{tabular}
     \label{tab:setting_eval}
   \end{center}
 \end{table}
-
-表 \ref{tab:setting_exp}, \ref{tab:setting_eval} に探索段階と評価段階の実験設定を示す.
-探索段階はDARTSを参考に, 評価段階はoptunaで最適化した値を使用した.
-データセットは, 訓練画像が 32 pixel 四方で訓練データを50000枚持つ CIFAR-10\cite{cifar10} を利用して,
-10クラス分類問題を解いた.
-
-探索時間は, 150 epochとし, 50 epochごとにその時点の $\alpha$ の性能を評価した.
-構成段階では手法A, Bに加えて比較のため,
-ショートカット数が同じとなる条件でランダムに選択する手法でも実験する.
-各手法において10回試行して統計的な性能を比較した.
 
 
 \clearpage\newpage
@@ -193,32 +185,59 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 \label{sec:pred.02}
 \changeindent{2cm}
 
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[clip,width=6cm]{./fig/03.pred/datdga.png}
+  \end{center}
+  \caption{提案手法:DARTS+TDGA 概念図}
+  \label{fig:image_ga}
+\end{figure}
 
 実験1では $\alpha$ の学習程度によって重み $w$ の学習しやすさに偏りがあったため,
 収束するグラフ構造にばらつきが見られた.
 
-そこで実験1から得られた最適設定をもとに,
+そこで実験1から得られた構造探索のための実験設定をもとに,
 個体表現を $\alpha$ とした遺伝的アルゴリズムによって,
-アーキテクチャの多様性を維持しつつ, 安定的なネットワーク構造の学習を図った.
+アーキテクチャを複数同時に管理, 最適化し,
+個体群の多様性を維持しつつ, 安定的なネットワーク構造の学習を図った.
 単純に個体数を増やすと計算コストが定数倍されるため,
 重み $w$ は全体で共有する One-Shot モデルを利用することで高速化した.
 
+
+\subsubsection{多様性項の拡張}
+(\ref{eq:Entropy}) 式では, 多様性の計算にエントロピーを利用していたが,
+個体 $\alpha$ は実数値の行列であるためエントロピーは計算できない.
+
+\begin{equation}
+H = \sum_{k \in \mathcal{P}} \sqrt{\mathrm{MSE}(\alpha_k, \bar{\alpha})} \label{eq:Entropy-new}
+\end{equation}
+
+そこで行列の各要素の標準偏差の平均として, $H$ の実数値拡張をした.
+
+
+\subsubsection{実験手順}
+実験は3段階からなり, 事前学習したDARTSから, w, aを引き継ぎ, TDGAで再探索し, 得られた最良個体のアーキテクチャを学習して性能を評価します.
+図 \ref{fig:image_ga} に$w$, $\alpha$の関係を示す.
+
+\begin{enumerate}
+  \item 事前学習
+  \item アーキテクチャ再探索
+  \item 性能評価
+\end{enumerate}
+
+\subsubsection{事前学習}
+DARTSをする.
+softmaxからsigmoidへ.
+
+
+\subsubsection{アーキテクチャ再探索}
+
 以下に TDGA をベースとして, DARTSの学習ステップの追加と多様性項の実数値拡張をした提案手法のアルゴリズムを示す.
-
-
-% \begin{enumerate}
-%   \item 一様乱数で初期個体生成
-%   % \item 重み$w$を$\displaystyle \sum_{i \in P} \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \alpha^\mathrm{sampled}_i)$で更新
-%   \item 重み $w$ を $\displaystyle \nabla_w \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
-%   \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
-%   \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha^\mathrm{smp})$ で個体 $\alpha$ を評価・選択
-%   \item 交叉・突然変異
-%   \item 収束するまで 2. に戻る
-% \end{enumerate}
 
 \begin{enumerate}
   \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
   \item エリート個体選択
+  \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{train}}(w^*, \bar{\alpha})$ で更新
   \item 個体 $\alpha_i$ を $\displaystyle \nabla_\alpha \mathcal{L}_{\mathrm{valid}}(w^*, \alpha_i)$ で更新
   \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w^*, \alpha_i)$ で個体 $\alpha_i$ を評価
   \item 交叉で子個体群生成
@@ -227,9 +246,39 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
   \item 収束するまで 2. に戻る
 \end{enumerate}
 
+
+\begin{enumerate}
+  \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
+  \item エリート個体選択
+  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w^*, \alpha_i)$ で個体 $\alpha_i$ を評価
+  \item 交叉で子個体群生成
+  \item 親個体群と子個体群の突然変異
+  \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+  \item 収束するまで 2. に戻る
+\end{enumerate}
+
+
+\begin{enumerate}
+  \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
+  \item エリート個体選択
+  \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w^*, \alpha_i)$ で個体 $\alpha_i$ を評価
+  \item 交叉で子個体群生成
+  \item 親個体群と子個体群の突然変異
+  \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+  \item 収束するまで 2. に戻る
+\end{enumerate}
+
+\begin{itemize}
+  \item 提案手法1. DAARTS + TDGA($w$, $\alpha$)
+  \item 提案手法2. DAARTS + TDGA($\alpha$)
+  \item 提案手法3. DAARTS + TDGA
+\end{itemize}
+
 % $P$は個体群,
 % $\bar{\alpha}$ は各個体の平均,
 % $\alpha_$ は実験1で有効だった構成手法Bで隣接行列にサンプリングした $\alpha$ である.
+
+\subsubsection{性能評価}
 
 学習後最終世代の個体の性能を実験1と同じ条件で評価した.
 
@@ -239,25 +288,43 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 \label{sec:pred.02_03}
 \changeindent{2cm}
 
-
+提案手法:DARTS+TDGAの実験を 実験2 とする.
 表 \ref{tab:setting_darts}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
 モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
 初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.5 の確率で操作する一様交叉を使用した.
 突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
 
 
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験2 : 事前学習の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Optimizer($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optimizer($\alpha$) & Adam(lr=0.0005, $\beta$=(0.5, 0.999)) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      train data & 25000\\ \hline
+      valid data & 25000\\ \hline
+      test data &  10000\\ \hline
+      epoch & 150\\ \hline
+    \end{tabular}
+    \label{tab:setting_pretrain}
+  \end{center}
+\end{table}
+
 \begin{table}[t]
   \begin{center}
-    \caption{実験2 : DARTSの設定}
+    \caption{実験2 : DARTS+TDGAの設定 (DARTS)}
   	\vspace{3mm}
     \begin{tabular}{|c|c|} \hline
       Optimizer($w$) & SGD(lr=0.001, momentum=0.9) \\ \hline
       Optimizer($\alpha$) & Adam(lr=0.001, $\beta$=(0.5, 0.999)) \\ \hline
       Loss & Cross Entropy Loss \\ \hline
       batch size & 64 \\ \hline
-      train data & 0\\ \hline
+      train data & 25000\\ \hline
       valid data & 25000\\ \hline
-      test data &  10000\\ \hline
+      test data &  2000\\ \hline
     \end{tabular}
     \label{tab:setting_darts}
   \end{center}
@@ -265,21 +332,38 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 
 \begin{table}[t]
   \begin{center}
-    \caption{実験2 : TDGAの設定}
+    \caption{実験2 : DARTS+TDGAの設定 (TDGA)}
   	\vspace{3mm}
     \begin{tabular}{|c|c|} \hline
       Population & 10 \\ \hline
       Generation & 150 \\ \hline \hline
       % Selection & 熱力学的選択 \\ \hline
       Selection & TD Select \\ \hline
-      Temperature & 1 $\rightarrow$ 0.01 \\ \hline \hline
+      Temperature & 1 $\rightarrow$ 0.001 \\ \hline \hline
       % Crossover & 一様交叉 \\ \hline
-      Crossover & Uniform Crossover \\ \hline
+      Crossover & Uniform Crossover (0.5 / locus) \\ \hline
       Crossover Rate & 0.8 \\ \hline \hline
       % Mutation & ガウス分布 \\ \hline
-      Mutation & Gaussian Mutation \\ \hline
+      Mutation & Gaussian Mutation ($\mu$=0, $\sigma$=0.2, 0.2 / locus)\\ \hline
       Mutation Rate & 0.2 \\ \hline
     \end{tabular}
     \label{tab:setting_ga}
+  \end{center}
+\end{table}
+
+\begin{table}[t]
+  \begin{center}
+    \caption{実験2 : ネットワーク評価の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Optimizer($w$) & SGD(lr=0.009, momentum=0.9) \\ \hline
+      Scheduler($w$) & Step($\gamma$=0.2344, step epoch=100) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      train data & 50000\\ \hline
+      test data &  10000\\ \hline
+      epoch & 150\\ \hline
+    \end{tabular}
+    \label{tab:setting_eval}
   \end{center}
 \end{table}

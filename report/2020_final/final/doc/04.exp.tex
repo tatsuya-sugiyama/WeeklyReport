@@ -13,7 +13,7 @@
 
 \begin{table}[t]
   \begin{center}
-    \caption{各アーキテクチャの精度}
+    \caption{実験1 : 各アーキテクチャの精度}
 		\vspace{3mm}
     \begin{tabular}{|c|c|c|c|c|c|}\hline
     \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}number of\\ shortcuts\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
@@ -34,15 +34,63 @@
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/short.png}
   \end{center}
-  \caption{ショートカット数に対する精度}
+  \caption{実験1 : ショートカット数に対する精度}
   \label{fig:short}
 \end{figure}
 \begin{figure}[t]
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/param.png}
   \end{center}
-  \caption{パラメータ数に対する精度}
+  \caption{実験1 : パラメータ数に対する精度}
   \label{fig:param}
+\end{figure}
+
+
+\begin{figure}[tb]
+ \begin{minipage}{0.3\hsize}
+ 	\begin{center}
+ 		\includegraphics[clip,scale=0.8]{./fig/04.exp/a50.png}\\
+ 		50 epoch
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.3\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.8]{./fig/04.exp/a100.png}\\
+    100 epoch
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.3\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.8]{./fig/04.exp/a150.png}\\
+    150 epoch
+ 	\end{center}
+ \end{minipage}
+ \caption{実験1 : 手法Aのアーキテクチャ 例}
+ \label{fig:exp1_a}
+\end{figure}
+
+
+\begin{figure}[tb]
+ \begin{minipage}{0.3\hsize}
+ 	\begin{center}
+ 		\includegraphics[clip,scale=0.8]{./fig/04.exp/b50.png}\\
+ 		50 epoch
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.3\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.8]{./fig/04.exp/b100.png}\\
+    100 epoch
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.3\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.8]{./fig/04.exp/b150.png}\\
+    150 epoch
+ 	\end{center}
+ \end{minipage}
+ \caption{実験1 : 手法Bのアーキテクチャ 例}
+ \label{fig:exp1_b}
 \end{figure}
 
 表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
@@ -62,41 +110,135 @@
 
 
 
+
+
+
+
 \clearpage\newpage
 \changeindent{0cm}
 \subsection{提案手法:DARTS+TDGA}
 \label{sec:exp.02}
 \changeindent{2cm}
 
+3つの提案手法の最終的なアーキテクチャ性能はこの表のようになりました.
+50世代ごとの結果全てに対して, DARTSのみとなる事前学習のアーキテクチャ 93.65\%をいずれも超えることができました.
+この表を横軸が世代数 縦軸がaccuracyの図にすると, wを更新する青色の提案手法1が150世代目で性能が下がっています. またDARTSの更新をしない緑色の提案手法3が最もよい結果となりました.
+
+この結果からDARTSによる頻繁な更新がTDGAの正確な適応度計算を妨害していることが原因として考えられます
+.
+
+
+
+\begin{table}[t]
+  \begin{center}
+    \caption{実験2 : 各提案手法のアーキテクチャ性能}
+		\vspace{-1mm}
+    ベースラインは事前学習時のネットワーク.
+		\vspace{1mm}
+		\vspace{3mm}
+    \begin{tabular}{|c|c|c|c|} \hline
+    \textbf{}       & \textbf{50 世代} & \textbf{100 世代} & \textbf{150 世代} \\ \hline\hline
+    DAARTS + TDGA($w$, $\alpha$)& 94.03 \%       & 94.10 \%        & 93.85 \%        \\ \hline
+    DAARTS + TDGA($\alpha$)& 93.88 \%       & 94.08 \%        & 94.13 \%        \\ \hline
+    DAARTS + TDGA   & 93.90 \%       & 94.17 \%        & 94.17 \%        \\ \hline
+    Baseline(DARTS) & \multicolumn{3}{c|}{93.65 \%}                      \\ \hline
+    \end{tabular}
+    \label{tab:acc_ga}
+  \end{center}
+\end{table}
 
 \begin{figure}[t]
   \begin{center}
-    \includegraphics[clip,width=10cm]{./fig/04.exp/acc_tdga.png}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/eval.png}
   \end{center}
-  \caption{TDGA精度}
-  \label{fig:acc_tdga}
+  \caption{eval}
+  \label{fig:exp2/eval}
 \end{figure}
-
 \begin{figure}[t]
   \begin{center}
-    \includegraphics[clip,width=10cm]{./fig/04.exp/loss_tdga.png}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/acc.png}
   \end{center}
-  \caption{TDGA loss}
-  \label{fig:loss_tdga}
+  \caption{acc}
+  \label{fig:exp2/acc}
 \end{figure}
-
 \begin{figure}[t]
   \begin{center}
-    \includegraphics[clip,width=10cm]{./fig/04.exp/edge_tdga.png}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/loss.png}
   \end{center}
-  \caption{TDGA edge}
-  \label{fig:edge_tdga}
+  \caption{loss}
+  \label{fig:exp2/loss}
 \end{figure}
-
 \begin{figure}[t]
   \begin{center}
-    \includegraphics[clip,width=10cm]{./fig/04.exp/eval_tdga.png}
+    \includegraphics[clip,width=10cm]{./fig/04.exp/edge.png}
   \end{center}
-  \caption{TDGA eval}
-  \label{fig:eval_tdga}
+  \caption{edge}
+  \label{fig:exp2/edge}
 \end{figure}
+
+
+\begin{figure}[tb]
+ \begin{minipage}{0.5\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.2]{./fig/04.exp/base.png}\\
+    Baseline (DARTS)
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.5\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.2]{./fig/04.exp/nofix_last.png}\\
+    DAARTS + TDGA($w$, $\alpha$)
+ 	\end{center}
+ \end{minipage}
+ \caption{実験2 : 手法のアーキテクチャ 1/2}
+ \label{fig:exp2/archi}
+\end{figure}
+
+\begin{figure}[tb]
+ \begin{minipage}{0.5\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.2]{./fig/04.exp/normal_last.png}\\
+    DAARTS + TDGA($\alpha$)
+ 	\end{center}
+ \end{minipage}
+ \begin{minipage}{0.5\hsize}
+ 	\begin{center}
+    \includegraphics[clip,scale=0.2]{./fig/04.exp/noevo_last.png}\\
+    DAARTS + TDGA
+ 	\end{center}
+ \end{minipage}
+ \caption{実験2 : 手法のアーキテクチャ 2/2}
+ \label{fig:exp2/archi2}
+\end{figure}
+
+% \begin{figure}[t]
+%   \begin{tabular}{cc}
+%     \begin{minipage}[t]{0.5\hsize}
+%     	\begin{center}
+%         \includegraphics[clip, width=70mm]{./fig/04.exp/eval.png}\\
+%         eval
+%       \end{center}
+%     \end{minipage}
+%     \begin{minipage}[t]{0.5\hsize}
+%     	\begin{center}
+%         \includegraphics[clip, width=70mm]{./fig/04.exp/acc.png}\\
+%         accuracy
+%       \end{center}
+%     \end{minipage}
+%     \\
+%     \begin{minipage}[c]{0.5\hsize}
+%     	\begin{center}
+%         \includegraphics[clip, width=70mm]{./fig/04.exp/loss.png}\\
+%         loss
+%       \end{center}
+%     \end{minipage}
+%     \begin{minipage}[c]{0.5\hsize}
+%     	\begin{center}
+%         \includegraphics[clip, width=70mm]{./fig/04.exp/edge.png}\\
+%         edge
+%       \end{center}
+%     \end{minipage}
+%   \end{tabular}
+%   \caption{実験2 : result}
+%   \label{fig:exp2_graph}
+% \end{figure}
