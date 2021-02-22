@@ -1,4 +1,4 @@
-\documentclass[12pt]{jarticle}
+\documentclass[12pt, dvipdfmx]{jarticle}
 \usepackage[dvipdfmx]{graphicx}
 \usepackage[dvipdfmx]{color}
 \usepackage{iepaper}
@@ -16,6 +16,7 @@
 \usepackage{comment}
 \usepackage{txfonts}
 \usepackage{inputenc}
+\usepackage{pdfpages}
 
 \title{TDGA を導入した DARTS による深層学習の構造探索}
 \author{杉山 竜弥}
@@ -45,6 +46,9 @@
 %目次・図一覧・表一覧
 \begin{document}
 \maketitle
+
+\includepdf[fitpaper]{../gaiyou/abstract_ja.pdf}
+
 \pagenumbering{roman}
 \tableofcontents\newpage
 \listoffigures

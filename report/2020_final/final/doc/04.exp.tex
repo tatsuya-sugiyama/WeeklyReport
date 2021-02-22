@@ -10,12 +10,29 @@
 \label{sec:exp.01}
 \changeindent{2cm}
 
-\begin{table}[b]
+表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
+図 \ref{fig:short}, \ref{fig:param} には
+表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
+最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
+100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
+しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
+図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
+
+また100 epoch時点と150 epoch時点を比較すると, 150 epochの方が性能が悪化していることが分かる.
+問題に対して過度に適合していることが原因であると考えられる.
+
+探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
+最適な重み $w$ の近似を1次下げていることで高速になったと思われる.
+
+% ここで 0.5 Page
+
+
+\begin{table}[tb]
   \begin{center}
     \caption{実験1 : 各アーキテクチャの精度}
 		\vspace{3mm}
     \begin{tabular}{|c|c|c|c|c|c|}\hline
-    \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}shortcut # \end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
+    \multicolumn{2}{|c|}{\textbf{architecture}} & \textbf{\begin{tabular}[c]{@{}c@{}}test accuracy\\ (\%)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}param\\ (M)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}shortcut \# \end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}random architect\\ accuracy (\%)\end{tabular}} \\ \hline
     \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}method A\end{tabular}} & 50 epoch & 93.70 $\pm$ 0.22 & 21.06 $\pm$ 0.07 & 12.7 $\pm$ 1.4 & 93.60 $\pm$ 0.15 \\ \cline{2-6}
      & 100 epoch & 94.02 $\pm$ 0.12 & 21.50 $\pm$ 0.11 & 18.2 $\pm$ 0.9 & 93.67 $\pm$ 0.14 \\ \cline{2-6}
      & 150 epoch & 93.90 $\pm$ 0.17 & 21.57 $\pm$ 0.25 & 18.9 $\pm$ 0.6 & 93.64 $\pm$ 0.09 \\ \hline
@@ -28,19 +45,43 @@
   \end{center}
 \end{table}
 
-表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
-図 \ref{fig:short}, \ref{fig:param} には
-表 \ref{tab:accg} の精度に対するショートカット数とパラメータ数の関係を図示する.
-最も性能が高かったのは100 epoch 時点の手法Aで94.02 \%(baseline+0.99\%)となり,
-100 epoch 時点の手法Bは93.93 \%(baseline+0.90\%)となった.
-しかしランダム手法と比較すると, 手法Aは+0.35\%, 手法Bは+0.46\%となり,
-図 \ref{fig:param} を参照しても少ないパラメータ数でより有効に探索できているのは手法Bと言える.
 
-また100 epoch時点と150 epoch時点を比較すると, 学習によって性能が悪化している.
-問題に対して過度に適合していることが原因であると考えられる.
+\begin{figure}[t]
+  \begin{tabular}{c}
+    \begin{minipage}[t]{1\hsize}
+    	\begin{center}
+        \includegraphics[clip, width=10cm]{./fig/short.png}
+      \end{center}
+      \caption{実験1 : ショートカット数に対する精度}
+      \label{fig:short}
+    \end{minipage}
+    \vspace{3cm}
+    \\
+    \begin{minipage}[c]{1\hsize}
+      \begin{center}
+        \includegraphics[clip,width=10cm]{./fig/param.png}
+      \end{center}
+      \caption{実験1 : パラメータ数に対する精度}
+      \label{fig:param}
+    \end{minipage}
+  \end{tabular}
+\end{figure}
 
-探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
-最適な重み $w^*$ の近似を1次下げていることで高速になったと思われる.
+% \begin{figure}[t]
+%   \begin{center}
+%     \includegraphics[clip,width=10cm]{./fig/short.png}
+%   \end{center}
+%   \caption{実験1 : ショートカット数に対する精度}
+%   \label{fig:short}
+% \end{figure}
+% \begin{figure}[t]
+%   \begin{center}
+%     \includegraphics[clip,width=10cm]{./fig/param.png}
+%   \end{center}
+%   \caption{実験1 : パラメータ数に対する精度}
+%   \label{fig:param}
+% \end{figure}
+
 
 図 \ref{fig:exp1_a}, \ref{fig:exp1_b} には, 手法A, Bのアーキテクチャの 50 epoch ごとの
 結果として, 10回試行のうちの1つを示した.
@@ -49,25 +90,6 @@
 これは離れた位置からの接続が, あまり変換されていない特徴の情報を引き継げることが,
 性能向上の要因と解釈できる.
 
-
-% ここで 0.5 Page
-
-
-
-\begin{figure}[t]
-  \begin{center}
-    \includegraphics[clip,width=10cm]{./fig/short.png}
-  \end{center}
-  \caption{実験1 : ショートカット数に対する精度}
-  \label{fig:short}
-\end{figure}
-\begin{figure}[t]
-  \begin{center}
-    \includegraphics[clip,width=10cm]{./fig/param.png}
-  \end{center}
-  \caption{実験1 : パラメータ数に対する精度}
-  \label{fig:param}
-\end{figure}
 
 
 \begin{figure}[tb]
@@ -127,22 +149,12 @@
 \label{sec:exp.02}
 \changeindent{2cm}
 
-3つの提案手法の最終的なアーキテクチャ性能はこの表のようになりました.
-50世代ごとの結果全てに対して, DARTSのみとなる事前学習のアーキテクチャ 93.65\%をいずれも超えることができました.
-この表を横軸が世代数 縦軸がaccuracyの図にすると, wを更新する青色の提案手法1が150世代目で性能が下がっています. またDARTSの更新をしない緑色の提案手法3が最もよい結果となりました.
-
-この結果からDARTSによる頻繁な更新がTDGAの正確な適応度計算を妨害していることが原因として考えられます
-.
-
-表 \ref{tab:acc_ga}.
-図 \ref{fig:exp2/eval},
-図 \ref{fig:exp2/acc},
-図 \ref{fig:exp2/loss},
-図 \ref{fig:exp2/edge},
-
-図 \ref{fig:exp2/archi}, \ref{fig:exp2/archi2}.
-
-% ここで 1 Page
+表 \ref{tab:acc_ga} に, 3つの提案手法の最終的なアーキテクチャ性能を示す.
+50世代ごとの結果全てに対して, DARTSのみとなる事前学習のアーキテクチャ 93.65\%をいずれも超えている.
+図 \ref{fig:exp2/eval} は 横軸に世代数, 縦軸にaccuracyをとった,
+表 \ref{tab:acc_ga} のグラフを示す.
+$w$ を更新する提案手法1が150世代目で性能が下がっている.
+またDARTSの更新をしない提案手法3が最もよい結果となった.
 
 
 \begin{table}[t]
@@ -170,6 +182,31 @@
   \caption{実験2 : 各提案手法のアーキテクチャ性能}
   \label{fig:exp2/eval}
 \end{figure}
+
+
+次に 図 \ref{fig:exp2/acc} ～ \ref{fig:exp2/edge} で探索段階のデータを考察する.
+
+図 \ref{fig:exp2/acc}, 図 \ref{fig:exp2/loss}に
+提案手法の適応度計算時のテストデータの正解率と損失を示す.
+ただし個体群の中で最良の適応度を得た個体をその世代の代表としている.
+提案手法1 は重み $w$ も更新しているため, 最も訓練時の正解率が高く, 90\%付近まで学習している.
+それと比べて, 提案手法2, 3 は 10\% 程度低くなっているが,
+提案手法3 は 提案手法2 と比較して, 150 世代でも正答率の増加傾向が見られる.
+図 \ref{fig:exp2/eval} の最終的な評価から考えて, 学習時の正答率の高さが
+ネットワークの性能と直結しているわけではないことが分かった.
+また 提案手法2, 3 は $w$ を固定しており, 同じ個体に対しては同じ適応度が計算されるため,
+純粋にアーキテクチャが学習される過程を示している.
+この同じ適応度が計算されるという信頼性が, 提案手法2, 3の結果が 提案手法1 よりも優れていた
+原因であると考えられる.
+したがって適応度計算には, 学習過程の正答率よりも同じ結果となることがより重要であると言える.
+
+図 \ref{fig:exp2/edge} には, 各探索段階での採用されるショートカット数を示した.
+ただしショートカット数は最良個体のものとした.
+提案手法2, 3 は 世代数が 50 から 100 のときに主に改善されているが,
+図 \ref{fig:exp2/edge} を参照するとショートカット数は減少している最中である.
+ネットワークの計算の邪魔になる, 不必要な辺を削除できたことで性能が改善されたことが分かった.
+
+
 \begin{figure}[t]
   \begin{center}
     \includegraphics[clip,width=10cm]{./fig/04.exp/acc.png}
@@ -192,15 +229,20 @@
   \label{fig:exp2/edge}
 \end{figure}
 
+図 \ref{fig:exp2/archi}, \ref{fig:exp2/archi2} には,
+事前学習と各提案手法の最終世代時の最良個体のアーキテクチャを示した.
+実験1 でもみられたような離れた位置からのショートカットが多いという特徴が, 提案手法2, 3でもみられ,
+逆に提案手法1 では無秩序を感じさせるような様々な位置で接続する構造となった.
+
 
 \begin{figure}[tb]
- \begin{minipage}{0.5\hsize}
+ \begin{minipage}{0.49\hsize}
  	\begin{center}
     \includegraphics[clip,scale=0.2]{./fig/04.exp/base.png}\\
     Baseline (DARTS)
  	\end{center}
  \end{minipage}
- \begin{minipage}{0.5\hsize}
+ \begin{minipage}{0.49\hsize}
  	\begin{center}
     \includegraphics[clip,scale=0.2]{./fig/04.exp/nofix_last.png}\\
     DAARTS + TDGA($w$, $\alpha$)
@@ -211,15 +253,15 @@
 \end{figure}
 
 \begin{figure}[tb]
- \begin{minipage}{0.5\hsize}
+ \begin{minipage}{0.49\hsize}
  	\begin{center}
-    \includegraphics[clip,scale=0.2]{./fig/04.exp/normal_last.png}\\
+    \includegraphics[clip,scale=0.19]{./fig/04.exp/normal_last.png}\\
     DAARTS + TDGA($\alpha$)
  	\end{center}
  \end{minipage}
- \begin{minipage}{0.5\hsize}
+ \begin{minipage}{0.49\hsize}
  	\begin{center}
-    \includegraphics[clip,scale=0.2]{./fig/04.exp/noevo_last.png}\\
+    \includegraphics[clip,scale=0.19]{./fig/04.exp/noevo_last.png}\\
     DAARTS + TDGA
  	\end{center}
  \end{minipage}

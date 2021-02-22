@@ -97,7 +97,7 @@ DARTSでネットワーク構造を探索するときの, 学習の手順は
 
 探索段階では, 勾配降下法によって $\alpha$ の更新を行う.
 このとき探索用のネットワークは, ショートカットの本数も探索するため,
-$\alpha$ に対する重み補正 $\beta$ を (\ref{equ:cut}) 式 で定義する.
+$\alpha$ に対する重み補正 $\beta$ を用いて (\ref{equ:cut}) 式 で定義する.
 \begin{equation}
   \label{equ:cut}
   x_i = f^{\mathrm{c}}_{i-1, i}(x_{i-1}) + \beta_i \sum_{j \in S_i} \alpha_{ij} f^{\mathrm{s}}_{j, i} (x_j)
@@ -139,12 +139,15 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 \changeindent{2cm}
 
 提案手法:DARTSの実験を 実験1 とする.
-表 \ref{tab:setting_exp}, \ref{tab:setting_eval} に実験1の探索段階と評価段階の実験設定を示す.
-探索段階はDARTSを参考に, 評価段階はoptunaで最適化した値を使用した.
-データセットは, 訓練画像が 32 pixel 四方で訓練データを50000枚持つ CIFAR-10\cite{cifar10} を利用して,
+表 \ref{tab:setting_exp}, \ref{tab:exp2/eval} に実験1の探索段階と評価段階の実験設定を示す.
+探索段階は先行研究のDARTSの設定を参考に, 評価段階はoptunaで最適化した値を使用した.
+$\alpha$ の Optimizer はAdam\cite{Kingma2015AdamAM}で,
+評価段階では, 訓練中に学習率を変化させる Scheduler\cite{Loshchilov2017SGDRSG}を用いた.
+
+データセットは, 32 pixel * 32 pixel * 3 channel の訓練画像を 50000枚 持つ CIFAR-10\cite{cifar10} を利用して,
 10クラス分類問題を解いた.
 
-探索時間は, 150 epochとし, 50 epochごとにその時点の $\alpha$ の性能を評価した.
+探索 epoch 数は, 150 epochとし, 50 epochごとにその時点の $\alpha$ の性能を評価した.
 構成段階では手法A, Bに加えて比較のため,
 ショートカット数が同じとなる条件でランダムに選択する手法でも実験する.
 各手法において10回試行して統計的な性能を比較した.
@@ -182,7 +185,7 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
       train data & 50000\\ \hline
       test data &  10000\\ \hline
     \end{tabular}
-    \label{tab:setting_eval}
+    \label{tab:exp2/eval}
   \end{center}
 \end{table}
 
@@ -224,7 +227,8 @@ H = \sum_{k \in \mathcal{P}} \sqrt{\mathrm{MSE}(\alpha_k, \bar{\alpha})} \label{
 
 
 \subsubsection{実験手順}
-実験は3段階からなり, 事前学習したDARTSから, w, aを引き継ぎ, TDGAで再探索し, 得られた最良個体のアーキテクチャを学習して性能を評価します.
+実験は3段階からなり, 事前学習したDARTSから, $w$, $\alpha$を引き継ぎ,
+TDGAで再探索し, 得られた最良個体のアーキテクチャを学習して性能を評価する.
 図 \ref{fig:image_ga} に$w$, $\alpha$の関係を示す.
 
 \begin{enumerate}
@@ -264,7 +268,7 @@ DARTSがTDGAの学習に与える影響をみる.
     \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
     \item 交叉で子個体群生成
     \item 親個体群と子個体群の突然変異
-    \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+    \item エリート個体と親個体群, 子個体群に熱力学的選択によって次世代とする
     \item 収束するまで 2. に戻る
   \end{enumerate}
 \end{algorithm}
@@ -280,7 +284,7 @@ DARTSがTDGAの学習に与える影響をみる.
     \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
     \item 交叉で子個体群生成
     \item 親個体群と子個体群の突然変異
-    \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+    \item エリート個体と親個体群, 子個体群に熱力学的選択によって次世代とする
     \item 収束するまで 2. に戻る
   \end{enumerate}
 \end{algorithm}
@@ -294,7 +298,7 @@ DARTSがTDGAの学習に与える影響をみる.
     \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(w, \alpha_i)$ で個体 $\alpha_i$ を評価
     \item 交叉で子個体群生成
     \item 親個体群と子個体群の突然変異
-    \item エリート個体と親個体, 子個体に熱力学的選択をして次世代とする
+    \item エリート個体と親個体群, 子個体群に熱力学的選択によって次世代とする
     \item 収束するまで 2. に戻る
   \end{enumerate}
 \end{algorithm}
@@ -317,12 +321,15 @@ DARTSがTDGAの学習に与える影響をみる.
 \changeindent{2cm}
 
 提案手法:DARTS+TDGAの実験を 実験2 とする.
-表 \ref{tab:setting_darts}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
-モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
-初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.5 の確率で操作する一様交叉を使用した.
-突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
 
-Adam\cite{Kingma2015AdamAM}. Scheduler\cite{Loshchilov2017SGDRSG}.
+表 \ref{tab:setting_pretrain} には事前学習の設定を示した.
+実験1 の設定を継承しつつ,
+モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
+
+表 \ref{tab:setting_darts}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
+初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.8 の確率で操作する一様交叉を使用した.
+突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
+交叉と突然変異の操作確率は, 個体ごとの確率で, それぞれは独立であり, 交叉の後に突然変異をした.
 
 % ここで 0.5 Page
 
@@ -368,15 +375,12 @@ Adam\cite{Kingma2015AdamAM}. Scheduler\cite{Loshchilov2017SGDRSG}.
     \begin{tabular}{|c|c|} \hline
       Population & 10 \\ \hline
       Generation & 150 \\ \hline \hline
-      % Selection & 熱力学的選択 \\ \hline
       Selection & Elite \\ \hline
-      Elite # & 1 \\ \hline
+      Elite \# & 1 \\ \hline
       Selection & TD Select \\ \hline
       Temperature & 1 $\rightarrow$ 0.001 \\ \hline \hline
-      % Crossover & 一様交叉 \\ \hline
       Crossover & Uniform Crossover (0.5 / locus) \\ \hline
       Crossover Rate & 0.8 \\ \hline \hline
-      % Mutation & ガウス分布 \\ \hline
       Mutation & Gaussian Mutation ($\mu$=0, $\sigma$=0.2, 0.2 / locus)\\ \hline
       Mutation Rate & 0.2 \\ \hline
     \end{tabular}
