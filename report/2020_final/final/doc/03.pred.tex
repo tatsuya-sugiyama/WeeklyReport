@@ -129,7 +129,7 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 \subsubsection{評価}
 評価段階では, 構成段階で得られたネットワークを学習し,
 最大の正答率をネットワークの性能とする.
-このときのパラメータは, グリッドサーチによる最適化API の optuna \cite{akiba2019optuna}
+このときのパラメータは, グリッドサーチによる最適化API の Optuna \cite{akiba2019optuna}
 で事前学習した結果から設定する.
 
 
@@ -140,7 +140,7 @@ $\alpha$ の値に対する, ネットワークの構成手法はいくつか考
 
 提案手法:DARTSの実験を 実験1 とする.
 表 \ref{tab:setting_exp}, \ref{tab:exp2/eval} に実験1の探索段階と評価段階の実験設定を示す.
-探索段階は先行研究のDARTSの設定を参考に, 評価段階はoptunaで最適化した値を使用した.
+探索段階は先行研究のDARTSの設定を参考に, 評価段階は Optuna で最適化した値を使用した.
 $\alpha$ の Optimizer はAdam\cite{Kingma2015AdamAM}で,
 評価段階では, 訓練中に学習率を変化させる Scheduler\cite{Loshchilov2017SGDRSG}を用いた.
 
