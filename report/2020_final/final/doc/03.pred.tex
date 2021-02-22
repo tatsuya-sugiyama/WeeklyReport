@@ -325,7 +325,8 @@ DARTSがTDGAの学習に与える影響をみる.
 
 表 \ref{tab:setting_pretrain} には事前学習の設定を示した.
 実験1 の設定を継承しつつ,
-モデルの重み $w$ はImage Netで訓練された事前学習の重みを畳み込み層の部分に適用した.
+モデルの重み $w$ はImage Net\cite{deng2009imagenet}で訓練された
+事前学習の重みを畳み込み層の部分に適用した.
 
 表 \ref{tab:setting_darts}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
 初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.8 の確率で操作する一様交叉を使用した.
