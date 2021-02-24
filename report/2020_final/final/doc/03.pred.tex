@@ -12,28 +12,28 @@
   \label{fig:image}
 \end{figure}
 
-DARTSで柔軟なアーキテクチャを探索することを実験の目的とし, 構造探索タスクとして
-深層畳み込みネットワークのVGG19\cite{Simonyan15}の
+DARTS で柔軟なアーキテクチャを探索することを実験の目的とし, 構造探索タスクとして
+深層畳み込みネットワークの VGG19\cite{Simonyan15} の
 ショートカット接続\cite{mao2016image}を考える.
 図 \ref{fig:image} のように, ショートカット接続は,
-畳み込み部において 1つ以上特徴を飛ばした接続とする.
-VGG19は分岐がない単純なネットワーク構造であるため, ベースモデルに適しているとして選択した.
+畳み込み部において 1 つ以上特徴を飛ばした接続とする.
+VGG19 は分岐がない単純なネットワーク構造であるため, ベースモデルに適しているとして選択した.
 
-VGG19は16層の畳み込み層と3層の線形結合層を持つ.
-表 \ref{tab:vgg} は, VGG19の畳み込みニューラルネットワーク
+VGG19 は 16 層の畳み込み層と 3 層の線形結合層を持つ.
+表 \ref{tab:vgg} は, VGG19 の畳み込みニューラルネットワーク
 (Convolutional Neural Network: CNN) 部分の構造を示している.
-構成する関数は, フィルターサイズが 3 $\times$ 3 の畳み込み層(Conv2d),
-Batch Normalization(BN)\cite{Ioffe2015BatchNA},
-活性化関数(Rectified Linear Unit: ReLU),
-ストライドが 2 の Max Pooling (MaxPool)である.
-このVGG19に対し層を飛ばして接続するショートカットの数と位置を求め,
+構成する関数は, フィルターサイズが 3 $\times$ 3 の畳み込み層 (Conv2d) ,
+Batch Normalization (BN)\cite{Ioffe2015BatchNA} ,
+活性化関数 (Rectified Linear Unit: ReLU) ,
+ストライドが 2 の Max Pooling (MaxPool) である.
+この VGG19 に対し層を飛ばして接続するショートカットの数と位置を求め,
 性能を向上させることを目的とする.
 
 \begin{table}[t]
   \begin{center}
     \caption{VGG19 の構造}
 		\vspace{-1mm}
-    例として入力する画像を(32, 32, 3)次元としている.
+    例として入力する画像を (32, 32, 3) 次元としている.
 		\vspace{1mm}
 		\vspace{3mm}
     \begin{tabular}{|c|c|c|l|}
@@ -71,27 +71,27 @@ Batch Normalization(BN)\cite{Ioffe2015BatchNA},
   \item 高さと幅が半分の場合：Factorized Reduce
   \item それ以外の場合：ショートカットを定義しない
 \end{enumerate}
-Pointwise Convolutionは, 要素ごとの畳み込みでチャンネル数を調整する.
-Factorized Reduceは, 畳み込み層を偶数列と奇数列の 2枚 用いることで, 情報の損失を防ぎつつ特徴次元を半分にすることができる.
+Pointwise Convolution は, 要素ごとの畳み込みでチャンネル数を調整する.
+Factorized Reduce は, 畳み込み層を偶数列と奇数列の 2 枚 用いることで, 情報の損失を防ぎつつ特徴次元を半分にすることができる.
 
-ショートカットに使用する関数の制限によってショートカット位置の候補は61であるため,
-探索空間は$2^{61}$である.
+ショートカットに使用する関数の制限によってショートカット位置の候補は 61 であるため,
+探索空間は $2^{61}$ である.
 演算子の種類は固定することで, アーキテクチャ $\bm{\alpha}$ は畳み込み部に相当するグラフの重みをもつ隣接行列と定義した.
 
 
 %4.1
 \changeindent{0cm}
-\subsection{提案手法:DARTS}
+\subsection{提案手法 : DARTS}
 \label{sec:pred.01}
 \changeindent{2cm}
 
-DARTSでネットワーク構造を探索するときの, 学習の手順は
+DARTS でネットワーク構造を探索するときの, 学習の手順は
 \begin{enumerate}
   \item 探索：アーキテクチャ $\bm{\alpha}$ の訓練
   \item 構成：$\bm{\alpha}$ からネットワークを構成
   \item 評価：得られたネットワークをバックプロパゲーションにより訓練し, テストデータで性能を評価
 \end{enumerate}
-の 3段階から成る.
+の 3 段階から成る.
 
 
 \subsubsection{探索}
@@ -105,10 +105,10 @@ $\bm{\alpha}$ に対する重み補正 $\bm{\beta}$ を用いて (\ref{equ:cut})
   \bm{x}_i = f^{\mathrm{c}}_{i-1, i}(\bm{x}_{i-1}) + \bm{\beta}_i \sum_{j \in S_i} \bm{\alpha}_{ij} f^{\mathrm{s}}_{j, i} (\bm{x}_j)
 \end{equation}
 
-ここで $f^{\mathrm{c}}(・)$, $f^{\mathrm{s}}(・)$ は, VGGの畳み込み関数とショートカット関数,
-$S_i$ はノード $i$ とショートカットで接続する先行(predecessor)ノードのインデックス集合である.
+ここで $f^{\mathrm{c}}(・)$, $f^{\mathrm{s}}(・)$ は, VGG の畳み込み関数とショートカット関数,
+$S_i$ はノード $i$ とショートカットで接続する先行 (predecessor) ノードのインデックス集合である.
 
-ただし$\bm{\beta}=0$で勾配の更新ができなくなるので,
+ただし $\bm{\beta}=0$ で勾配の更新ができなくなるので,
 \begin{equation}
   \label{equ:beta}
   \hat{\bm{\beta}} = \begin{cases}
@@ -116,7 +116,7 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
     \log(\bm{\beta}) + 1 & (\mathrm{otherwise})
   \end{cases}
 \end{equation}
-で0とならないように補正した $\hat{\bm{\beta}}$ を用いた.
+で 0 とならないように補正した $\hat{\bm{\beta}}$ を用いた.
 
 \begin{figure}[t]
   \begin{center}
@@ -135,7 +135,7 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
       \end{scope}
     \end{tikzpicture}
   \end{center}
-  \caption{$\bm{\beta}$の補正関数}
+  \caption{$\bm{\beta}$ の補正関数}
   \label{fig:pred/beta}
 \end{figure}
 
@@ -147,16 +147,16 @@ $S_i$ はノード $i$ とショートカットで接続する先行(predecessor
 構成段階では, 探索段階で得られた $\bm{\alpha}$ から具体的なネットワークをサンプリングする.
 $\bm{\alpha}$ の値に対する, ネットワークの構成手法はいくつか考えられるため,
 \begin{itemize}
-  \item 構成手法A : predecessorsの中で大きい順に採択
-  \item 構成手法B : 閾値以上のエッジを採択
+  \item 構成手法 A : predecessors の中で大きい順に採択
+  \item 構成手法 B : 閾値以上のエッジを採択
 \end{itemize}
-の 2通りの手法を設定した.
+の 2 通りの手法を設定した.
 % (predecessorsはあるノードに接続している前のノードの集合)
 
 \subsubsection{評価}
 評価段階では, 構成段階で得られたネットワークを学習し,
 最大の正答率をネットワークの性能とする.
-このときのパラメータは, グリッドサーチによる最適化API の Optuna \cite{akiba2019optuna}
+このときのパラメータは, グリッドサーチによる最適化 API の Optuna \cite{akiba2019optuna}
 で事前学習した結果から設定する.
 
 
@@ -164,7 +164,7 @@ $\bm{\alpha}$ の値に対する, ネットワークの構成手法はいくつ�
 
 \clearpage\newpage
 \changeindent{0cm}
-\subsection{提案手法:DARTS+TDGA}
+\subsection{提案手法 : DARTS + TDGA}
 \label{sec:pred.02}
 \changeindent{2cm}
 
@@ -172,14 +172,14 @@ $\bm{\alpha}$ の値に対する, ネットワークの構成手法はいくつ�
   \begin{center}
     \includegraphics[clip,width=6cm]{./fig/03.pred/datdga.png}
   \end{center}
-  \caption{提案手法:DARTS+TDGA 概念図}
+  \caption{提案手法 : DARTS + TDGA 概念図}
   \label{fig:image_ga}
 \end{figure}
 
-実験1では $\bm{\alpha}$ の学習程度によって重み $\bm{w}$ の学習しやすさに偏りがあったため,
+実験 1 では $\bm{\alpha}$ の学習程度によって重み $\bm{w}$ の学習しやすさに偏りがあったため,
 収束するグラフ構造にばらつきが見られた.
 
-そこで実験1から得られた構造探索のための実験設定をもとに,
+そこで実験 1 から得られた構造探索のための実験設定をもとに,
 個体表現を $\bm{\alpha}$ とした遺伝的アルゴリズムによって,
 アーキテクチャを複数同時に管理, 最適化し,
 個体群の多様性を維持しつつ, 安定的なネットワーク構造の学習を図った.
@@ -199,9 +199,9 @@ H = \sum_{k \in \mathcal{P}} \sqrt{\mathrm{MSE}(\bm{\alpha}_k, \bar{\bm{\alpha}}
 
 
 \subsubsection{実験手順}
-実験は3段階からなり, 事前学習したDARTSから, $\bm{w}$, $\bm{\alpha}$を引き継ぎ,
-TDGAで再探索し, 得られた最良個体のアーキテクチャを学習して性能を評価する.
-図 \ref{fig:image_ga} に$\bm{w}$, $\bm{\alpha}$の関係を示す.
+実験は 3 段階からなり, 事前学習した DARTS から, $\bm{w}$, $\bm{\alpha}$ を引き継ぎ,
+TDGA で再探索し, 得られた最良個体のアーキテクチャを学習して性能を評価する.
+図 \ref{fig:image_ga} に $\bm{w}$, $\bm{\alpha}$ の関係を示す.
 
 \begin{enumerate}
   \item 事前学習
@@ -211,31 +211,31 @@ TDGAで再探索し, 得られた最良個体のアーキテクチャを学習�
 
 \subsubsection{事前学習}
 
-事前学習では, TDGAに引き継ぐための初期値をDARTSで学習する.
-実験1の結果から辺ごとに計算する手法が有効であるとわかったため,
-正規化として先行研究のDARTSでも利用されていた,
+事前学習では, TDGA に引き継ぐための初期値を DARTS で学習する.
+実験 1 の結果から辺ごとに計算する手法が有効であるとわかったため,
+正規化として先行研究の DARTS でも利用されていた,
 Softmax ではなく Hard Sigmoid に変更する.
-この変更によって, $\alpha$の正規化された値と生の値の相互変換ができるようになり,
+この変更によって, $\alpha$ の正規化された値と生の値の相互変換ができるようになり,
 実験間のデータ受け渡しが容易となった.
 
 
 \subsubsection{アーキテクチャ再探索}
 
-以下に TDGA をベースとして, DARTSの学習ステップの追加と多様性項の実数値拡張をした提案手法のアルゴリズム
+以下に TDGA をベースとして, DARTS の学習ステップの追加と多様性項の実数値拡張をした提案手法のアルゴリズム
 
 \begin{itemize}
-  \item 提案手法1. DARTS + TDGA($\bm{w}$, $\bm{\alpha}$)
-  \item 提案手法2. DARTS + TDGA($\bm{\alpha}$)
-  \item 提案手法3. DARTS + TDGA
+  \item 提案手法 1. DARTS + TDGA ($\bm{w}$, $\bm{\alpha}$)
+  \item 提案手法 2. DARTS + TDGA ($\bm{\alpha}$)
+  \item 提案手法 3. DARTS + TDGA
 \end{itemize}
 
 \noindent
 を アルゴリズム \ref{alg1}, \ref{alg2}, \ref{alg3} に示す.
-アルゴリズム \ref{alg1} をベースとして, DARTSによる勾配更新のステップを無効にすることで,
-DARTSがTDGAの学習に与える影響をみる.
+アルゴリズム \ref{alg1} をベースとして, DARTS による勾配更新のステップを無効にすることで,
+DARTS が TDGA の学習に与える影響をみる.
 
 \begin{algorithm}[tb]
-  \caption{提案手法1. DARTS + TDGA($\bm{w}$, $\bm{\alpha}$)}
+  \caption{提案手法 1. DARTS + TDGA ($\bm{w}$, $\bm{\alpha}$)}
   \label{alg1}
   \begin{enumerate}
     \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
@@ -252,7 +252,7 @@ DARTSがTDGAの学習に与える影響をみる.
 
 
 \begin{algorithm}[tb]
-  \caption{提案手法2. DARTS + TDGA($\bm{\alpha}$)}
+  \caption{提案手法 2. DARTS + TDGA ($\bm{\alpha}$)}
   \label{alg2}
   \begin{enumerate}
     \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
@@ -267,7 +267,7 @@ DARTSがTDGAの学習に与える影響をみる.
 \end{algorithm}
 
 \begin{algorithm}[tb]
-  \caption{提案手法3. DARTS + TDGA}
+  \caption{提案手法 3. DARTS + TDGA}
   \label{alg3}
   \begin{enumerate}
     \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
@@ -289,4 +289,4 @@ DARTSがTDGAの学習に与える影響をみる.
 \subsubsection{性能評価}
 
 性能評価の段階では, 提案手法による探索結果をもとに,
-学習後最終世代の個体の性能を実験1と同じ条件で学習し評価した.
+学習後最終世代の個体の性能を実験 1 と同じ条件で学習し評価した.
