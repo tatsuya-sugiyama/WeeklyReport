@@ -239,10 +239,10 @@ DARTSがTDGAの学習に与える影響をみる.
   \label{alg1}
   \begin{enumerate}
     \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
-    \item エリート個体選択
     \item 重み $\bm{w}$ を $\displaystyle \nabla_{\bm{\alpha}} \mathcal{L}_{\mathrm{train}}(\bm{w}, \bar{\bm{\alpha}})$ で更新
     \item 個体 $\bm{\alpha}_i$ を $\displaystyle \nabla_{\bm{\alpha}} \mathcal{L}_{\mathrm{valid}}(\bm{w}, \bm{\alpha}_i)$ で更新
     \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(\bm{w}, \bm{\alpha}_i)$ で個体 $\bm{\alpha}_i$ を評価
+    \item エリート個体選択
     \item 交叉で子個体群生成
     \item 親個体群と子個体群の突然変異
     \item エリート個体と親個体群, 子個体群に熱力学的選択によって次世代とする
@@ -256,9 +256,9 @@ DARTSがTDGAの学習に与える影響をみる.
   \label{alg2}
   \begin{enumerate}
     \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
-    \item エリート個体選択
     \item 個体 $\bm{\alpha}_i$ を $\displaystyle \nabla_{\bm{\alpha}} \mathcal{L}_{\mathrm{valid}}(\bm{w}, \bm{\alpha}_i)$ で更新
     \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(\bm{w}, \bm{\alpha}_i)$ で個体 $\bm{\alpha}_i$ を評価
+    \item エリート個体選択
     \item 交叉で子個体群生成
     \item 親個体群と子個体群の突然変異
     \item エリート個体と親個体群, 子個体群に熱力学的選択によって次世代とする
@@ -271,8 +271,8 @@ DARTSがTDGAの学習に与える影響をみる.
   \label{alg3}
   \begin{enumerate}
     \item DARTSで事前学習したモデルの重みを引き継いだ初期個体を生成
-    \item エリート個体選択
     \item 適応度 $\displaystyle \mathcal{L}_{\mathrm{test}}(\bm{w}, \bm{\alpha}_i)$ で個体 $\bm{\alpha}_i$ を評価
+    \item エリート個体選択
     \item 交叉で子個体群生成
     \item 親個体群と子個体群の突然変異
     \item エリート個体と親個体群, 子個体群に熱力学的選択によって次世代とする
