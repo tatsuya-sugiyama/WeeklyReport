@@ -22,7 +22,7 @@
 $\bm{\alpha}$ の Optimizer はAdam\cite{Kingma2015AdamAM}で,
 評価段階では, 訓練中に学習率を変化させる Scheduler\cite{Loshchilov2017SGDRSG}を用いた.
 
-データセットは, 32 pixel * 32 pixel * 3 channel の訓練画像を 50000枚 持つ CIFAR-10\cite{cifar10} を利用して,
+データセットは, 32 pixel $\times$ 32 pixel $\times$ 3 channel の訓練画像を 50000枚 持つ CIFAR-10\cite{cifar10} を利用して,
 10クラス分類問題を解いた.
 
 探索 epoch 数は, 150 epochとし, 50 epochごとにその時点の $\bm{\alpha}$ の性能を評価した.
