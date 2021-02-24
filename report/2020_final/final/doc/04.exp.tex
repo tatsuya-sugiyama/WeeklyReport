@@ -6,9 +6,76 @@
 
 
 \changeindent{0cm}
-\subsection{提案手法:DARTS}
+\subsection{実験1}
 \label{sec:exp.01}
 \changeindent{2cm}
+
+
+\changeindent{0cm}
+\subsubsection{実験概要}
+\label{sec:exp.01_01}
+\changeindent{2cm}
+
+提案手法:DARTSの実験を 実験1 とする.
+表 \ref{tab:setting_exp}, \ref{tab:exp2/eval} に実験1の探索段階と評価段階の実験設定を示す.
+探索段階は先行研究のDARTSの設定を参考に, 評価段階は Optuna で最適化した値を使用した.
+$\bm{\alpha}$ の Optimizer はAdam\cite{Kingma2015AdamAM}で,
+評価段階では, 訓練中に学習率を変化させる Scheduler\cite{Loshchilov2017SGDRSG}を用いた.
+
+データセットは, 32 pixel * 32 pixel * 3 channel の訓練画像を 50000枚 持つ CIFAR-10\cite{cifar10} を利用して,
+10クラス分類問題を解いた.
+
+探索 epoch 数は, 150 epochとし, 50 epochごとにその時点の $\bm{\alpha}$ の性能を評価した.
+構成段階では手法A, Bに加えて比較のため,
+ショートカット数が同じとなる条件でランダムに選択する手法でも実験する.
+各手法において10回試行して統計的な性能を比較した.
+
+\clearpage
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験1 : 探索段階の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Step & Architecture Search \\ \hline\hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      Optimizer($\bm{w}$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optimizer($\bm{\alpha}$) & Adam(lr=0.003, $\bm{\beta}$=(0.5, 0.999)) \\ \hline
+      epoch & 150\\ \hline
+      train data & 25000\\ \hline
+      valid data & 25000\\ \hline
+      test data &  10000\\ \hline
+    \end{tabular}
+    \label{tab:setting_exp}
+  \end{center}
+\end{table}
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験1 : 評価段階の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Step & Evaluation \\ \hline\hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      Optimizer($\bm{w}$) & SGD(lr=0.0090131, momentum=0.9) \\ \hline
+      Scheduler($\bm{w}$) & Step($\gamma$=0.23440, stepsize=100) \\ \hline
+      epoch & 150\\ \hline
+      train data & 50000\\ \hline
+      test data &  10000\\ \hline
+    \end{tabular}
+    \label{tab:exp2/eval}
+  \end{center}
+\end{table}
+
+
+\clearpage
+\changeindent{0cm}
+\subsubsection{結果}
+\label{sec:exp.01_02}
+\changeindent{2cm}
+
+
 
 表 \ref{tab:accg} に各構成手法におけるテストデータの精度を示す.
 図 \ref{fig:short}, \ref{fig:param} には
@@ -22,7 +89,7 @@
 問題に対して過度に適合していることが原因であると考えられる.
 
 探索時間は150 epochでおよそ 5 GPU hours を要したが, DARTSと比べ演算子を探索していないことや.
-最適な重み $w$ の近似を1次下げていることで高速になったと思われる.
+最適な重み $\bm{w}$ の近似を1次下げていることで高速になったと思われる.
 
 % ここで 0.5 Page
 
@@ -48,18 +115,18 @@
 
 \begin{figure}[t]
   \begin{tabular}{c}
-    \begin{minipage}[t]{1\hsize}
+    \begin{minipage}[t]{0.95\hsize}
     	\begin{center}
-        \includegraphics[clip, width=10cm]{./fig/short.png}
+        \includegraphics[clip, width=95mm]{./fig/short.png}
       \end{center}
       \caption{実験1 : ショートカット数に対する精度}
       \label{fig:short}
     \end{minipage}
     \vspace{3cm}
     \\
-    \begin{minipage}[c]{1\hsize}
+    \begin{minipage}[c]{0.95\hsize}
       \begin{center}
-        \includegraphics[clip,width=10cm]{./fig/param.png}
+        \includegraphics[clip,width=95mm]{./fig/param.png}
       \end{center}
       \caption{実験1 : パラメータ数に対する精度}
       \label{fig:param}
@@ -67,6 +134,8 @@
   \end{tabular}
 \end{figure}
 
+
+% \clearpage
 % \begin{figure}[t]
 %   \begin{center}
 %     \includegraphics[clip,width=10cm]{./fig/short.png}
@@ -143,17 +212,124 @@
 
 
 
+
+
+
+
+
 \clearpage\newpage
 \changeindent{0cm}
-\subsection{提案手法:DARTS+TDGA}
+\subsection{実験2}
 \label{sec:exp.02}
 \changeindent{2cm}
+
+
+
+\changeindent{0cm}
+\subsubsection{実験概要}
+\label{sec:exp.02_01}
+\changeindent{2cm}
+
+提案手法:DARTS+TDGAの実験を 実験2 とする.
+
+表 \ref{tab:setting_pretrain} には事前学習の設定を示した.
+実験1 の設定を継承しつつ,
+モデルの重み $\bm{w}$ はImage Net\cite{deng2009imagenet}で訓練された
+事前学習の重みを畳み込み層の部分に適用した.
+
+表 \ref{tab:setting_darts}, \ref{tab:setting_ga}にモデルとGAの実験設定を示した.
+初期収束を防ぐため, 交叉にはエッジに相当する遺伝子座ごとに 0.8 の確率で操作する一様交叉を使用した.
+突然変異には遺伝子座ごとに 0.1 の確率で $\mu=0$, $\gamma=0.2$ となるガウス分布からの摂動を与えた.
+交叉と突然変異の操作確率は, 個体ごとの確率で, それぞれは独立であり, 交叉の後に突然変異をした.
+
+% ここで 0.5 Page
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{実験2 : 事前学習の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Optimizer($\bm{w}$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optimizer($\bm{\alpha}$) & Adam(lr=0.0005, $\bm{\beta}$=(0.5, 0.999)) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      train data & 25000\\ \hline
+      valid data & 25000\\ \hline
+      test data &  10000\\ \hline
+      epoch & 150\\ \hline
+    \end{tabular}
+    \label{tab:setting_pretrain}
+  \end{center}
+\end{table}
+
+\begin{table}[t]
+  \begin{center}
+    \caption{実験2 : DARTS+TDGAの設定 (DARTS)}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Optimizer($\bm{w}$) & SGD(lr=0.001, momentum=0.9) \\ \hline
+      Optimizer($\bm{\alpha}$) & Adam(lr=0.001, $\bm{\beta}$=(0.5, 0.999)) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      train data & 25000\\ \hline
+      valid data & 25000\\ \hline
+      test data &  2000\\ \hline
+    \end{tabular}
+    \label{tab:setting_darts}
+  \end{center}
+\end{table}
+
+\begin{table}[t]
+  \begin{center}
+    \caption{実験2 : DARTS+TDGAの設定 (TDGA)}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Population & 10 \\ \hline
+      Generation & 150 \\ \hline \hline
+      Selection & Elite \\ \hline
+      Elite \# & 1 \\ \hline
+      Selection & TD Select \\ \hline
+      Temperature & 1 $\rightarrow$ 0.001 \\ \hline \hline
+      Crossover & Uniform Crossover (0.5 / locus) \\ \hline
+      Crossover Rate & 0.8 \\ \hline \hline
+      Mutation & Gaussian Mutation ($\mu$=0, $\sigma$=0.2, 0.2 / locus)\\ \hline
+      Mutation Rate & 0.2 \\ \hline
+    \end{tabular}
+    \label{tab:setting_ga}
+  \end{center}
+\end{table}
+
+\begin{table}[t]
+  \begin{center}
+    \caption{実験2 : ネットワーク評価の設定}
+  	\vspace{3mm}
+    \begin{tabular}{|c|c|} \hline
+      Optimizer($\bm{w}$) & SGD(lr=0.009, momentum=0.9) \\ \hline
+      Scheduler($\bm{w}$) & Step($\gamma$=0.2344, step epoch=100) \\ \hline
+      Loss & Cross Entropy Loss \\ \hline
+      batch size & 64 \\ \hline
+      train data & 50000\\ \hline
+      test data &  10000\\ \hline
+      epoch & 150\\ \hline
+    \end{tabular}
+    \label{tab:setting_eval}
+  \end{center}
+\end{table}
+
+
+\clearpage
+\changeindent{0cm}
+\subsubsection{結果}
+\label{sec:exp.02_02}
+\changeindent{2cm}
+
+
 
 表 \ref{tab:acc_ga} に, 3つの提案手法の最終的なアーキテクチャ性能を示す.
 50世代ごとの結果全てに対して, DARTSのみとなる事前学習のアーキテクチャ 93.65\%をいずれも超えている.
 図 \ref{fig:exp2/eval} は 横軸に世代数, 縦軸にaccuracyをとった,
 表 \ref{tab:acc_ga} のグラフを示す.
-$w$ を更新する提案手法1が150世代目で性能が下がっている.
+$\bm{w}$ を更新する提案手法1が150世代目で性能が下がっている.
 またDARTSの更新をしない提案手法3が最もよい結果となった.
 
 
@@ -166,9 +342,9 @@ $w$ を更新する提案手法1が150世代目で性能が下がっている.
 		\vspace{3mm}
     \begin{tabular}{|c|c|c|c|} \hline
     \textbf{}       & \textbf{50 世代} & \textbf{100 世代} & \textbf{150 世代} \\ \hline\hline
-    DAARTS + TDGA($w$, $\alpha$)& 94.03 \%       & 94.10 \%        & 93.85 \%        \\ \hline
-    DAARTS + TDGA($\alpha$)& 93.88 \%       & 94.08 \%        & 94.13 \%        \\ \hline
-    DAARTS + TDGA   & 93.90 \%       & 94.17 \%        & 94.17 \%        \\ \hline
+    DARTS + TDGA($\bm{w}$, $\bm{\alpha}$)& 94.03 \%       & 94.10 \%        & 93.85 \%        \\ \hline
+    DARTS + TDGA($\bm{\alpha}$)& 93.88 \%       & 94.08 \%        & 94.13 \%        \\ \hline
+    DARTS + TDGA   & 93.90 \%       & 94.17 \%        & 94.17 \%        \\ \hline
     Baseline(DARTS) & \multicolumn{3}{c|}{93.65 \%}                      \\ \hline
     \end{tabular}
     \label{tab:acc_ga}
@@ -189,12 +365,12 @@ $w$ を更新する提案手法1が150世代目で性能が下がっている.
 図 \ref{fig:exp2/acc}, 図 \ref{fig:exp2/loss}に
 提案手法の適応度計算時のテストデータの正解率と損失を示す.
 ただし個体群の中で最良の適応度を得た個体をその世代の代表としている.
-提案手法1 は重み $w$ も更新しているため, 最も訓練時の正解率が高く, 90\%付近まで学習している.
+提案手法1 は重み $\bm{w}$ も更新しているため, 最も訓練時の正解率が高く, 90\%付近まで学習している.
 それと比べて, 提案手法2, 3 は 10\% 程度低くなっているが,
 提案手法3 は 提案手法2 と比較して, 150 世代でも正答率の増加傾向が見られる.
 図 \ref{fig:exp2/eval} の最終的な評価から考えて, 学習時の正答率の高さが
 ネットワークの性能と直結しているわけではないことが分かった.
-また 提案手法2, 3 は $w$ を固定しており, 同じ個体に対しては同じ適応度が計算されるため,
+また 提案手法2, 3 は $\bm{w}$ を固定しており, 同じ個体に対しては同じ適応度が計算されるため,
 純粋にアーキテクチャが学習される過程を示している.
 この同じ適応度が計算されるという信頼性が, 提案手法2, 3の結果が 提案手法1 よりも優れていた
 原因であると考えられる.
@@ -245,7 +421,7 @@ $w$ を更新する提案手法1が150世代目で性能が下がっている.
  \begin{minipage}{0.49\hsize}
  	\begin{center}
     \includegraphics[clip,scale=0.2]{./fig/04.exp/nofix_last.png}\\
-    DAARTS + TDGA($w$, $\alpha$)
+    DARTS + TDGA($\bm{w}$, $\bm{\alpha}$)
  	\end{center}
  \end{minipage}
  \caption{実験2 : 手法のアーキテクチャ 1/2}
@@ -256,13 +432,13 @@ $w$ を更新する提案手法1が150世代目で性能が下がっている.
  \begin{minipage}{0.49\hsize}
  	\begin{center}
     \includegraphics[clip,scale=0.19]{./fig/04.exp/normal_last.png}\\
-    DAARTS + TDGA($\alpha$)
+    DARTS + TDGA($\bm{\alpha}$)
  	\end{center}
  \end{minipage}
  \begin{minipage}{0.49\hsize}
  	\begin{center}
     \includegraphics[clip,scale=0.19]{./fig/04.exp/noevo_last.png}\\
-    DAARTS + TDGA
+    DARTS + TDGA
  	\end{center}
  \end{minipage}
  \caption{実験2 : 手法のアーキテクチャ 2/2}
