@@ -1,0 +1,181 @@
+
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+\documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+% \documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	\twocolumn[
+		\noindent
+		\hspace{1em}
+		2021 年 6 月 11 日
+		ゼミ資料
+		\hfill
+		M1 杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	]
+
+  % \begin{table*}[tb]
+  %   \begin{center}
+  %     \caption{GPT-2の動作例}
+  %     \begin{tabular}{|c|c|} \hline
+  %       input & output \\ \hline
+  %       2は偶数。3は奇数。5は & \verb|2は偶数。3は奇数。5は奇数(n≠0.0)である。3は...| \\ \hline
+  %       2は偶数。3は奇数。8は & \verb|2は偶数。3は奇数。8は偶数は偶数?。11は偶数_。...|\\ \hline
+  %     \end{tabular}
+  %     \label{tab:exp}
+  %   \end{center}
+  % \end{table*}
+
+\section{今週やったこと}
+\begin{itemize}
+  \item GPT-3の申請
+  \item GPT-2の日本語学習済みモデル
+\end{itemize}
+
+\section{GPT-3の申請}
+GPT-3はモデルをダウンロードするのではなく,
+申請した後に, API を通して実行する形式のようであった.
+実際に GPT-3 を動かしていこうとすると不便かもしれない.
+
+もうすぐ申請してから 1 週間だが, 記入した内容がよくなかったのか
+返信メールは今だ届かないため待機中.
+
+\section{GPT-2の日本語学習済みモデル}
+日本語学習済みモデルを探し, 先週のものより自然な文章生成ができることを確認できた.
+
+\begin{itemize}
+  \item input : 昔々あるところに、おじいさんとおばあさんが
+  \item output : 住んでいました。
+その部屋は小さく、ベッドがふたつあるだけでした。
+ある時、おじいさんは部屋の扉をあけました。
+すると、そこには何もなかったかのように、壁が現れました。
+そしたら、何もなかったのです。
+そんなある日、おじいさんはお母さんの家にお泊まりに行きました。
+すると、お母さんは
+このお泊り券はどうすれば、いいのだろう？
+私はおじいさんとお話しすることにしました。
+すると、なんとあのおじいさんは「よく、これを、受け取れ」と言うのです。
+おじいさんは「どういう、ことなのだ？」とまだ半信半疑でいます。
+「私たちが言っていたと思うが・・・、ここに住んでくれないか。」
+おじいさんは
+\end{itemize}
+
+\url{https://github.com/tanreinama/gpt2-japanese}
+
+\section{GPT-2のタスク}
+表 \ref{tab:task} にGPT-2を利用することで解けるタスクの一部を示した.
+文脈となる文章のほかに, このタスクの種類も入力する.
+それぞれのタスク用に追加学習したモデルが多く公開されている(英語は).
+
+TextGeneration はたくさん情報があるが,
+それ以外のタスクで日本語を扱っているものが少ない.
+おそらく見つけることができていないだけなので, エラーが出ず動くものを調査中.
+
+\begin{table}[tb]
+  \begin{center}
+    \caption{GPT-2の解けるタスク}
+    \begin{tabular}{|c|} \hline
+      % AutomaticSpeechRecognition \\ \hline
+      Conversational \\ \hline
+      % FeatureExtraction \\ \hline
+      % FillMask \\ \hline
+      % ImageClassification \\ \hline
+      QuestionAnswering \\ \hline
+      Summarization \\ \hline
+      TextClassification \\ \hline
+      TextGeneration \\ \hline
+      % TokenClassification \\ \hline
+      Translation \\ \hline
+      % ZeroShotClassification \\ \hline
+      % Text2TextGeneration \\ \hline
+      % TableQuestionAnswering \\ \hline
+    \end{tabular}
+    \label{tab:task}
+  \end{center}
+\end{table}
+\url{https://huggingface.co/}
+
+\section{Transformer encoder-decoderモデルベース雑談システムの
+学習方法に対する主観評価の変動分析}
+対話タスクについて : 確かに面白そうだと思いました.
+一応英語ならすぐに動かせそうなので, このタスク周りについて考えてみます.
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+\begin{itemize}
+  \item いくつかのタスクでGPTを動かす
+\end{itemize}
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
