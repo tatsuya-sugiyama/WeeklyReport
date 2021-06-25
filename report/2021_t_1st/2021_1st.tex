@@ -84,8 +84,9 @@
 	]
 
 \section{はじめに}
-GPT-2\cite{radford2019language}を実行した.
-GPTとその前提のtransformer\cite{DBLP:journals/corr/VaswaniSPUJGKP17}について調査した.
+
+実データとボットの識別.
+(識別機で生成の評価ができる)
 
 \section{要素技術}
 \subsection{Transformer}
@@ -114,12 +115,10 @@ Positional Encoding
 
 \subsection{GPT-2}
 Generative Pretrained Transformer 2 (GPT-2)\cite{radford2019language}　は
-% 特定のタスクに特化した教師あり学習は行わず、より大きな言語コーパスを使って、より大きなモデルの言語モデルを事前学習させることにより、zero-shot、もしくはfew-shotのセッティングでも精度が出るような汎用的なモデルを目指しています。
-% zero-shot もしくは few-shot のデータでも精度が出るような汎用的なモデルである.
+
 特定のタスクに特化した数万の教師ありデータでファインチューニングが必要だった GPT, BERT をはじめとしたモデルと異なり,
 大規模な言語コーパスで様々なタスクを学習する汎用的なモデルとして設計された.
 
- % variable length sequences of symbols
 任意の長さの文章をシンボルにしたシーケンスを $(s_1, s_2, ..., s_n)$ とする.
 同時確率は条件付確率の積に分解される.
 \begin{equation}
@@ -129,27 +128,6 @@ p(x) = \prod^n_{i=1} p(s_n|s_1, ... , s_{n-1})
 
 GPT-2では, $p(\mathrm{output}|\mathrm{input})$ を一般化して,
 $p(\mathrm{output}| \mathrm{input}, \mathrm{task})$と表しタスクの種類も学習することで, 特定の問題のためのファインチューニングなしで, 1つのモデルでも問題を解けるようにしている.
-
-
-% Fine-tuning
-% 次に言語モデルのファインチューニングと分類器のファインチューニングを行います。
-% ULMFiTではこれらを順番に行っていましたが、OpenAI GPTでは同時に行うようです。
-%
-% 両方ともラベル付きデータを使って行います。
-% ラベル付きデータの入力単語をx1,⋯,xmとすると、ラベルyの予測は最後のtransformer blockの最後の時点の出力hmlのベクトルを使ってsoftmaxレイヤーにより求めます。
-%
-% P(y|x1,⋯,xm)=softmax(hmlWy)
-% そして、ラベル付きデータをCとすると、対数尤度
-%
-% L2(C)=∑(x,y)logP(y|x1,⋯,xm)
-% が最大になるようにパラメータを調整します。
-% さらに、単純にL2を最大化させるのではなく、同時に言語モデルのファインチューニングを行います。
-% その尤度をL3とすると、
-%
-% L3(C)=L2(C)+λ∗L1(C)
-% を最大化するように、言語モデルと分類器のファインチューニングを同時に行います。
-% L1(C)は ラベル付きコーパスを使った言語モデル(Pretrainingのところの式)の学習を意味しています。
-% この目的関数をauxiliary objectiveと呼んでいます。
 
 
 \begin{table}[tbh]
@@ -218,6 +196,20 @@ BPE は
 % %     \label{tab:task}
 % %   \end{center}
 % % \end{table}
+
+\subsection{BERT}
+BERT \cite{devlin2018bert} は, 2018 年に Google が発表した汎用言
+語モデルである. 複数の双方向 Transformer を用い
+ることで文脈を考慮することができるモデルとさ
+れている. 各タスクに対してファインチューニング
+をすることでさまざまなタスクに柔軟に対応する
+ことができる. 事前学習には入力の一部の単語を
+“[MASK]” に置き換えてその元単語を予測するよう
+に訓練するタスク (Masked Language Model) と 2 文
+を入力としてその連続性を識別するように訓練す
+るタスク (Next Sentence Prediction) が用意されてい
+る. 本研究の実験では, 京都大学によって公開され
+ている BERT 日本語 Pretrained モデルを使用した.
 
 \section{実験}
 
