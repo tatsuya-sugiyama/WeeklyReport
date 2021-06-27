@@ -90,31 +90,31 @@
 
 自然言語分野では, 文章生成など創作に関わるものも人間と遜色なく生成できるようになり,
 大きく注目されている.
+そこで自動的に文章が生成できるモデルを用いて,
+人の考えた文章と計算機が生成した文章との違いについて考える.
 
-人の考えた文章と計算機が生成した文章との違いに注目した.
 
-
-本研究では
-オープンソース化されていないGPT-3に代わって,
-前身のGPT-2を使って, 文章の破綻推定をした.
-人工知能に人の文章と自動生成の文章が識別できるのかと,
-GPT-2の文章生成能力の確認実験をした.
+本研究ではオープンソース化されていない GPT-3 に代わって,
+前身の GPT-2 を使い文章の破綻推定問題として,
+計算機に人の文章と自動生成の文章が識別可能かという実験と,
+GPT-2 の文章生成能力の確認実験をした.
+本研究の結果から GPT-2 の性能を確認し,
+対話タスクなど他のタスクを実験する際の足がかりとすることを目的とする.
 
 \section{要素技術}
 \subsection{Transformer}
-Transformer\cite{DBLP:journals/corr/VaswaniSPUJGKP17} は再帰的ニューラルネットワーク (Recurrent Neural Network: RNN)\cite{mikolov2010recurrent} を使わずに, Self-Attention を使って並列計算を可能にするモデルである.
+Transformer \cite{DBLP:journals/corr/VaswaniSPUJGKP17} は
+再帰的ニューラルネットワーク (Recurrent Neural Network : RNN)
+% \cite{mikolov2010recurrent}
+を使わずに, Self-Attention を使って並列計算を可能にするモデルであり, GPT-2, BERT をはじめとして様々なモデルに組み込まれている.
 
 RNN は時系列に沿って順番に計算する構造であるため並列計算ができず,
 GPU などを使っても計算時間が長いという欠点がある.
 GPU の性能を十分に活用し, 計算速度を向上させるため, RNN を使用しないことが必要となる.
 
 % Self-Attentionとは、attentionの実践のところで紹介しましたが、もともとの論文にあった 翻訳語の単語から翻訳前の単語に注意を向けるattentionではなく、自分自身のどこが重要かに注意を向ける.
-Self-Attentionは, シーケンス内の単語間の関係性に注目する.
-TransformerはSelf-Attentionの計算を並列化するとこで効率的な計算ができる.
-
-% Positional Encoding
-
-
+Self-Attention は, シーケンス内の単語間の関係性に注目する.
+Transformer は Self-Attention の計算を並列化することによって効率的な計算を可能とした.
 
 \begin{figure}[tb]
   \begin{center}
@@ -127,10 +127,10 @@ TransformerはSelf-Attentionの計算を並列化するとこで効率的な計�
 
 
 \subsection{GPT-2}
-Generative Pretrained Transformer 2 (GPT-2)\cite{radford2019language}　は
+Generative Pretrained Transformer 2 (GPT-2) \cite{radford2019language}　は
 
-特定のタスクに特化した数万の教師ありデータでファインチューニングが必要だった GPT, BERT をはじめとしたモデルと異なり,
-Transformerのデコーダ部分を利用し,
+特定のタスクに特化した数万の教師ありデータでファインチューニングが必要だった GPT, BERT などのモデルと異なり,
+Transformer のデコーダ部分を利用し,
 大規模な言語コーパスで様々なタスクを学習する汎用的なモデルとして設計された.
 
 任意の長さの文章をシンボルにしたシーケンスを $(s_1, s_2, ..., s_n)$ とする.
@@ -138,30 +138,33 @@ Transformerのデコーダ部分を利用し,
 \begin{equation}
 p(x) = \prod^n_{i=1} p(s_n|s_1, ... , s_{n-1})
 \end{equation}
-この条件付確率は, Transformer\cite{DBLP:journals/corr/VaswaniSPUJGKP17}によって効率的に計算できる.
+この条件付確率は, Transformer によって効率的に計算できる.
 
 GPT-2では, $p(\mathrm{output} | \mathrm{input})$ を一般化して,
-$p(\mathrm{output} | \mathrm{input}, \mathrm{task})$と表しタスクの種類も学習することで, 特定の問題のためのファインチューニングなしで, 1つのモデルでも問題を解けるようにしている.
-
+$p(\mathrm{output} | \mathrm{input}, \mathrm{task})$ と表しタスクの種類も学習することで, 特定の問題のためのファインチューニングなしで, 1 つのモデルでも問題を解けるようにしている.
+表 \ref{tab:task} に GPT-2 が対応できるタスクを示した.
+本研究では, GPT-2 の基本として Text Generation を使用した.
 
 \begin{table}[tbh]
   \begin{center}
-    \caption{GPT-2の解けるタスク}
-    \begin{tabular}{|c|} \hline
-      AutomaticSpeechRecognition \\ \hline
-      Conversational \\ \hline
-      FeatureExtraction \\ \hline
-      FillMask \\ \hline
-      ImageClassification \\ \hline
-      QuestionAnswering \\ \hline
-      Summarization \\ \hline
-      TextClassification \\ \hline
-      TextGeneration \\ \hline
-      TokenClassification \\ \hline
-      Translation \\ \hline
-      ZeroShotClassification \\ \hline
-      % Text2TextGeneration \\ \hline
-      % TableQuestionAnswering \\ \hline
+    \caption{GPT-2 の回答できるタスクの一部}
+    \begin{tabular}{c}
+      \hline
+      Task \\
+      \hline
+      Automatic Speech Recognition \\
+      Conversational \\
+      Feature Extraction \\
+      Fill Mask \\
+      Image Classification \\
+      Question Answering \\
+      Summarization \\
+      Text Classification \\
+      Text Generation \\
+      Token Classification \\
+      Translation \\
+      Zero Shot Classification \\
+      \hline
     \end{tabular}
     \label{tab:task}
   \end{center}
@@ -171,19 +174,17 @@ $p(\mathrm{output} | \mathrm{input}, \mathrm{task})$と表しタスクの種類�
 Byte Pair Encoding (BPE) は高頻度の単語は単語全体を辞書に登録し、低頻度の単語は文字単位に分割する言語モデルにおける未知語処理手法である.
 
 言語モデルは語彙サイズをハイパーパラメータとして設定するため, ニューラルモデルに扱われない未知語が存在する.
-未知語処理として, $<unk>$ などの特殊トークンに置き換える方法と, 単語をより細かく分割しサブワードにすることで語彙を少なくする方法がある.
+未知語処理として, \verb|<unk>| などの特殊トークンに置き換える方法と, 単語をより細かく分割しサブワードにすることで語彙を少なくする方法がある.
 
 BPE は
-データ圧縮手法を言語モデルに応用した.
+データ圧縮手法を言語モデルに応用しており,
 文字単位に単語を分解し, 2 文字のペアの中で高頻度の要素を結合して 1 つのサブワードとする手順を繰り返すことで,
 単語を接頭辞や接尾辞などの意味のある単位に分解できる.
 
 \subsection{Manga 109}
-Manga 109 \cite{mtap_matsui_2017} は, 漫画の学術研究への使用を目的と
-して作成された研究用コミックデータセットである.
-1970 年代から 2010 年代に公開された, 日本のプロ
-漫画家によって描かれた漫画 109 冊で構成されて
-いる.
+Manga 109 \cite{mtap_matsui_2017} は,
+漫画の学術研究への使用を目的として作成された研究用コミックデータセットである.
+1970 年代から 2010 年代に公開された, 日本のプロ漫画家によって描かれた漫画 109 冊で構成されている.
 
 
 \subsection{BERT}
@@ -191,7 +192,7 @@ BERT \cite{devlin2018bert} は, 2018 年に Google が発表した汎用言語�
 複数の双方向 Transformer を用いることで文脈を考慮することができるモデルとされている.
 各タスクに対してファインチューニングをすることでさまざまなタスクに柔軟に対応することができる.
 
-事前学習には入力の一部の単語を “[MASK]” に置き換えてその元単語を予測するように訓練するタスク (Masked Language Model) と 2 文を入力としてその連続性を識別するように訓練するタスク (Next Sentence Prediction) が用意されている.
+事前学習には入力の一部の単語を \verb|[MASK]| に置き換えてその元単語を予測するように訓練するタスク (Masked Language Model) と 2 文を入力としてその連続性を識別するように訓練するタスク (Next Sentence Prediction) が用意されている.
 % 本研究の実験では,  東北大学によって公開されている BERT 日本語 Pretrained モデルを使用した.
 本研究では, 入力する文章の分類器として選んだ.
 
@@ -250,57 +251,53 @@ BERT \cite{devlin2018bert} は, 2018 年に Google が発表した汎用言語�
                                        & $S_{i+1}$  & いつまでも人任せに安穏としていていいのかしら…          \\
      & $S'_{i+1}$ & \small{\begin{tabular}[c]{@{}c@{}}・ ・ ・ ・ なんでこういうことになったのか知らないが、今から思えば大問題 ・ ・ ・ \\ こういうことをやっている人には何を言っても無駄なのか\end{tabular}}\\
      \hline
-     \multicolumn{3}{l}{©あくはむ 新居 さとし,   ©幼稚園ぼうえい組 テンヤ}
+     \multicolumn{3}{l}{©あくはむ/新居 さとし,   ©幼稚園ぼうえい組/テンヤ}
     \end{tabular}
     \label{tab:gpt_gen}
   \end{center}
 \end{table*}
 
 
-人間が作成した文章と, GPT-2が作成した文章のデータセットを作成し,
-BERTで作成者を推定する問題を解く.
+人間が作成した文章と, GPT-2 が作成した文章のデータセットを作成し,
+BERT で作成者を推定する問題を解く.
+したがって実験は, 生成実験と分類実験に分かれる.
 
-\subsection{データセット}
-人間が作成した文章として Manga 109 中のセリフを利用した.
+\subsection{生成実験}
+生成実験では, GPT-2 で文章を生成する.
+本実験では人間が作成した文章として Manga 109 中のセリフを利用した.
 
+% データの構造
+Manga109 のセリフデータ $S_1, S_2, ..., S_n$ に対して,
+GPT-2 に文 $S_i$ を入力し GPT-2 に文章を生成させ, 推測したその次の文を $S’_{i+1}$ とした.
 
-~~~として, 連続する 2 文をつかう.
+GPT-2 による生成では, 生成文の句点までを 1 文とし,  \verb|[SEP]|, \verb|[EOS]| などのトークンは削除している.
 
-文章間の意味が繋がっている必要があるが, 意味を考慮した単位に文章を分割するのは難しい.
+\subsection{データセット作成}
+
+生成実験のデータから, 人と計算機の文章データセットを構築する.
+
+連続する 2 文を人間の作成したデータを $(S_i, S_{i+1})$，
+GPT-2 へ入力した文と推測した文を生成データ $(S_i, S'_{i+1})$
+と定義してデータセットを作成した.
+これらの 2 文は, \verb|[CLS]|, \verb|[SEP]|, \verb|[EOS]|トークンで結合して BERT で分類するデータとした.
+
+% ~~~として, 連続する 2 文をつかう.
+このとき漫画のセリフデータは
+文章間の場面が同じで意味が繋がっている必要があるが, 意味を考慮した単位に文章を分割するのは難しい.
 そのため決められたフォーマットで, 繋がりを持った文章として仮定しやすい 4 コマ漫画を対象として
 Manga109 中の 5 作品のデータを用いた.
 
-% データの構造
+\subsection{分類実験}
+分類実験では作成した人と計算機の文章データセットを使用して, 人の文章データのラベルを 1, 計算機の生成データのラベルを 0 として BERT に入力し 2 値分類問題を解く.
 
-Manga109 のセリフデータを $S_1$, $S_2$, $S_n$ として, 連続する 2 文を実際のデータ，GPT-2 で次の文章を推測した $S’$ を含んだ 2 文を生成データとして, データセットを作成した.
-文と文の間は [SEP] トークンで結合しました.
+この分類実験の結果, 正答率が高いと BERT が高い性能で分類ができることが確認でき.
+低いと BERT が間違えるほど GPT-2 の文章生成能力が高いということが分かる.
 
-GPT-2 による生成では, 生成文の句点までを 1 文とし, [SEP], [EOS] などのトークンは削除したものを $S’$ とした.
-
-
-\subsection{分類問題}
-実データのラベルを 1, 生成データのラベルを 0として BERTを利用して 2値分類問題を解く.
-
-高いとBERTで分類可能性.
-低いとGPT-2の文章生成能力が高い.
-
-% \subsection{対話タスク}
-%
-% 図 \ref{fig:con} に対話例を示した.
-% 英語の場合, 対話を自然に続けられることを確認した.
-%
-% \begin{figure}[tb]
-%   \begin{center}
-%     \includegraphics[clip,width=75mm]{ss.png}
-%     \caption{対話例}
-%     \label{fig:con}
-%   \end{center}
-% \end{figure}
 
 \section{実験}
 
 表 \ref{tab:setting_gpt}, 表 \ref{tab:setting_bert} は GPT-2 と BERT の実験パラメータである.
-GPT-2 の事前学習パラメータにはrinna/japanese-gpt2-mediumを, BERTの事前学習パラメータには東北大学が公開するモデルを使用した.
+GPT-2 の事前学習パラメータには rinna/japanese-gpt2-medium を, BERT の事前学習パラメータには東北大学が公開するモデルを使用した.
 
 
 \subsection{生成の結果}
@@ -338,7 +335,7 @@ GPT-2 の事前学習パラメータにはrinna/japanese-gpt2-mediumを, BERTの
 
 \begin{table}[tb]
   \begin{center}
-    \caption{混合行列}
+    \caption{テストデータの混合行列}
     \begin{tabular}{|c|c|c|c|}
     \hline
     \multicolumn{2}{|c|}{\multirow{2}{*}{\textbf{}}} & \multicolumn{2}{c|}{予測} \\ \cline{3-4}
@@ -367,7 +364,7 @@ GPT-2 の事前学習パラメータにはrinna/japanese-gpt2-mediumを, BERTの
       \verb|[CLS]極道の生態に親しむこのツアー[SEP]も4年目になる[EOS]| & 0 & 1 \\
       \verb|[CLS]子供の頃から普通の男にはなるなと[SEP]先生に言われていた[EOS]| & 0 & 1 \\
       \hline
-      \multicolumn{3}{l}{©徹さん	川口 憲吾,   ©OLランチ	さんり ようこ,  ©高校の人達	葛原 兄}
+      \multicolumn{3}{l}{©徹さん/川口 憲吾,   ©OLランチ/さんり ようこ,  ©高校の人達/葛原 兄}
     \end{tabular}
     \label{tab:bert_result}
   \end{center}
@@ -375,7 +372,7 @@ GPT-2 の事前学習パラメータにはrinna/japanese-gpt2-mediumを, BERTの
 
 表 \ref{tab:result} は BERT による分類の学習結果を示す.
 2 値分類であるため正答率のベースラインは 0.5 であるが, テストデータで 0.959 という高い精度で分類できたと言える.
-この結果は BERT の文章の識別問題への有効性を示すとともに, 本実験設定でのGPT-2 と人間による文章との間には大きな違いがあることを示唆している.
+この結果は BERT の文章の識別問題への有効性を示すとともに, 本実験設定での GPT-2 と人間による文章との間には大きな違いがあることを示唆している.
 
 % 0.997280	0.009569
 % test loss:  0.12322708242572844  test acc:  0.9585223590408296
@@ -386,10 +383,10 @@ GPT-2 の事前学習パラメータにはrinna/japanese-gpt2-mediumを, BERTの
 表 \ref{tab:bert_result} は BERT の分類の誤りの例である.
 表 \ref{tab:conmat} の結果から, 人間の文章を GPT-2 の文章と誤っている回数が多いことが分かる.
 
-表 \ref{tab:bert_result} の label=1, pred=0 となっている部分を見ると,
-[SEP] トークンを挟んで文章が続いているパターンがあった.
+そこで表 \ref{tab:bert_result} の label=1, pred=0 となっている部分を見ると,
+対話せずに \verb|[SEP]| トークンを挟んで文章が続いているパターンがあった.
 GPT-2 の生成した文章に頻繁にあるパターンであるため, 誤って識別したと考えられる.
-また 2 文のうち 1 方が, 呼びかけなどで短すぎる場合もあり, この情報だけで判断するのは人間とっても困難であると思われる.
+また 2 文のうち片方が, 呼びかけなどで短すぎる場合もあり, この情報だけで判断するのは人間とっても困難であると思われる.
 
 反対に GPT-2 の文章を人間の文章と誤っている例を見ると,
 文脈の短さも相まって一見自然な文章が生成されていると感じられた.
@@ -410,7 +407,7 @@ GPT-2 の生成した文章に頻繁にあるパターンであるため, 誤っ
 
 % 課題.
 今後の課題としては, GPT-3 を利用して同様の実験をし性能を比較することが挙げられる.
-またGPT-2 に与える入力文章を長くすることによって, GPT-2 がより自然な文章を出力できるようになる可能性もあるため, GPT-2 の設定を見直したい.
+また GPT-2 に与える入力文章を長くすることによって, GPT-2 がより自然な文章を出力できるようになる可能性もあるため, GPT-2 の設定を見直したい.
 
 % 参考文献リスト
 \bibliographystyle{unsrt}
