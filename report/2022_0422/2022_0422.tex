@@ -1,0 +1,132 @@
+
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+% \documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+\documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	% \twocolumn[
+		\noindent
+		\hspace{1em}
+		2022 年 4 月 22 日
+		ゼミ資料
+		\hfill
+		杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	% ]
+
+
+\section{今週やったこと}
+\begin{itemize}
+  \item sketch-rnn 周辺の調査と動作実験
+\end{itemize}
+
+\section{SVG に関連する問題}
+SVG に関するものを調査した. すぐに思いついたものはすでに先行研究があったので，研究の方向性は未定．
+汎用的な問題は別の手法でも試され尽くしている気がするので，sketch rnn 系でなにかしたい.
+
+\begin{itemize}
+  \item 創作系  お絵かき\\
+   sketch rnn\cite{ha2017neural}
+  \item ラスタ画像からベクタ画像への変換\cite{liu2017raster}\\
+      ベクタ画像からラスタ画像への逆変換は簡単なので，データセットを集めやすくていいと思ったが，
+      すでに先行研究が存在した．
+  \item フォントスタイル変換
+  % \cite{kim2018semantic}
+  \\
+  日本語は文字数が多いので自動化できたら嬉しい．\\
+   Deep Glyph(アプリ)\\
+   ラスタ形式でStackGAN
+\end{itemize}
+
+\section{Sketch-Rnn}
+動かせそうなコードがあったので，Sketch-Rnnの動作確認をした．
+Sketch-Rnn は古いコードで, 現在のプロジェクトも tensor-flow v1系 を使用していたため,
+コードの改造をする際に苦戦する可能性がある．
+
+\section{データセット}
+\begin{itemize}
+  \item Quick Draw Dataset\\
+  Quick Draw!というゲームで収集されたデータセット．
+  データ数は 5000 万とのことで，手描きイラスト系ならこのデータセットで十分だと思われる．\\
+  実験で使用できるように, 内部の形式や使用方法を調査したい.
+\end{itemize}
+
+% \section{今後の予定}
+% % なんとなくなんかの勉強をするとかではなく具体的に
+% \begin{itemize}
+%   \item
+% \end{itemize}
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
