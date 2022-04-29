@@ -1,0 +1,147 @@
+
+%\documentstyle[epsf,twocolumn]{jarticle}       %LaTeX2e仕様
+% \documentclass[twocolumn]{jarticle}     %pLaTeX2e仕様(platex.exeの場合)
+\documentclass[onecolumn]{ujarticle}   %pLaTeX2e仕様(uplatex.exeの場合)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  基本バージョン
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\topmargin}{-45pt}
+%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-7.5mm}
+%\setlength{\evensidemargin}{0cm}
+\setlength{\textheight}{24.1cm}
+%setlength{\textheight}{25cm}
+\setlength{\textwidth}{17.4cm}
+%\setlength{\textwidth}{172mm}
+\setlength{\columnsep}{11mm}
+
+%\kanjiskip=.07zw plus.5pt minus.5pt
+
+
+% 【節が変わるごとに (1.1)(1.2) … (2.1)(2.2) と数式番号をつけるとき】
+%\makeatletter
+%\renewcommand{\theequation}{%
+%\thesection.\arabic{equation}} %\@addtoreset{equation}{section}
+%\makeatother
+
+%\renewcommand{\arraystretch}{0.95} 行間の設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{graphicx}   %pLaTeX2e仕様(\documentstyle ->\documentclass)
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings} %,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=3zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex
+}
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	%bibtex用の設定
+	%\bibliographystyle{ujarticle}
+
+	% \twocolumn[
+		\noindent
+		\hspace{1em}
+		2022 年 4 月 29 日
+		ゼミ資料
+		\hfill
+		杉山　竜弥
+		\vspace{2mm}
+
+		\hrule
+		\begin{center}
+			{\Large \bf 進捗報告}
+		\end{center}
+		\hrule
+		\vspace{9mm}
+	% ]
+
+
+\section{今週やったこと}
+\begin{itemize}
+  \item 先行研究(藤井さん)の確認
+\end{itemize}
+
+\section{先行研究について}
+絵描き歌自動生成システムの成果についてまとめる．
+\begin{itemize}
+  \item スケッチの類似性を評価する指標を提案．
+  \item 手描きスケッチをストローク（1筆）に分解して，類似するデータラベルから絵描き歌のベースとなる指示を作成．
+\end{itemize}
+課題については，文章が英語であることなどが挙げられていた．
+
+絵描き歌の生成という機能を 2 段階に分けると，スケッチから歌詞への変換と，歌詞から曲への変換に分けられる．
+したがって事前調査として，「画像から文章への変換」や「作曲の自動化」などについて調べた．
+
+\subsection{画像から文章への変換}
+先行研究では，スケッチから推測した単語列をもとに絵描き指示を生成していた．
+
+他の方法では，
+スケッチではないが画像からキャプションを生成する研究(\cite{vinyals2015show}など)がある．
+この方針の場合，英語ではなく日本語で絵描き歌用のデータセットを作成する必要があるため，先行研究の方法よりも難しいと思われる．
+
+\subsection{作曲の自動化}
+機械学習による作曲も，入力と出力によって問題の種類が様々あった．
+メロディー以外にも音楽の要素は多数存在し，
+生成方法も小節単位や時間単位，音符単位などがあり，
+データフォーマットも 音声信号，MIDI，ピアノロール，テキスト形式があった．
+
+音楽に関する知識がないので，「作曲の自動化」についてはかなり厳しいと感じた．
+
+\section{方針}
+「作曲の自動化」はかなり難しいと分かったため，「画像から文章への変換」に絞る方針にしたい．
+
+先行研究で改良できそうな点として，
+\begin{itemize}
+  \item 文章をストローク単位からオブジェクト単位に変える
+  \item 描き順を絵描き歌用に最適化する．
+\end{itemize}
+の 2 つを思いついた．
+
+1 点目は，絵描き歌の単位をストロークとしていたが，
+実際の絵描き歌はオブジェクト単位となっていたことから，
+スケッチを木構造のようなグループに分割できるとより自然な絵描き歌になると考えた．
+手法として，ストロークの組み合わせの中から最適なものを，スケッチデータベースから検索することで，
+スケッチをオブジェクトの集合で表せると思われる．
+
+2 点目，先行研究は描きはじめの位置や順番などを忠実に守っていたが，
+実際の例を確認すると絵描き歌にする際には強引な書き順になることも多かった．
+改良点として，よく似ているオブジェクト順に書き順を並べ替えることでさらに自然になると考えた．
+この類似度指標には先行研究の SSII や描き順を考慮しない指標を用いたい．
+
+\section{今後の予定}
+% なんとなくなんかの勉強をするとかではなく具体的に
+こんな感じの方針でいいのか相談したいです．
+とりあえずは藤井さんの追実験のしようと思っています．
+
+% 参考文献リスト
+\bibliographystyle{unsrt}
+\bibliography{ref}
+\end{document}
