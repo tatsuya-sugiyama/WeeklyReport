@@ -299,31 +299,6 @@ AKAZE の影響が強いことと Sketch RNN の性能が高くないことか�
 
 
 \section{実験2: スケッチの分割}
-実験 2 では実験 1 で求めた指標を用いて実際に部分スケッチを求めた．
-
-実験 1 の 3 つの類似指標それぞれで，
-部分スケッチに最も近いデータベース中のクラスを求め，
-対象のスケッチから最尤の部分スケッチを 1 つ分割した．
-
-\subsection{設定}
-分割方法はスケッチのストローク列の中で 1 箇所分割するように部分スケッチを得た．
-
-データベースの 345 クラスの代表スケッチから
-最も類似度の高いものを部分スケッチの推定クラスとし，
-全体で最大の類似度となった分割を求める．
-
-
-\subsection{結果}
-
-図 \ref{fig:exp2_o} ～ \ref{fig:exp2_c} に実験 2 の推定結果を示す．
-図中の赤枠は類似度最大の部分スケッチである．
-
-ここに考察を入力してください．
-ここに考察を入力してください．
-ここに考察を入力してください．
-ここに考察を入力してください．
-ここに考察を入力してください．
-ここに考察を入力してください．
 
 \begin{figure*}[tb]
 
@@ -339,7 +314,7 @@ AKAZE の影響が強いことと Sketch RNN の性能が高くないことか�
   \begin{minipage}{1\hsize}
   	\begin{center}
   		\includegraphics[clip,width=170mm]{sheep_a.png}
-  		\caption{類似度 : Sketch RNN の推定結果}
+  		\caption{Sketch RNN の推定結果}
   		\label{fig:exp2_a}
   	\end{center}
   \end{minipage}
@@ -348,7 +323,7 @@ AKAZE の影響が強いことと Sketch RNN の性能が高くないことか�
    \begin{minipage}{1\hsize}
      \begin{center}
        \includegraphics[clip,width=170mm]{sheep_b.png}
-       \caption{類似度 : AKAZE の推定結果}
+       \caption{AKAZE の推定結果}
        \label{fig:exp2_b}
      \end{center}
    \end{minipage}
@@ -357,7 +332,7 @@ AKAZE の影響が強いことと Sketch RNN の性能が高くないことか�
     \begin{minipage}{1\hsize}
       \begin{center}
         \includegraphics[clip,width=170mm]{sheep_c.png}
-        \caption{類似度 : 混合指標 の推定結果}
+        \caption{Sketch RNN + AKAZE の推定結果}
         \label{fig:exp2_c}
       \end{center}
     \end{minipage}
@@ -366,6 +341,40 @@ AKAZE の影響が強いことと Sketch RNN の性能が高くないことか�
 
 \end{figure*}
 
+
+
+
+実験 2 では実験 1 で求めた指標を用いて実際に部分スケッチを求めた．
+
+実験 1 の 3 つの類似指標それぞれで，
+部分スケッチに最も近いデータベース中のクラスを求め，
+対象のスケッチから最尤の部分スケッチを 1 つ分割した．
+
+\subsection{設定}
+分割方法はスケッチのストローク列の中で 1 箇所分割するように部分スケッチを得た．
+
+データベースの 345 クラスの代表スケッチから
+最も類似度の高いものを部分スケッチの推定クラスとし，
+全体で最大の類似度となった分割を求める．
+
+実験 1 同様に "Sheep" クラスを分割対象として選んだ．
+このスケッチは 7 画であるため，候補は 12 個となった．
+
+\subsection{結果}
+
+図 \ref{fig:exp2_o} ～ \ref{fig:exp2_c} に実験 2 の推定結果を示す．
+図 \ref{fig:exp2_o} はストローク列の 1 箇所で分割される可能性がある部分スケッチの候補である．
+図 \ref{fig:exp2_a} ～ \ref{fig:exp2_c} は各類似度におけるそれぞれの推定する類似スケッチとなる．
+図中の赤枠は類似度最大の部分スケッチである．
+
+AKAZE 類似度を利用している手法の部分スケッチが一致した．
+最も似ているのは Sketch RNN + AKAZE の"hat" クラスと思われる．
+途中経過と最終状態を両方考慮することで，
+類似度の性能が上がっている可能性がある．
+定量的に評価するためアンケート調査を行いたい．
+
+主観では体を "bush" や "cloud" ，足を "coffee cup" と比較してほしかったため，
+単純な部分スケッチが選ばれにくいような補正が必要であると考えられる．
 
 \section{まとめと今後の課題}
 書き順を含むスケッチデータに対して～実験をし，類似度指標の考察をした．
