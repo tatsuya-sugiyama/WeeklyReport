@@ -72,7 +72,7 @@
 
 		\hrule
 		\begin{center}
-			{\Large \bf 絵描き歌生成のための手描きスケッチ類似度}
+			{\Large \bf 手描きスケッチの類似度に基づく絵描き歌生成手法の検討}
 		\end{center}
 		\hrule
 		\vspace{9mm}
@@ -116,35 +116,36 @@
     入力はスケッチの時系列を含む描き順を意味する行列であり，潜在ベクトルがエンコーダの出力となる．
     また，デコーダの出力は入力と同じ，画像を生成できる行列となる.
 
-
-	\subsection{Quick Draw データセット}
-		Google が公開する描き順データセットである QuickDraw! \cite{Cheema:2012:QID:2207676.2208550} の形式を使用する．
-		この形式では， 1 つの手描きスケッチを構成する描き順データは行列で保持される．
-		描き順データの行方向は手描きスケッチの描き始めから描き終わりまでのペンの状態に関する情報を時系列に沿って保持する．
-		また，描き順データの列方向はある時刻 $t$ におけるペンの状態を保持しており，$x$ 座標の相対値， $y$ 座標の相対値，ストロークの描き終わりのブール値をそれぞれベクトルで持っている．
+  \subsection{Accelerated KAZE}
+  Accelerated KAZE (AKAZE) \cite{alcantarilla2011fast} は任意の画像に対して類似している画像を探す手法である．
+  AKAZE は特徴点検出を行い画像の拡大や縮小回転に対して不変となっている KAZE をもとにしており，
+  KAZE と同様に高い認識精度を持ちつつ計算に必要な時間を大幅に短縮している．
+  類似度指標としては，マッチングした特徴点の距離平均を用いた．
+  したがって 0 のとき完全に一致し，無関係のとき画像サイズに近くなる．
 
     \subsection{Cosine Similarity}
-コサイン類似度 (Cosine Similarity) は, 2 つのベクトルの類似性を表す尺度である．
-ベクトルがなす角がコサイン類似度となるため，1 のとき完全に類似し，0 のとき無関係となる．
+    コサイン類似度 (Cosine Similarity) は, 2 つのベクトルの類似性を表す尺度である．
+    ベクトルがなす角がコサイン類似度となるため，1 のとき完全に類似し，0 のとき無関係となる．
 
-\begin{equation}
-  \cos( \overrightarrow{a}, \overrightarrow{b} ) =
-  \frac{\overrightarrow{a} \cdot \overrightarrow{b}}{|\overrightarrow{a}| |\overrightarrow{b}|}
-\end{equation}
+    \begin{equation}
+      \cos( \overrightarrow{a}, \overrightarrow{b} ) =
+      \frac{\overrightarrow{a} \cdot \overrightarrow{b}}{|\overrightarrow{a}| |\overrightarrow{b}|}
+    \end{equation}
 
-    \subsection{Accelerated KAZE}
-    Accelerated KAZE (AKAZE) \cite{alcantarilla2011fast} は任意の画像に対して類似している画像を探す手法である．
-    AKAZE は特徴点検出を行い画像の拡大や縮小回転に対して不変となっている KAZE をもとにしており，
-    KAZE と同様に高い認識精度を持ちつつ計算に必要な時間を大幅に短縮している．
-    類似度指標としては，マッチングした特徴点の距離平均を用いた．
-    したがって 0 のとき完全に一致し，無関係のとき画像サイズに近くなる．
+
+	\subsection{Quick Draw データセット}
+	Google が公開する描き順データセットである QuickDraw! \cite{Cheema:2012:QID:2207676.2208550} の形式を使用する．
+	この形式では， 1 つの手描きスケッチを構成する描き順データは行列で保持される．
+	描き順データの行方向は手描きスケッチの描き始めから描き終わりまでのペンの状態に関する情報を時系列に沿って保持する．
+	また，描き順データの列方向はある時刻 $t$ におけるペンの状態を保持しており，$x$ 座標の相対値， $y$ 座標の相対値，ストロークの描き終わりのブール値をそれぞれベクトルで持っている．
 
 
 \section{提案手法}
 
-\subsection{絵描き歌}
-藤井ら \cite{fujii} による絵描き歌生成の先行研究では
-この問題を 3 つに分割していた．
+\subsection{絵描き歌生成}
+% 藤井ら \cite{fujii} による
+絵描き歌生成の先行研究 \cite{fujii} では
+絵描き歌生成の問題を 3 つに分割していた．
 
 まず「スケッチの類似度比較」では，
 2 つのスケッチ同士の類似度を求める場合の適当な指標を定める．
@@ -168,8 +169,9 @@
 新たなスケッチ分割手法を提案する．
 
 
-\subsection{手法}
-本研究では絵描き歌生成のためにまず「スケッチの類似度比較」と「スケッチの分割」を実験した．
+\subsection{提案手法}
+本研究では絵描き歌生成のために必要な「スケッチの類似度比較」と「スケッチの分割」
+について 2 つの実験をした．
 それぞれを実験 1，実験 2 とする．
 
 実験 1 ではスケッチの類似度指標となる 3 つの候補について，
@@ -178,13 +180,13 @@
 実験 2 では実験 1 で求めた指標を用いて実際にスケッチを分割し，結果を比較した．
 
 
-\section{実験1}
+\section{実験 1 : スケッチの類似度}
 % \subsection{目的}
 
 \begin{figure*}[tb]
  \begin{minipage}{1\hsize}
  	\begin{center}
- 		\includegraphics[clip,width=120mm]{sketch_trained_sim_A_0.png}
+ 		\includegraphics[clip,width=115mm]{sketch_trained_sim_A_0.png}
  		\caption{(手法A) Sketch RNN}
  		\label{fig:exp1_a}
  	\end{center}
@@ -192,7 +194,7 @@
 
   \begin{minipage}{1\hsize}
   	\begin{center}
-  		\includegraphics[clip,width=120mm]{sketch_trained_sim_B_0.png}
+  		\includegraphics[clip,width=115mm]{sketch_trained_sim_B_0.png}
   		\caption{(手法B) AKAZE}
   		\label{fig:exp1_b}
   	\end{center}
@@ -200,7 +202,7 @@
 
    \begin{minipage}{1\hsize}
    	\begin{center}
-   		\includegraphics[clip,width=120mm]{sketch_trained_sim_D_0.png}
+   		\includegraphics[clip,width=115mm]{sketch_trained_sim_D_0.png}
    		\caption{(手法C) Sketch RNN + AKAZE}
    		\label{fig:exp1_c}
    	\end{center}
@@ -210,8 +212,9 @@
 実験 1 では最適なスケッチの類似度指標を求める．
 スケッチでは線を書く順番の「途中経過」と完成した「最終状態」を合わせた 2 つの状態があり，
 この 2 つの状態を比較する必要がある．
+この際に途中のストロークを考慮するか否かで 2 つの手法を用いる.
 
-途中経過はスケッチの時系列データを扱うことが出来る Sketch RNN を利用した．
+まず途中のストロークを考慮する場合はスケッチの時系列データを扱うことが出来る Sketch RNN を利用した．
 Sketch RNN は Variational Autoencoder (VAE) であるため，
 スケッチの時系列データを入力することで潜在ベクトル $z$ を得ることが出来る．
 この $z$ のコサイン類似度を途中経過の類似度指標とした．
@@ -223,7 +226,7 @@ $S(x, y)$ を類似度関数, $E(x)$ をエンコーダとすると, $S_a$ は�
 \end{equation}
 
 
-次に最終状態はスケッチを画像化し，画像比較手法 AKAZE で比較することにした．
+次に考慮しない場合はスケッチを画像化し，画像比較手法 AKAZE で比較した．
 先行研究では画質評価手法 Structural Similarity (SSIM) が用いられていたが，
 AKAZE は特徴点マッチングをするため画像の内容を比較できる．
 AKAZE を用いた類似度 $S_b$ を
@@ -241,7 +244,8 @@ AKAZE を用いた類似度 $S_b$ を
 
 \begin{equation}
   \label{equ:c}
-  S_c(U, V) = \frac{S_a(U, V) + S_b(U, V)}{2}
+  % S_c(U, V) = \frac{S_a(U, V) + S_b(U, V)}{2}
+  S_c(U, V) = S_a(U, V) + S_b(U, V)
 \end{equation}
 
 とし，式 \ref{equ:a} ～ \ref{equ:c} でスケッチの類似度指標を評価する．
@@ -293,13 +297,13 @@ Sketch RNN のパラメータは事前に長時間学習したものを使用し
  羊毛と体の向きも類似しており 比較がうまくいく場合もあることが確認された．
 
 
-\section{実験2: スケッチの分割}
+\section{実験 2 : スケッチの分割}
 
 \begin{figure*}[tb]
 
  \begin{minipage}{1\hsize}
  	\begin{center}
- 		\includegraphics[clip,width=170mm]{origin.png}
+ 		\includegraphics[clip,width=160mm]{origin.png}
  		\caption{分割候補となる部分スケッチ}
  		\label{fig:exp2_o}
  	\end{center}
@@ -308,7 +312,7 @@ Sketch RNN のパラメータは事前に長時間学習したものを使用し
 
   \begin{minipage}{1\hsize}
   	\begin{center}
-  		\includegraphics[clip,width=170mm]{sheep_a.png}
+  		\includegraphics[clip,width=160mm]{sheep_a.png}
   		\caption{手法 A の Sketch RNN の推定結果}
   		\label{fig:exp2_a}
   	\end{center}
@@ -317,7 +321,7 @@ Sketch RNN のパラメータは事前に長時間学習したものを使用し
 
    \begin{minipage}{1\hsize}
      \begin{center}
-       \includegraphics[clip,width=170mm]{sheep_b.png}
+       \includegraphics[clip,width=160mm]{sheep_b.png}
        \caption{手法 B の AKAZE の推定結果}
        \label{fig:exp2_b}
      \end{center}
@@ -326,7 +330,7 @@ Sketch RNN のパラメータは事前に長時間学習したものを使用し
 
     \begin{minipage}{1\hsize}
       \begin{center}
-        \includegraphics[clip,width=170mm]{sheep_c.png}
+        \includegraphics[clip,width=160mm]{sheep_c.png}
         \caption{手法 C の Sketch RNN + AKAZE の推定結果}
         \label{fig:exp2_c}
       \end{center}
@@ -361,13 +365,15 @@ Sketch RNN のパラメータは事前に長時間学習したものを使用し
 図 \ref{fig:exp2_o} ～ \ref{fig:exp2_c} に実験 2 の推定結果を示す．
 図 \ref{fig:exp2_o} はストローク列の 1 箇所で分割される可能性がある部分スケッチの候補である．
 図 \ref{fig:exp2_a} ～ \ref{fig:exp2_c} は各類似度におけるそれぞれの推定する類似スケッチとなる．
-図中の赤枠は類似度最大の部分スケッチである．
+図の縦方向が各々の部分スケッチと 3 つの指標に対応している.
+図の横方向で類似度最大となったクラススケッチは図中の赤枠で示す．
+
 
 AKAZE 類似度を利用している手法の部分スケッチが一致した．
 最も似ているのは Sketch RNN + AKAZE の"hat" クラスと思われる．
 途中経過と最終状態を両方考慮することで，
 類似度の性能が上がっている可能性がある．
-定量的に評価するためアンケート調査を行いたい．
+定量的に評価するためアンケート調査を実施する予定である．
 
 他の部分スケッチについてみると，
 体を “bush” や “cloud” ，足を “coffee cup” と比較するなど
@@ -386,9 +392,11 @@ AKAZE 類似度を利用している手法の部分スケッチが一致した�
 類似度指標では，
 AKAZE を用いた最終状態を入力する手法が良い結果となったが，
 Sketch RNN のパラメータの性能が低かったことも原因として挙げられる．
+
 スケッチの分割方法では，
 先行研究ではなかったオブジェクトベースの視点を取り入れ，
 一部では妥当な部分スケッチが得られた．
+
 本研究では定性的な評価のみであったため，
 定量的な評価としてアンケート調査をしたいと考えている．
 
